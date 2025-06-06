@@ -1,7 +1,16 @@
+/**
+ * Service class for interacting with the FastEditor API.
+ * Provides methods for product personalization, order notification, and more.
+ */
 export class FastEditorAPI {
   private apiKey: string;
   private domain: string;
 
+  /**
+   * Constructs a FastEditorAPI instance with the given API key and domain.
+   * @param apiKey - The FastEditor API key for authentication.
+   * @param domain - The FastEditor API domain (e.g., yourbrand.fasteditor.com).
+   */
   constructor(apiKey: string, domain: string) {
     this.apiKey = apiKey;
     this.domain = domain;

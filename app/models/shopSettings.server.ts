@@ -1,5 +1,8 @@
 import prisma from '../db.server';
 
+/**
+ * Interface representing the FastEditor settings for a shop.
+ */
 export interface ShopSettings {
   id: string;
   shop: string;

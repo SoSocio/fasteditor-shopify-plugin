@@ -7,6 +7,10 @@ import {
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
 
+/**
+ * Shopify app instance configured for this project.
+ * Handles authentication, session storage, and API configuration.
+ */
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
   apiSecretKey: process.env.SHOPIFY_API_SECRET || "",
@@ -25,9 +29,24 @@ const shopify = shopifyApp({
     : {}),
 });
 
+/**
+ * The main Shopify app instance for use throughout the server.
+ */
 export default shopify;
+
+/**
+ * The current Shopify API version used by the app.
+ */
 export const apiVersion = ApiVersion.January25;
+
+/**
+ * Adds required document response headers for Shopify app.
+ */
 export const addDocumentResponseHeaders = shopify.addDocumentResponseHeaders;
+
+/**
+ * Shopify authentication helpers.
+ */
 export const authenticate = shopify.authenticate;
 export const unauthenticated = shopify.unauthenticated;
 export const login = shopify.login;
