@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
+import { data, useFetcher, useLoaderData } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -10,9 +10,12 @@ import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
+  const { billing, session } = await authenticate.admin(request);
+  const { hasActivePayment, appSubscriptions } = await billing.check();
 
-  return null;
+  console.log(hasActivePayment, appSubscriptions);
+
+  return data({ hasActivePayment, appSubscriptions });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -23,6 +26,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function Index() {
   const fetcher = useFetcher<typeof action>();
+  const { hasActivePayment, appSubscriptions } = useLoaderData<typeof loader>();
 
   const shopify = useAppBridge();
 

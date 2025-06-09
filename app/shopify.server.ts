@@ -2,10 +2,13 @@ import "@shopify/shopify-app-remix/adapters/node";
 import {
   ApiVersion,
   AppDistribution,
+  BillingInterval,
   shopifyApp,
 } from "@shopify/shopify-app-remix/server";
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
+
+export const MONTHLY_PLAN = "Monthly subscription";
 
 /**
  * Shopify app instance configured for this project.
@@ -20,6 +23,17 @@ const shopify = shopifyApp({
   authPathPrefix: "/auth",
   sessionStorage: new PrismaSessionStorage(prisma),
   distribution: AppDistribution.AppStore,
+  billing: {
+    [MONTHLY_PLAN] : {
+      lineItems: [
+        {
+          amount: 95,
+          currencyCode: 'USD',
+          interval: BillingInterval.Every30Days,
+        }
+      ],
+    }
+  },
   future: {
     unstable_newEmbeddedAuthStrategy: true,
     removeRest: true,

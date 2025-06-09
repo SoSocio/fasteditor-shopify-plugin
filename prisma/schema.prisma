@@ -32,10 +32,13 @@ model Session {
 }
 
 model ShopSettings {
-  id                String   @id @default(cuid())
-  shop              String   @unique // Shopify shop domain (e.g. myshop.myshopify.com)
-  fastEditorApiKey  String
-  fastEditorDomain  String // Should be in format {{your_brand}}.staging.fasteditor.com
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                           String   @id @default(cuid())
+  shop                         String   @unique // Shopify shop domain (e.g. myshop.myshopify.com)
+  shopifySubscriptionId        String?
+  subscriptionStatus           String?
+  subscriptionCurrentPeriodEnd DateTime?
+  fastEditorApiKey             String?
+  fastEditorDomain             String? // Should be in format {{your_brand}}.staging.fasteditor.com
+  createdAt                    DateTime @default(now())
+  updatedAt                    DateTime @updatedAt
 }
