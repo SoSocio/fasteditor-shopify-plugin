@@ -55,7 +55,25 @@ export class FastEditorAPI {
     return response.json();
   }
 
+  async checkShopIntegration() {
+    const response = await fetch(`https://api.${this.domain}/api/shop-integration`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': this.apiKey,
+      },
+    });
+
+    // Check for unsuccessful response
+    if (!response.ok) {
+      throw new Error(`FastEditor getProductsByUser failed: ${response.statusText}`);
+    }
+
+    // Return the parsed JSON response
+    return response.json();
+  }
+
   // Future methods can be added here, e.g.:
   // async notifyOrder(...) { ... }
   // async saleNotification(...) { ... }
-} 
+}
