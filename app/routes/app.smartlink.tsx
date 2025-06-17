@@ -13,10 +13,12 @@ export const action = async ({request}: ActionFunctionArgs) => {
     return new Response(null, {status: 405, statusText: "Method Not Allowed"});
   }
   try {
+    const data = await request.json();
+    const shop = data.shop;
+
     // TODO: Replace temp credentials with real shop settings after integration is complete
-    // const {session} = await authenticate.admin(request);
     // const {fastEditorApiKey, fastEditorDomain} =
-    //   await prisma.shopSettings.findFirst({where: {shop: session.shop}});
+    //   await prisma.shopSettings.findFirst({where: {shop: shop}});
 
     // Temporary variables while FastEditor integration logic is not yet implemented
     const fastEditorApiKey = process.env.FASTEDITOR_DEV_API_KEY
@@ -31,11 +33,14 @@ export const action = async ({request}: ActionFunctionArgs) => {
     }
 
     const fastEditor = new FastEditorAPI(fastEditorApiKey, fastEditorDomain);
-    const data = await request.json();
 
     if (!data.sku) {
       return Response.json({statusCode: 400, error: 'Missing SKU'}, {status: 200});
     }
+
+    const cartUrl = `https://${shop}/cart`;
+    const openProductOptionsOnStart = false;
+    const productOptionsEnabled = true;
 
     const params = {
       userId: data?.userId ?? null,
@@ -43,14 +48,14 @@ export const action = async ({request}: ActionFunctionArgs) => {
       language: data?.language ?? null,
       country: data?.country ?? null,
       currency: data?.currency ?? null,
-      custom_attributes: data?.custom_attributes ?? null,
+      custom_attributes: data?.custom_attributes ?? [],
       productOptions: {
-        openOnStart: data?.openOnStart ?? null,
-        enabled: data?.enabled ?? null,
+        openOnStart: openProductOptionsOnStart,
+        enabled: productOptionsEnabled,
       },
       projectId: data?.projectId ?? null,
       quantity: data?.quantity ?? null,
-      cartUrl: data?.cartUrl ?? null
+      cartUrl: cartUrl
     }
 
     const response = await fastEditor.createSmartLink(params);
@@ -67,7 +72,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
       }
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    const message = error instanceof Error ? error.message : error;
     console.error(`/app/smartlink failed with error: ${message}`);
 
     return Response.json(
