@@ -5,6 +5,10 @@ import {Badge, BlockStack, Card, Layout, Page,} from "@shopify/polaris";
 import {TitleBar} from "@shopify/app-bridge-react";
 import {authenticate} from "../shopify.server";
 import ShopIntegrationForm from "../components/HomePage/ShopIntegrationForm";
+import prisma from "../db.server";
+import {GET_SHOP_INFO} from "../graphql/query/getShopInfo";
+import {shopifyGraphqlRequest} from "../services/shopifyGraphqlRequest.server";
+import {GET_SHOP_LOCALES} from "../graphql/query/getShopLocales";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const {billing} = await authenticate.admin(request);
@@ -16,13 +20,12 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
 };
 
 export const action = async ({request}: ActionFunctionArgs) => {
-
+  const {session} = await authenticate.admin(request);
   try {
     const formData = await request.formData();
 
     const apiKey = String(formData.get("apiKey")) || "";
     const apiDomain = String(formData.get("apiDomain")) || "";
-    console.log("apiKey", apiKey, "apiDomain", apiDomain)
 
     const errorsData = {};
     if (apiKey === "") {
@@ -32,8 +35,26 @@ export const action = async ({request}: ActionFunctionArgs) => {
       errorsData.apiDomain = "API Domain is required";
     }
     if (Object.keys(errorsData).length > 0) {
-      return Response.json({errors: errorsData})
+      return data(
+        {
+          statusCode: 400,
+          statusText: "Validation errors",
+          body: {
+            errors: errorsData
+          },
+          ok: false
+        },
+        {
+          status: 200
+        }
+      )
     }
+
+    const shopInfoResponse = await shopifyGraphqlRequest(session, GET_SHOP_INFO)
+    const shopLocalesResponse = await shopifyGraphqlRequest(session, GET_SHOP_LOCALES)
+
+    const shopInfo = shopInfoResponse.shop
+    const primaryLang = shopLocalesResponse.shopLocales.find(locale => locale.primary);
 
     // const fastEditorAPI = new FastEditorAPI(apiKey, apiDomain);
     //
@@ -42,34 +63,51 @@ export const action = async ({request}: ActionFunctionArgs) => {
     // if (!response.ok) {
     //   return Response.json(response, {error: "Something went wrong:"})
     // }
-    //
-    // const upsertShopSettings = await db.shopsettings.upsert({
-    //   where: {
-    //     shop: session.shop,
-    //   },
-    //   update: {
-    //     fastEditorApiKey: updateJson.user,
-    //     fastEditorDomain: updateJson.api_token,
-    //   },
-    //   create: {
-    //     shop: "",
-    //     shopifySubscriptionId: "",
-    //     subscriptionStatus: "",
-    //     subscriptionCurrentPeriodEnd: "",
-    //     fastEditorApiKey: "",
-    //     fastEditorDomain: "",
-    //     createdAt: "",
-    //     updatedAt: ""
-    //   },
-    // });
-    //
-    // console.log("upsertShopSettings", upsertShopSettings)
-    //
-    // console.log("FastEditor products:", response);
-    return Response.json({success: true, products: []})
+
+    await prisma.shopSettings.upsert({
+      where: {
+        shop: session.shop,
+      },
+      update: {
+        fastEditorApiKey: apiKey,
+        fastEditorDomain: apiDomain,
+        language: primaryLang.locale,
+        country: shopInfo.billingAddress.countryCodeV2,
+        currency: shopInfo.currencyCode
+      },
+      create: {
+        shop: session.shop,
+        fastEditorApiKey: apiKey,
+        fastEditorDomain: apiDomain,
+        language: primaryLang.locale,
+        country: shopInfo.billingAddress.countryCodeV2,
+        currency: shopInfo.currencyCode
+      },
+    });
+
+    return data(
+      {
+        statusCode: 200,
+        statusText: "FastEditor integration is successful",
+        ok: true
+      },
+      {
+        status: 200
+      }
+    )
   } catch (error) {
-    console.error("Something went wrong:", error);
-    return data({success: false, error: error instanceof Error ? error.message : String(error)});
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error("FastEditor integration failed", errorMessage);
+    return data(
+      {
+        statusCode: 500,
+        statusText: errorMessage,
+        ok: false
+      },
+      {
+        status: 200
+      }
+    );
   }
 };
 
