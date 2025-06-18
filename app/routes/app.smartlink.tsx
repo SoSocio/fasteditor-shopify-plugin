@@ -1,6 +1,6 @@
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import {FastEditorAPI} from "../services/fastEditorAPI.server";
-import * as process from "node:process";
+import prisma from "../db.server";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   console.error("GET request to /app/smartlink endpoint is not allowed.", request);
@@ -9,20 +9,17 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
 
 export const action = async ({request}: ActionFunctionArgs) => {
   if (request.method !== "POST") {
-    console.error(`${request.method} request to /app/smartlink endpoint is not allowed. ${request}`);
+    console.error(`${request.method} request to /app/smartlink endpoint is not allowed.`, request);
     return new Response(null, {status: 405, statusText: "Method Not Allowed"});
   }
   try {
     const data = await request.json();
     const shop = data.shop;
+    console.log("POST request to /app/smartlink endpoint. Payload: ", data);
 
-    // TODO: Replace temp credentials with real shop settings after integration is complete
-    // const {fastEditorApiKey, fastEditorDomain} =
-    //   await prisma.shopSettings.findFirst({where: {shop: shop}});
-
-    // Temporary variables while FastEditor integration logic is not yet implemented
-    const fastEditorApiKey = process.env.FASTEDITOR_DEV_API_KEY
-    const fastEditorDomain = process.env.FASTEDITOR_DEV_DOMAIN
+    const {fastEditorApiKey, fastEditorDomain, id, language, country, currency} = await prisma.shopSettings.findFirst({
+      where: {shop: shop}
+    });
 
     if (!fastEditorApiKey) {
       throw new Error("Not found fastEditorApiKey");
@@ -35,7 +32,16 @@ export const action = async ({request}: ActionFunctionArgs) => {
     const fastEditor = new FastEditorAPI(fastEditorApiKey, fastEditorDomain);
 
     if (!data.sku) {
-      return Response.json({statusCode: 400, error: 'Missing SKU'}, {status: 200});
+      return Response.json(
+        {
+          statusCode: 400,
+          statusText: 'Missing SKU',
+          ok: false
+        },
+        {
+          status: 200
+        }
+      );
     }
 
     const cartUrl = `https://${shop}/cart`;
@@ -43,23 +49,25 @@ export const action = async ({request}: ActionFunctionArgs) => {
     const productOptionsEnabled = true;
 
     const params = {
-      userId: data?.userId ?? null,
+      userId: id,
       sku: data.sku,
-      language: data?.language ?? null,
-      country: data?.country ?? null,
-      currency: data?.currency ?? null,
+      language: language,
+      country: country,
+      currency: currency,
       custom_attributes: data?.custom_attributes ?? [],
       productOptions: {
         openOnStart: openProductOptionsOnStart,
         enabled: productOptionsEnabled,
       },
-      projectId: data?.projectId ?? null,
       quantity: data?.quantity ?? null,
       cartUrl: cartUrl
     }
 
+    console.log("/app/smartlink params", params);
+
     const response = await fastEditor.createSmartLink(params);
 
+    console.log("POST request to /app/smartlink endpoint is success.");
     return Response.json(
       {
         statusCode: 200,
@@ -72,8 +80,8 @@ export const action = async ({request}: ActionFunctionArgs) => {
       }
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : error;
-    console.error(`/app/smartlink failed with error: ${message}`);
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error("/app/smartlink failed with error:", errorMessage);
 
     return Response.json(
       {
