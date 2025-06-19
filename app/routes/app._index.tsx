@@ -1,58 +1,42 @@
 import {useCallback, useEffect, useState} from "react";
-import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import {useFetcher, useLoaderData} from "@remix-run/react";
-import {Badge, BlockStack, Card, Layout, Page,} from "@shopify/polaris";
+import {BlockStack, Layout, Page,} from "@shopify/polaris";
 import {TitleBar} from "@shopify/app-bridge-react";
 import {authenticate} from "../shopify.server";
-import ShopIntegrationForm from "../components/HomePage/ShopIntegrationForm";
+import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
+import type {ActionData, ErrorsData, FormValues, LoaderData} from "../components/HomePage/ShopIntegrationForm.types";
 import {getFastEditorAPIForShop} from "../services/fastEditorFactory.server";
 import {fastEditorIntegration} from "../services/fastEditorIntegration";
-
-
-interface FastEditorIntegration {
-  apiKey: string;
-  domain: string;
-}
-
-interface LoaderData {
-  hasActivePayment: boolean;
-  appSubscriptions: unknown[];
-  fasteditorIntegration?: FastEditorIntegration;
-}
-
-interface ErrorsData {
-  apiKey?: string;
-  apiDomain?: string;
-}
-
-interface ActionData {
-  statusCode: number;
-  statusText: string;
-  ok: boolean;
-  body?: {
-    errors?: ErrorsData;
-  };
-}
-
-interface FormValues {
-  apiKey: string;
-  apiDomain: string;
-}
+import ShopIntegrationForm from "../components/HomePage/ShopIntegrationForm";
+import ShopIntegrationCard from "../components/HomePage/ShopIntegrationCard";
+import {shopifyBilling} from "../services/shopifyBilling.server";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const {billing, session} = await authenticate.admin(request);
-  const {hasActivePayment, appSubscriptions} = await billing.check();
+  await shopifyBilling(session.shop, billing);
+  try {
+    const {hasActivePayment, appSubscriptions} = await billing.check();
+    console.log("hasActivePayment", hasActivePayment);
+    console.log("appSubscriptions", appSubscriptions);
 
-  const fasteditorIntegration = await getFastEditorAPIForShop(session.shop)
+    const fasteditorIntegration = await getFastEditorAPIForShop(session.shop)
 
-  console.log("hasActivePayment", hasActivePayment);
-  console.log("appSubscriptions", appSubscriptions);
-
-  return Response.json({
-    hasActivePayment,
-    appSubscriptions,
-    fasteditorIntegration,
-  });
+    return Response.json({
+      hasActivePayment,
+      appSubscriptions,
+      fasteditorIntegration,
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : error
+    console.error("Loader error.", errorMessage);
+    return Response.json({
+        statusCode: 500,
+        statusText: errorMessage,
+        ok: false
+      },
+      {status: 200}
+    );
+  }
 };
 
 export const action = async ({request}: ActionFunctionArgs) => {
@@ -84,7 +68,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
     await fastEditorIntegration(session, apiKey, apiDomain);
     return Response.json({
         statusCode: 200,
-        statusText: "FastEditor integration is successful",
+        statusText: "FastEditor integration is successful.",
         ok: true
       },
       {status: 200}
@@ -92,7 +76,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error("FastEditor integration failed", errorMessage);
+    console.error("FastEditor integration failed.", errorMessage);
     return Response.json({
         statusCode: 500,
         statusText: errorMessage,
@@ -112,6 +96,8 @@ export default function Index() {
   });
   const [isApiKeyError, setApiKeyError] = useState<boolean>(false);
   const [isApiDomainError, setApiDomainError] = useState<boolean>(false);
+  const [fastEditorError, setFastEditorError] = useState<boolean>(false);
+  const formErrors = fetcher.data?.body?.errors
 
   useEffect(() => {
     if (fetcher.state !== "idle" || !fetcher.data) return;
@@ -119,11 +105,17 @@ export default function Index() {
     if (fetcher.data?.ok) {
       shopify.toast.show(fetcher.data.statusText);
     } else {
-      shopify.toast.show("FastEditor integration failed. Please check entered values.");
+      shopify.toast.show("Connection to FastEditor failed. Please check your API Key and Domain and try again.");
     }
 
-    setApiKeyError(!!fetcher.data?.body?.errors?.apiKey);
-    setApiDomainError(!!fetcher.data?.body?.errors?.apiDomain);
+    if (!fetcher.data?.ok) {
+      setFastEditorError(true);
+    } else {
+      setFastEditorError(false);
+    }
+
+    setApiKeyError(!!formErrors?.apiKey);
+    setApiDomainError(!!formErrors?.apiDomain);
   }, [fetcher.state, fetcher.data]);
 
   const handleChange = useCallback(
@@ -152,25 +144,20 @@ export default function Index() {
         {/*</button>*/}
       </TitleBar>
       <BlockStack gap="500">
-        {fasteditorIntegration &&
-          <Layout>
-            <Layout.Section>
-              <Card>
-                <Badge tone="success">Active</Badge>
-              </Card>
-            </Layout.Section>
-          </Layout>
-        }
+
         <Layout>
           <Layout.Section>
-            <ShopIntegrationForm
-              handleChange={handleChange}
-              handleSubmit={handleSubmit}
-              formValues={formValues}
-              isApiKeyError={isApiKeyError}
-              isApiDomainError={isApiDomainError}
-              errors={fetcher.data?.body?.errors}
-            />
+            <ShopIntegrationCard integration={fasteditorIntegration}>
+              <ShopIntegrationForm
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+                formValues={formValues}
+                isApiKeyError={isApiKeyError}
+                isApiDomainError={isApiDomainError}
+                errors={formErrors}
+                fastEditorError={fastEditorError}
+              />
+            </ShopIntegrationCard>
           </Layout.Section>
         </Layout>
       </BlockStack>
