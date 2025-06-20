@@ -1,0 +1,49 @@
+import {shopifyGraphqlRequest} from "./shopifyGraphqlRequest.server";
+import {GET_SHOP_INFO} from "../graphql/query/getShopInfo";
+import {GET_SHOP_LOCALES} from "../graphql/query/getShopLocales";
+import {FastEditorAPI} from "./fastEditorAPI.server";
+import prisma from "../db.server";
+import type {Session} from "@shopify/shopify-api";
+
+export interface FastEditorIntegrationData {
+  URL: string;
+}
+
+export async function fastEditorIntegration(
+  session: Session,
+  apiKey: string,
+  apiDomain: string
+): Promise<FastEditorIntegrationData> {
+  const shopInfoData = await shopifyGraphqlRequest(session, GET_SHOP_INFO)
+  const shopLocalesData = await shopifyGraphqlRequest(session, GET_SHOP_LOCALES)
+
+  const shopInfo = shopInfoData.shop
+  const primaryLang = shopLocalesData.shopLocales.find((locale: { primary: boolean }) => locale.primary);
+
+  const fastEditor = new FastEditorAPI(apiKey, apiDomain);
+
+  const response: FastEditorIntegrationData = await fastEditor.checkShopIntegration();
+
+  await prisma.shopSettings.upsert({
+    where: {
+      shop: session.shop,
+    },
+    update: {
+      fastEditorApiKey: apiKey,
+      fastEditorDomain: apiDomain,
+      language: primaryLang.locale,
+      country: shopInfo.billingAddress.countryCodeV2,
+      currency: shopInfo.currencyCode
+    },
+    create: {
+      shop: session.shop,
+      fastEditorApiKey: apiKey,
+      fastEditorDomain: apiDomain,
+      language: primaryLang.locale,
+      country: shopInfo.billingAddress.countryCodeV2,
+      currency: shopInfo.currencyCode
+    },
+  });
+
+  return response;
+}
