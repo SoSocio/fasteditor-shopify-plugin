@@ -53,7 +53,7 @@ const ShopIntegrationForm: React.FC<ShopIntegrationFormProps> = (
             message={fastEditorError ? "Connection to FastEditor failed. Please check your API Key and Domain and try again." : ""}
           />
         </BlockStack>
-        <Button submit>Submit</Button>
+        <Button submit>Connect</Button>
       </FormLayout>
     </Form>
   );
