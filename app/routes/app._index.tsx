@@ -134,15 +134,8 @@ export default function Index() {
       });
   }, [formValues, fetcher]);
 
-  // const generateProduct = () => fetcher.submit({}, {method: "POST"});
-
   return (
     <Page fullWidth>
-      <TitleBar title="FastEditor">
-        {/*<button variant="primary" onClick={generateProduct}>*/}
-        {/*  Generate a product*/}
-        {/*</button>*/}
-      </TitleBar>
       <BlockStack gap="500">
 
         <Layout>

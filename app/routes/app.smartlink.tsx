@@ -29,8 +29,6 @@ export const action = async ({request}: ActionFunctionArgs) => {
       throw new Error("Not found fastEditorDomain");
     }
 
-    const fastEditor = new FastEditorAPI(fastEditorApiKey, fastEditorDomain);
-
     if (!data.sku) {
       return Response.json(
         {
@@ -43,6 +41,8 @@ export const action = async ({request}: ActionFunctionArgs) => {
         }
       );
     }
+
+    const fastEditor = new FastEditorAPI(fastEditorApiKey, fastEditorDomain);
 
     const cartUrl = `https://${shop}/cart`;
     const openProductOptionsOnStart = false;
@@ -66,6 +66,8 @@ export const action = async ({request}: ActionFunctionArgs) => {
     console.log("/app/smartlink params", params);
 
     const response = await fastEditor.createSmartLink(params);
+
+    console.log("/app/smartlink response", response);
 
     console.log("POST request to /app/smartlink endpoint is success.");
     return Response.json(

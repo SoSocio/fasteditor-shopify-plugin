@@ -5,10 +5,9 @@ window.addEventListener("load", function () {
   const shop = button.dataset.shop;
   const sku = button.dataset.sku;
 
-  const quantityInput = document.querySelector('input[name="quantity"]');
-  const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
-
   button.addEventListener("click", async function () {
+    const quantityInput = document.querySelector('input[name="quantity"]');
+    const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
     try {
       const response = await fetch("/apps/fasteditor-app/app/smartlink", {
         method: "POST",
@@ -16,7 +15,7 @@ window.addEventListener("load", function () {
         body: JSON.stringify({
           shop: shop,
           sku: sku,
-          custom_attributes: ["myattributes"],
+          custom_attributes: ["test"],
           quantity: quantity,
         }),
       });
