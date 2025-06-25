@@ -1,10 +1,11 @@
+<script src="{{ 'fasteditor-cart-handler.js' | asset_url }}" defer></script>
 {% assign font = block.settings.text_font %}
 
 <style>
   {{ font | font_face }}
 
   .fasteditor__button {
-    background-color: {{ block.settings.bg-color }};
+    background-color: {{ block.settings.bg_color }};
     color: {{ block.settings.text_color }};
     font-size: {{ block.settings.text_size }}px;
     font-family: {{ font.family }},{{ font.fallback_families }};
@@ -19,7 +20,7 @@
     <button
       class="fasteditor__button"
       data-shop="{{ shop.permanent_domain }}"
-      data-sku="{{ product.variants.first.sku | escape }}"
+      data-handle="{{ product.handle }}"
     >
       {{ block.settings.text }}
     </button>
@@ -40,7 +41,7 @@
   "settings": [
     {
       "type": "color",
-      "id": "bg-color",
+      "id": "bg_color",
       "label": "Button background color",
       "default": "#000000"
     },

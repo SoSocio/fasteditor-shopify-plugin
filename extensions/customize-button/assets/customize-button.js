@@ -3,32 +3,29 @@ window.addEventListener("load", function () {
   if (!button) return;
 
   const shop = button.dataset.shop;
-  const sku = button.dataset.sku;
+  const productHandle = button.dataset.handle;
 
   button.addEventListener("click", async function () {
+    const variantId = document.querySelector('[name="id"]')?.value;
     const quantityInput = document.querySelector('input[name="quantity"]');
     const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
+
     try {
-      const response = await fetch("/apps/fasteditor-app/app/smartlink", {
+      const response = await fetch("/apps/embedded/app/smartlink", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          shop: shop,
-          sku: sku,
-          custom_attributes: ["test"],
-          quantity: quantity,
-        }),
+        body: JSON.stringify({shop, variantId, quantity, productHandle}),
       });
 
-      const data = await response.json();
+      const responseData = await response.json();
 
-      if (data.ok && data.body?.url) {
-        window.location.href = data.body.url;
+      if (responseData.ok && responseData.data?.url) {
+        window.location.href = responseData.data.url;
       } else {
-        console.error("SmartLink error:", data);
+        console.error("FastEditor error response:", responseData);
       }
     } catch (error) {
-      console.error("SmartLink request failed:", error);
+      console.error("FastEditor request failed:", error);
     }
   });
 });
