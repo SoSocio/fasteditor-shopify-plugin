@@ -28,10 +28,11 @@ export class FastEditorAPI {
     language?: string;
     country?: string;
     currency?: string;
-    custom_attributes?: object;
-    productOptions?: object;
-    openOnStart?: boolean;
-    enabled?: boolean;
+    customAttributes?: object;
+    productOptions?: {
+      openOnStart: boolean;
+      enabled: boolean;
+    };
     projectId?: number;
     quantity?: number;
     cartUrl?: string;
@@ -56,8 +57,8 @@ export class FastEditorAPI {
   }
 
   async checkShopIntegration() {
-    const response = await fetch(`https://api.${this.domain}/api/shop-integration`, {
-      method: 'GET',
+    const response = await fetch(`https://api.${this.domain}/api/smartlink`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Api-Key': this.apiKey,
@@ -66,7 +67,7 @@ export class FastEditorAPI {
 
     // Check for unsuccessful response
     if (!response.ok) {
-      throw new Error(`FastEditor getProductsByUser failed: ${response.statusText}`);
+      throw new Error(`FastEditor checkShopIntegration failed: ${response.statusText}`);
     }
 
     // Return the parsed JSON response
@@ -130,7 +131,7 @@ export class FastEditorAPI {
    */
   async downloadPDF(downloadUrl: string): Promise<Buffer> {
     const response = await fetch(downloadUrl);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to download PDF: ${response.statusText}`);
     }

@@ -1,0 +1,104 @@
+<script src="{{ 'fasteditor-cart-handler.js' | asset_url }}" defer></script>
+{% assign font = block.settings.text_font %}
+
+<style>
+  {{ font | font_face }}
+
+  .fasteditor__button {
+    background-color: {{ block.settings.bg_color }};
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    font-family: {{ font.family }},{{ font.fallback_families }};
+    border-width: {{ block.settings.border_width }}px;
+    border-color: {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+</style>
+
+{% if request.design_mode or product.tags contains "fasteditor" %}
+  <div class="fasteditor">
+    <button
+      class="fasteditor__button"
+      data-shop="{{ shop.permanent_domain }}"
+      data-handle="{{ product.handle }}"
+    >
+      {{ block.settings.text }}
+    </button>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "FastEditor button",
+  "target": "section",
+  "enabled_on": {
+    "templates": [
+      "product"
+    ]
+  },
+  "stylesheet": "customize-button.css",
+  "javascript": "customize-button.js",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Button background color",
+      "default": "#000000"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Button text",
+      "default": "Customize"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 8,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "Text font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}
