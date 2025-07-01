@@ -1,14 +1,11 @@
-import { getFastEditorAPIForShop } from './fastEditorFactory.server';
-import { ShopifyAPI } from './shopifyAPI.server';
+import {getFastEditorAPIForShop} from './fastEditorFactory.server';
+import {ShopifyAPI} from './shopifyAPI.server';
 
 /**
  * Interface for FastEditor design data from line item properties.
  */
 interface FastEditorDesignData {
-  offering_id: string;
-  image_url?: string;
-  svg_url?: string;
-  metadata?: any;
+  projectKey?: any;
 }
 
 /**
@@ -42,7 +39,7 @@ export class OrderProcessor {
    */
   async processPaidOrder(order: any, shop: string): Promise<any[]> {
     const customItems = this.extractCustomItems(order);
-    
+
     if (customItems.length === 0) {
       console.log(`No custom items found in order ${order.name}`);
       return [];
@@ -52,12 +49,15 @@ export class OrderProcessor {
     const callbackUrl = `${process.env.SHOPIFY_APP_URL}/webhooks/fasteditor-sale-result?shop=${encodeURIComponent(shop)}`;
 
     for (const item of customItems) {
+      console.log("processPaidOrder item", item);
+      console.log("processPaidOrder order", order);
+      console.log("processPaidOrder callbackUrl", callbackUrl);
       try {
-        const result = await this.processCustomItem(item, order, callbackUrl, shop);
+        const result = await this.processCustomItem(item, order, callbackUrl);
         results.push({
           success: true,
           lineItemId: item.id,
-          offeringId: item.designData.offering_id,
+          projectKey: item.designData.projectKey,
           result
         });
       } catch (error) {
@@ -84,10 +84,12 @@ export class OrderProcessor {
    */
   private extractCustomItems(order: any): Array<any & { designData: FastEditorDesignData }> {
     const customItems = [];
+    console.log("extractCustomItems item", order);
 
     for (const lineItem of order.line_items) {
       const designData = this.extractDesignDataFromLineItem(lineItem);
-      
+      console.log("extractCustomItems lineItem", lineItem);
+      console.log("extractCustomItems designData", designData);
       if (designData) {
         customItems.push({
           ...lineItem,
@@ -106,37 +108,41 @@ export class OrderProcessor {
    */
   private extractDesignDataFromLineItem(lineItem: any): FastEditorDesignData | null {
     // Check line item properties for FastEditor data
+    let projectKey = null
     if (lineItem.properties) {
       for (const prop of lineItem.properties) {
-        if (prop.name === 'fasteditor_design_data' && prop.value) {
-          try {
-            return JSON.parse(prop.value);
-          } catch (error) {
-            console.error('Failed to parse FastEditor design data:', error);
-          }
+        if (prop.name === '_fasteditor_project_key' && prop.value) {
+          // try {
+          //   return JSON.parse(prop.value);
+          //
+          // } catch (error) {
+          //   console.error('Failed to parse FastEditor design data:', error);
+          // }
+          projectKey = prop.value;
         }
       }
     }
 
     // Check for offering_id in properties
-    let offeringId = null;
-    if (lineItem.properties) {
-      for (const prop of lineItem.properties) {
-        if (prop.name === 'offering_id' || prop.name === 'fasteditor_offering_id') {
-          offeringId = prop.value;
-          break;
-        }
-      }
-    }
+    // let offeringId = null;
+    // if (lineItem.properties) {
+    //   for (const prop of lineItem.properties) {
+    //     if (prop.name === 'offering_id' || prop.name === 'fasteditor_offering_id') {
+    //       offeringId = prop.value;
+    //       break;
+    //     }
+    //   }
+    // }
+    //
+    // if (offeringId) {
+    //   return {
+    //     offering_id: offeringId,
+    //     metadata: this.extractMetadataFromLineItem(lineItem)
+    //   };
+    // }
 
-    if (offeringId) {
-      return {
-        offering_id: offeringId,
-        metadata: this.extractMetadataFromLineItem(lineItem)
-      };
-    }
 
-    return null;
+    return {projectKey}
   }
 
   /**
@@ -149,7 +155,7 @@ export class OrderProcessor {
 
     if (lineItem.properties) {
       for (const prop of lineItem.properties) {
-        if (prop.name.startsWith('fasteditor_') && prop.name !== 'fasteditor_design_data') {
+        if (prop.name === "_projectKey" && prop.name !== 'fasteditor_design_data') {
           const key = prop.name.replace('fasteditor_', '');
           metadata[key] = prop.value;
         }
@@ -171,37 +177,62 @@ export class OrderProcessor {
     item: any & { designData: FastEditorDesignData },
     order: any,
     callbackUrl: string,
-    shop: string
   ): Promise<any> {
     const payload = {
-      offering_id: item.designData.offering_id,
-      order_id: order.name, // Using order name as order_id
-      order_item_id: item.id.toString(),
-      design_data: {
-        image_url: item.designData.image_url,
-        svg_url: item.designData.svg_url,
-        metadata: {
-          ...item.designData.metadata,
-          shop: shop, // Include shop information in metadata
-          order_name: order.name
-        }
+      orderId: order.name,
+      orderItems: {
+        projectKey:  item.designData.projectKey,
+        orderItemId: item.id.toString(),
+        quantity: item.quantity,
+        totalSaleValue: item.price
       },
-      customer: {
-        email: order.email,
-        name: `${order.billing_address?.first_name || ''} ${order.billing_address?.last_name || ''}`.trim()
+      billingInfo: {
+        name: order.billing_address.name,
+        email: order.customer.email,
+        address1: order.billing_address.address1,
+        address2: order.billing_address.address2,
+        city: order.billing_address.city,
+        zip: order.billing_address.zip,
+        country: order.billing_address.country,
       },
-      shipping_address: order.shipping_address ? {
-        first_name: order.shipping_address.first_name,
-        last_name: order.shipping_address.last_name,
+      shippingInfo: {
+        name: order.shipping_address.name,
+        email: order.customer.email,
         address1: order.shipping_address.address1,
         address2: order.shipping_address.address2,
         city: order.shipping_address.city,
-        province: order.shipping_address.province,
-        country: order.shipping_address.country,
         zip: order.shipping_address.zip,
-        phone: order.shipping_address.phone
-      } : undefined,
-      callback_url: callbackUrl
+        country: order.shipping_address.country,
+      },
+      callbackUrl: callbackUrl,
+      //
+      // order_id: order.name, // Using order name as order_id
+      // order_item_id: item.id.toString(),
+      // design_data: {
+      //   image_url: item.designData.image_url,
+      //   svg_url: item.designData.svg_url,
+      //   metadata: {
+      //     ...item.designData.metadata,
+      //     shop: shop, // Include shop information in metadata
+      //     order_name: order.name
+      //   }
+      // },
+      // customer: {
+      //   email: order.email,
+      //   name: `${order.billing_address?.first_name || ''} ${order.billing_address?.last_name || ''}`.trim()
+      // },
+      // shipping_address: order.shipping_address ? {
+      //   first_name: order.shipping_address.first_name,
+      //   last_name: order.shipping_address.last_name,
+      //   address1: order.shipping_address.address1,
+      //   address2: order.shipping_address.address2,
+      //   city: order.shipping_address.city,
+      //   province: order.shipping_address.province,
+      //   country: order.shipping_address.country,
+      //   zip: order.shipping_address.zip,
+      //   phone: order.shipping_address.phone
+      // } : undefined,
+      // callback_url: callbackUrl
     };
 
     return await this.fastEditorAPI.sendSaleNotification(payload);
@@ -233,4 +264,4 @@ export class OrderProcessor {
       console.error('Failed to update order processing status:', error);
     }
   }
-} 
+}
