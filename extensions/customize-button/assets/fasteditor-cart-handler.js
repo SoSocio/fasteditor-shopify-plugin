@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       items: [{
         id: variantId,
         quantity,
-        properties: { _projectKey: projectKey },
+        properties: { _fasteditor_project_key: projectKey },
       }],
     };
 
