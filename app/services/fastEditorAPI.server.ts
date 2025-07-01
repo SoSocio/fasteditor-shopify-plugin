@@ -76,37 +76,39 @@ export class FastEditorAPI {
 
   /**
    * Sends sale notification to FastEditor for order processing.
-   * @param params - Sale notification parameters including offering_id, order details, and design data.
+   * @param params - Sale notification parameters including orderId, orderItems, billingInfo, shippingInfo and callbackUrl.
    * @returns The response from FastEditor API.
    * @throws Error if the API request fails.
    */
   async sendSaleNotification(params: {
-    offering_id: string;
-    order_id: string;
-    order_item_id: string;
-    design_data: {
-      image_url?: string;
-      svg_url?: string;
-      metadata?: any;
-    };
-    customer: {
-      email: string;
-      name: string;
-    };
-    shipping_address?: {
-      first_name?: string;
-      last_name?: string;
+    orderId?: string;
+    orderItems: {
+      projectKey: string;
+      orderItemId: string;
+      quantity: number;
+      totalSaleValue?: number
+    }[]
+    billingInfo?: {
+      name?: string;
+      email?: string;
       address1?: string;
       address2?: string;
       city?: string;
-      province?: string;
-      country?: string;
       zip?: string;
-      phone?: string;
-    };
-    callback_url?: string;
+      country?: string;
+    }
+    shippingInfo?: {
+      name?: string;
+      email?: string;
+      address1?: string;
+      address2?: string;
+      city?: string;
+      zip?: string;
+      country?: string;
+    }
+    callbackUrl?: string;
   }): Promise<any> {
-    const response = await fetch(`https://api.${this.domain}.fasteditor.com/webhook/notifyorder`, {
+    const response = await fetch(`https://api.${this.domain}/webhook/notifyorder`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
