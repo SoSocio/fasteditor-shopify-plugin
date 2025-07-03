@@ -1,48 +1,61 @@
 import React from "react";
-import {authenticate} from "../shopify.server";
+import {useLoaderData} from "@remix-run/react";
 import type {LoaderFunctionArgs} from "@remix-run/node";
+import {Page, Layout, Card, BlockStack} from "@shopify/polaris";
+
+import type {DashboardLoader} from "../components/DashboardPage/dashboard.types";
+import {authenticate} from "../shopify.server";
 import {pagination} from "../utils/pagination";
 import {GET_PRODUCTS_BY_QUERY} from "../graphql/query/getProductsByTag";
-import {useLoaderData} from "@remix-run/react";
-import {Page, Layout, Card, BlockStack} from "@shopify/polaris";
-import {ProductsTableInfo} from "../components/DashboardPage/ProductsTableInfo";
+import {getShopSettings} from "../models/shopSettings.server";
 import {ProductsTable} from "../components/DashboardPage/ProductsTable";
-import {WithNestedRowsExample} from "../components/DashboardPage/WithNestedRowsExample";
+import {ProductsTableInfo} from "../components/DashboardPage/ProductsTableInfo";
 
-export const loader = async ({request}: LoaderFunctionArgs) => {
+export const loader = async ({request}: LoaderFunctionArgs): Promise<DashboardLoader> => {
   const {admin, session} = await authenticate.admin(request);
 
-  const productsLimit = 10;
-  const variables = pagination(request, productsLimit)
+  const limit = 10;
+  const cursorVars = pagination(request, limit);
 
-  console.log("app.dashboard.tsx loader. variables: ", variables);
+  console.log("[Dashboard Loader] Pagination variables:", cursorVars);
 
-  const response = await admin.graphql(
-    GET_PRODUCTS_BY_QUERY, {
-      variables: {
-        query: `tag:fasteditor`,
-        ...variables,
-      }
-    }
-  )
+  const response = await admin.graphql(GET_PRODUCTS_BY_QUERY, {
+    variables: {
+      query: "tag:fasteditor",
+      ...cursorVars,
+    },
+  });
 
-  const responseJson = await response.json();
-  const productsData = responseJson.data.products
-  console.log("app.dashboard.tsx loader. productsData:", productsData);
+  const json = await response.json();
+  const productsData = json.data.products;
 
-  const shopName = session.shop.replace(".myshopify.com", "")
-  console.log("app.dashboard.tsx loader. shopName:", shopName);
+  console.log(`[Dashboard Loader] Fetched ${productsData.edges.length} products`);
+
+  const shopSettings = await getShopSettings(session.shop);
+  if (!shopSettings) {
+    const message = `[Dashboard Loader Error] No shop settings found for ${session.shop}`
+    console.log(message);
+    throw new Error(message);
+  }
+
+  const shopName = session.shop.replace(".myshopify.com", "");
 
   return {
     productsData,
-    shopName,
-    productsLimit
+    shopData: {
+      name: shopName,
+      locale: shopSettings.language,
+      currency: shopSettings.currency,
+    },
+    productsLimit: limit,
   }
 };
 
 export default function Dashboard() {
-  const {productsData, shopName, productsLimit} = useLoaderData()
-  console.log("app.dashboard.tsx client. productsData:", productsData);
+  const data = useLoaderData<DashboardLoader>();
+  const {productsData, productsLimit, shopData} = data;
+
+  console.log("[Dashboard Client] Rendering Dashboard for", shopData.name);
 
   return (
     <Page fullWidth>
@@ -51,8 +64,11 @@ export default function Dashboard() {
           <Card>
             <BlockStack gap="400">
               <ProductsTableInfo/>
-              <ProductsTable productsData={productsData} shop={shopName} limit={productsLimit}/>
-              <WithNestedRowsExample/>
+              <ProductsTable
+                productsData={productsData}
+                shopData={shopData}
+                productsLimit={productsLimit}
+              />
             </BlockStack>
           </Card>
         </Layout.Section>

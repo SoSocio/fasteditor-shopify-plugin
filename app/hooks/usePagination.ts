@@ -1,29 +1,45 @@
-import {useNavigate} from "react-router";
 import {useMemo} from "react";
+import {useNavigate} from "react-router-dom";
 
-export const usePagination = ({pageInfo, limit}) => {
-  const {hasPreviousPage, startCursor, hasNextPage, endCursor} = pageInfo
+interface PageInfo {
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+  startCursor: string | null;
+  endCursor: string | null;
+}
+
+interface UsePaginationProps {
+  pageInfo: PageInfo;
+  productsLimit: number;
+}
+
+export const usePagination = ({pageInfo, productsLimit}: UsePaginationProps) => {
   const navigate = useNavigate();
-
-  const buildPaginationLink = (rel, cursor) => {
-    const params = new URLSearchParams({
-      rel,
-      cursor,
-      limit: String(limit),
-    });
-    return `/app/dashboard?${params.toString()}`;
-  };
+  const {hasPreviousPage, hasNextPage, startCursor, endCursor} = pageInfo;
 
   return useMemo(() => {
+    const buildPaginationLink = (rel: "previous" | "next", cursor: string) => {
+      const params = new URLSearchParams({
+        rel,
+        cursor,
+        limit: String(productsLimit),
+      });
+      return `/app/dashboard?${params.toString()}`;
+    };
+
     return {
-      hasPrevious: hasPreviousPage && !!startCursor,
-      hasNext: hasNextPage && !!endCursor,
+      hasPrevious: Boolean(hasPreviousPage && startCursor),
+      hasNext: Boolean(hasNextPage && endCursor),
       onPrevious: () => {
-        if (hasPreviousPage && startCursor) navigate(buildPaginationLink("previous", startCursor));
+        if (hasPreviousPage && startCursor) {
+          navigate(buildPaginationLink("previous", startCursor));
+        }
       },
       onNext: () => {
-        if (hasNextPage && endCursor) navigate(buildPaginationLink("next", endCursor));
+        if (hasNextPage && endCursor) {
+          navigate(buildPaginationLink("next", endCursor));
+        }
       },
     };
-  }, [hasPreviousPage, startCursor, hasNextPage, endCursor, navigate]);
+  }, [hasPreviousPage, hasNextPage, startCursor, endCursor, productsLimit, navigate]);
 };

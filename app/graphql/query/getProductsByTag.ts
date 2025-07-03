@@ -1,7 +1,12 @@
-// language=GraphQL
 export const GET_PRODUCTS_BY_QUERY = `
-  #graphgl
-  query GetProducts($first: Int, $after: String, $last: Int, $before: String, $query: String) {
+  #graphql
+  query GetProducts(
+    $first: Int
+    $after: String
+    $last: Int
+    $before: String
+    $query: String
+  ) {
     products(
       first: $first
       after: $after
@@ -15,6 +20,7 @@ export const GET_PRODUCTS_BY_QUERY = `
           id
           title
           legacyResourceId
+
           featuredMedia {
             preview {
               image {
@@ -23,29 +29,30 @@ export const GET_PRODUCTS_BY_QUERY = `
               }
             }
           }
-          status
-          variantsCount {
-            count
-          }
-          variants(first: 15) {
+
+          variants(first: 30) {
             nodes {
               id
+              legacyResourceId
               title
+              sku
+              price
+              inventoryQuantity
               image {
                 altText
                 url
               }
-              sku
-              price
             }
           }
         }
       }
+
       pageInfo {
+        startCursor
         endCursor
         hasNextPage
         hasPreviousPage
-        startCursor
       }
     }
-  }`
+  }
+`;

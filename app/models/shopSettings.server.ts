@@ -10,6 +10,9 @@ export interface ShopSettings {
   fastEditorDomain: string;
   createdAt: Date;
   updatedAt: Date;
+  language: string;
+  country: string;
+  currency: string;
 }
 
 /**
@@ -22,4 +25,4 @@ export async function getShopSettings(shopId: string): Promise<ShopSettings | nu
   return prisma.shopSettings.findUnique({
     where: { shop: shopId },
   });
-} 
+}
