@@ -1,144 +1,122 @@
 import {useCallback, useEffect, useState} from "react";
-import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
-import {data, useFetcher} from "@remix-run/react";
-import {Badge, BlockStack, Card, Layout, Page,} from "@shopify/polaris";
+import {useFetcher, useLoaderData} from "@remix-run/react";
+import {BlockStack, Layout, Page,} from "@shopify/polaris";
 import {TitleBar} from "@shopify/app-bridge-react";
 import {authenticate} from "../shopify.server";
+import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
+import type {ActionData, ErrorsData, FormValues, LoaderData} from "../components/HomePage/ShopIntegrationForm.types";
+import {getFastEditorAPIForShop} from "../services/fastEditorFactory.server";
+import {fastEditorIntegration} from "../services/fastEditorIntegration";
 import ShopIntegrationForm from "../components/HomePage/ShopIntegrationForm";
-import prisma from "../db.server";
-import {GET_SHOP_INFO} from "../graphql/query/getShopInfo";
-import {shopifyGraphqlRequest} from "../services/shopifyGraphqlRequest.server";
-import {GET_SHOP_LOCALES} from "../graphql/query/getShopLocales";
+import ShopIntegrationCard from "../components/HomePage/ShopIntegrationCard";
+import {shopifyBilling} from "../services/shopifyBilling.server";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
-  const {billing} = await authenticate.admin(request);
-  const {hasActivePayment, appSubscriptions} = await billing.check();
+  const {billing, session} = await authenticate.admin(request);
+  await shopifyBilling(session.shop, billing);
+  try {
+    const {hasActivePayment, appSubscriptions} = await billing.check();
+    console.log("hasActivePayment", hasActivePayment);
+    console.log("appSubscriptions", appSubscriptions);
 
-  console.log(hasActivePayment, appSubscriptions);
+    const fasteditorIntegration = await getFastEditorAPIForShop(session.shop)
 
-  return data({hasActivePayment, appSubscriptions});
+    return Response.json({
+      hasActivePayment,
+      appSubscriptions,
+      fasteditorIntegration,
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : error
+    console.error("Loader error.", errorMessage);
+    return Response.json({
+        statusCode: 500,
+        statusText: errorMessage,
+        ok: false
+      },
+      {status: 200}
+    );
+  }
 };
 
 export const action = async ({request}: ActionFunctionArgs) => {
   const {session} = await authenticate.admin(request);
   try {
+    console.log("FastEditor API integration request");
     const formData = await request.formData();
 
     const apiKey = String(formData.get("apiKey")) || "";
     const apiDomain = String(formData.get("apiDomain")) || "";
 
-    const errorsData = {};
+    const errorsData: ErrorsData = {};
     if (apiKey === "") {
       errorsData.apiKey = "API Key is required";
     }
     if (apiDomain === "") {
       errorsData.apiDomain = "API Domain is required";
     }
+
     if (Object.keys(errorsData).length > 0) {
-      return data(
-        {
-          statusCode: 400,
-          statusText: "Validation errors",
-          body: {
-            errors: errorsData
-          },
-          ok: false
-        },
-        {
-          status: 200
-        }
-      )
+      return Response.json({
+        statusCode: 400,
+        statusText: "Validation errors",
+        body: {errors: errorsData},
+        ok: false
+      });
     }
 
-    const shopInfoResponse = await shopifyGraphqlRequest(session, GET_SHOP_INFO)
-    const shopLocalesResponse = await shopifyGraphqlRequest(session, GET_SHOP_LOCALES)
-
-    const shopInfo = shopInfoResponse.shop
-    const primaryLang = shopLocalesResponse.shopLocales.find(locale => locale.primary);
-
-    // const fastEditorAPI = new FastEditorAPI(apiKey, apiDomain);
-    //
-    // const response = await fastEditorAPI.checkShopIntegration();
-    //
-    // if (!response.ok) {
-    //   return Response.json(response, {error: "Something went wrong:"})
-    // }
-
-    await prisma.shopSettings.upsert({
-      where: {
-        shop: session.shop,
-      },
-      update: {
-        fastEditorApiKey: apiKey,
-        fastEditorDomain: apiDomain,
-        language: primaryLang.locale,
-        country: shopInfo.billingAddress.countryCodeV2,
-        currency: shopInfo.currencyCode
-      },
-      create: {
-        shop: session.shop,
-        fastEditorApiKey: apiKey,
-        fastEditorDomain: apiDomain,
-        language: primaryLang.locale,
-        country: shopInfo.billingAddress.countryCodeV2,
-        currency: shopInfo.currencyCode
-      },
-    });
-
-    return data(
-      {
+    await fastEditorIntegration(session, apiKey, apiDomain);
+    return Response.json({
         statusCode: 200,
-        statusText: "FastEditor integration is successful",
+        statusText: "FastEditor integration is successful.",
         ok: true
       },
-      {
-        status: 200
-      }
-    )
+      {status: 200}
+    );
+
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error("FastEditor integration failed", errorMessage);
-    return data(
-      {
+    console.error("FastEditor integration failed.", errorMessage);
+    return Response.json({
         statusCode: 500,
         statusText: errorMessage,
         ok: false
       },
-      {
-        status: 200
-      }
+      {status: 200}
     );
   }
 };
 
-
 export default function Index() {
-  const fetcher = useFetcher<typeof action>();
-  const [formValues, setFormValues] = useState({
-    apiKey: "",
-    apiDomain: "",
+  const {fasteditorIntegration} = useLoaderData<LoaderData>()
+  const fetcher = useFetcher<ActionData>();
+  const [formValues, setFormValues] = useState<FormValues>({
+    apiKey: fasteditorIntegration?.apiKey ?? "",
+    apiDomain: fasteditorIntegration?.domain ?? "",
   });
   const [isApiKeyError, setApiKeyError] = useState<boolean>(false);
   const [isApiDomainError, setApiDomainError] = useState<boolean>(false);
+  const [fastEditorError, setFastEditorError] = useState<boolean>(false);
+  const formErrors = fetcher.data?.body?.errors
 
   useEffect(() => {
-    if (fetcher.data?.success) {
-      setFormValues({
-        apiKey: "",
-        apiDomain: "",
-      });
-    }
-    if (fetcher.data?.errors?.apiKey) {
-      setApiKeyError(true);
+    if (fetcher.state !== "idle" || !fetcher.data) return;
+
+    if (fetcher.data?.ok) {
+      shopify.toast.show(fetcher.data.statusText);
     } else {
-      setApiKeyError(false);
+      shopify.toast.show("Connection to FastEditor failed. Please check your API Key and Domain and try again.");
     }
-    if (fetcher.data?.errors?.apiDomain) {
-      setApiDomainError(true);
+
+    if (!fetcher.data?.ok) {
+      setFastEditorError(true);
     } else {
-      setApiDomainError(false);
+      setFastEditorError(false);
     }
-  }, [fetcher.data]);
+
+    setApiKeyError(!!formErrors?.apiKey);
+    setApiDomainError(!!formErrors?.apiDomain);
+  }, [fetcher.state, fetcher.data]);
 
   const handleChange = useCallback(
     (field: keyof typeof formValues) => (value: string) => {
@@ -146,7 +124,6 @@ export default function Index() {
     }, []);
 
   const handleSubmit = useCallback(async () => {
-
     fetcher.submit(
       {
         apiKey: formValues.apiKey,
@@ -157,44 +134,30 @@ export default function Index() {
       });
   }, [formValues, fetcher]);
 
-
-  // const { hasActivePayment, appSubscriptions } = useLoaderData<typeof loader>();
-
-  // const shopify = useAppBridge();
-  //
-  // useEffect(() => {
-  //   shopify.toast.show("Product created");
-  // }, [shopify]);
-
-  const generateProduct = () => fetcher.submit({}, {method: "POST"});
+  // const generateProduct = () => fetcher.submit({}, {method: "POST"});
 
   return (
     <Page fullWidth>
       <TitleBar title="FastEditor">
-        <button variant="primary" onClick={generateProduct}>
-          Generate a product
-        </button>
+        {/*<button variant="primary" onClick={generateProduct}>*/}
+        {/*  Generate a product*/}
+        {/*</button>*/}
       </TitleBar>
       <BlockStack gap="500">
-        {fetcher.data?.success &&
-          <Layout>
-            <Layout.Section>
-              <Card>
-                <Badge tone="success">Active</Badge>
-              </Card>
-            </Layout.Section>
-          </Layout>
-        }
+
         <Layout>
           <Layout.Section>
-            <ShopIntegrationForm
-              handleChange={handleChange}
-              handleSubmit={handleSubmit}
-              formValues={formValues}
-              isApiKeyError={isApiKeyError}
-              isApiDomainError={isApiDomainError}
-              errors={fetcher.data?.errors}
-            />
+            <ShopIntegrationCard integration={fasteditorIntegration}>
+              <ShopIntegrationForm
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+                formValues={formValues}
+                isApiKeyError={isApiKeyError}
+                isApiDomainError={isApiDomainError}
+                errors={formErrors}
+                fastEditorError={fastEditorError}
+              />
+            </ShopIntegrationCard>
           </Layout.Section>
         </Layout>
       </BlockStack>
