@@ -28,10 +28,11 @@ export class FastEditorAPI {
     language?: string;
     country?: string;
     currency?: string;
-    custom_attributes?: object;
-    productOptions?: object;
-    openOnStart?: boolean;
-    enabled?: boolean;
+    customAttributes?: object;
+    productOptions?: {
+      openOnStart: boolean;
+      enabled: boolean;
+    };
     projectId?: number;
     quantity?: number;
     cartUrl?: string;

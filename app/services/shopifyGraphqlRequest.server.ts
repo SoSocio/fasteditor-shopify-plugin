@@ -1,9 +1,13 @@
 import type {ClientResponse} from '@shopify/graphql-client';
-import type {Session} from "@shopify/shopify-api";
 import {shopifyClient} from "./shopifyClient.server";
 
+type ShopifySession = {
+  accessToken: string;
+  shop: string;
+};
+
 export async function shopifyGraphqlRequest<T = any>(
-  session: Session,
+  session: ShopifySession,
   query: string,
   variables?: Record<string, any>
 ): Promise<T> {

@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 import {useFetcher, useLoaderData} from "@remix-run/react";
 import {BlockStack, Layout, Page,} from "@shopify/polaris";
-import {TitleBar} from "@shopify/app-bridge-react";
 import {authenticate} from "../shopify.server";
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import type {ActionData, ErrorsData, FormValues, LoaderData} from "../components/HomePage/ShopIntegrationForm.types";
@@ -134,15 +133,8 @@ export default function Index() {
       });
   }, [formValues, fetcher]);
 
-  // const generateProduct = () => fetcher.submit({}, {method: "POST"});
-
   return (
     <Page fullWidth>
-      <TitleBar title="FastEditor">
-        {/*<button variant="primary" onClick={generateProduct}>*/}
-        {/*  Generate a product*/}
-        {/*</button>*/}
-      </TitleBar>
       <BlockStack gap="500">
 
         <Layout>
