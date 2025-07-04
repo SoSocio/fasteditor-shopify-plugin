@@ -1,0 +1,13 @@
+.fasteditor__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border-style: solid;
+  cursor: pointer;
+  transition: opacity .1s ease-in-out;
+}
+
+.fasteditor__button:hover {
+  opacity: .8;
+}
