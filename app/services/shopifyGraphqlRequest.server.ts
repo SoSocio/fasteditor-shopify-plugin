@@ -1,31 +1,24 @@
-import type {ClientResponse} from '@shopify/graphql-client';
-import {shopifyClient} from "./shopifyClient.server";
-
-type ShopifySession = {
-  accessToken: string;
-  shop: string;
-};
+import type { AdminGraphqlClient } from "@shopify/shopify-app-remix/server";
 
 export async function shopifyGraphqlRequest<T = any>(
-  session: ShopifySession,
+  graphql: AdminGraphqlClient,
   query: string,
   variables?: Record<string, any>
 ): Promise<T> {
-  const client = shopifyClient(session.shop, session.accessToken);
-
   try {
-    const response: ClientResponse<T> = await client.request(query, variables);
+    const response = await graphql(query, variables);
 
-    if (response.errors) {
-      console.error("Shopify GraphQL errors:", response.errors);
-      throw new Error(JSON.stringify(response.errors));
+    console.log("response", response);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Shopify GraphQL error:", errorText);
+      throw new Error(errorText);
     }
 
-    if (!response.data) {
-      throw new Error("No data returned from Shopify GraphQL");
-    }
+    const responseJson = await response.json();
 
-    return response.data;
+    return responseJson.data;
   } catch (error) {
     console.error("Shopify GraphQL error:", error);
     throw error;

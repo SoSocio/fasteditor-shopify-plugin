@@ -39,7 +39,7 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
 };
 
 export const action = async ({request}: ActionFunctionArgs) => {
-  const {session} = await authenticate.admin(request);
+  const {admin, session} = await authenticate.admin(request);
   try {
     console.log("FastEditor API integration request");
     const formData = await request.formData();
@@ -64,7 +64,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
       });
     }
 
-    await fastEditorIntegration(session, apiKey, apiDomain);
+    await fastEditorIntegration(admin.graphql, session.shop, apiKey, apiDomain);
     return Response.json({
         statusCode: 200,
         statusText: "FastEditor integration is successful.",
