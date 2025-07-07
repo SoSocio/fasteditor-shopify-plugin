@@ -3,22 +3,25 @@ import {GET_SHOP_INFO} from "../graphql/query/getShopInfo";
 import {GET_SHOP_LOCALES} from "../graphql/query/getShopLocales";
 import {FastEditorAPI} from "./fastEditorAPI.server";
 import prisma from "../db.server";
-import type {Session} from "@shopify/shopify-api";
+import type {AdminGraphqlClient} from "@shopify/shopify-app-remix/server";
 
 export interface FastEditorIntegrationData {
   URL: string;
 }
 
 export async function fastEditorIntegration(
-  session: Session,
+  graphql: AdminGraphqlClient,
+  shop: string,
   apiKey: string,
   apiDomain: string
 ): Promise<FastEditorIntegrationData> {
-  const shopInfoData = await shopifyGraphqlRequest(session, GET_SHOP_INFO)
-  const shopLocalesData = await shopifyGraphqlRequest(session, GET_SHOP_LOCALES)
+  const shopInfoData = await shopifyGraphqlRequest(graphql, GET_SHOP_INFO)
+  const shopLocalesData = await shopifyGraphqlRequest(graphql, GET_SHOP_LOCALES)
 
   const shopInfo = shopInfoData.shop
-  const primaryLang = shopLocalesData.shopLocales.find((locale: { primary: boolean }) => locale.primary);
+  const primaryLang = shopLocalesData.shopLocales.find((locale: {
+    primary: boolean
+  }) => locale.primary);
 
   const fastEditor = new FastEditorAPI(apiKey, apiDomain);
 
@@ -26,7 +29,7 @@ export async function fastEditorIntegration(
 
   await prisma.shopSettings.upsert({
     where: {
-      shop: session.shop,
+      shop: shop,
     },
     update: {
       fastEditorApiKey: apiKey,
@@ -36,7 +39,7 @@ export async function fastEditorIntegration(
       currency: shopInfo.currencyCode
     },
     create: {
-      shop: session.shop,
+      shop: shop,
       fastEditorApiKey: apiKey,
       fastEditorDomain: apiDomain,
       language: primaryLang.locale,
