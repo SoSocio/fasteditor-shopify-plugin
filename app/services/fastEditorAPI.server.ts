@@ -18,7 +18,8 @@ export class FastEditorAPI {
 
   /**
    * Creates a SmartLink for FastEditor product personalization.
-   * @param params - Parameters for SmartLink creation, including SKU, userId, language, etc.
+   * @param params - Parameters for SmartLink creation, including SKU, userId,
+   *   language, etc.
    * @returns The response from FastEditor API containing the editor URL.
    * @throws Error if the API request fails.
    */
@@ -76,7 +77,7 @@ export class FastEditorAPI {
 
   /**
    * Sends sale notification to FastEditor for order processing.
-   * @param params - Sale notification parameters including orderId, orderItems, billingInfo, shippingInfo and callbackUrl.
+   * @param params - Sale notification parameters.
    * @returns The response from FastEditor API.
    * @throws Error if the API request fails.
    */
@@ -119,7 +120,7 @@ export class FastEditorAPI {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`FastEditor sale notification failed: ${response.status} - ${errorText}`);
+      throw new Error(`FastEditor sale notification failed for order ${params.orderId}: ${response.status} - ${errorText}`);
     }
 
     return response.json();
