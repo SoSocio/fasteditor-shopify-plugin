@@ -3,45 +3,49 @@ import {useFetcher, useLoaderData} from "@remix-run/react";
 import {BlockStack, Layout, Page,} from "@shopify/polaris";
 import {authenticate} from "../shopify.server";
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
-import type {ActionData, ErrorsData, FormValues, LoaderData} from "../components/HomePage/ShopIntegrationForm.types";
+import type {
+  ActionData,
+  ErrorsData,
+  FormValues,
+  LoaderData
+} from "../components/HomePage/ShopIntegrationForm.types";
 import {getFastEditorAPIForShop} from "../services/fastEditorFactory.server";
 import {fastEditorIntegration} from "../services/fastEditorIntegration";
 import ShopIntegrationForm from "../components/HomePage/ShopIntegrationForm";
 import ShopIntegrationCard from "../components/HomePage/ShopIntegrationCard";
 import {shopifyBilling} from "../services/shopifyBilling.server";
 
+const ENDPOINT = "/app/_index";
+
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const {billing, session} = await authenticate.admin(request);
   await shopifyBilling(session.shop, billing);
   try {
     const {hasActivePayment, appSubscriptions} = await billing.check();
-    console.log("hasActivePayment", hasActivePayment);
-    console.log("appSubscriptions", appSubscriptions);
+    console.log(`[${ENDPOINT}] Loader hasActivePayment:`, hasActivePayment);
+    console.log(`[${ENDPOINT}] Loader appSubscriptions:`, appSubscriptions);
 
     const fasteditorIntegration = await getFastEditorAPIForShop(session.shop)
+    console.log(`[${ENDPOINT}] Loader fasteditorIntegration:`, fasteditorIntegration);
 
-    return Response.json({
+    return {
       hasActivePayment,
       appSubscriptions,
       fasteditorIntegration,
-    });
+    };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : error
-    console.error("Loader error.", errorMessage);
-    return Response.json({
-        statusCode: 500,
-        statusText: errorMessage,
-        ok: false
-      },
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error(`[${ENDPOINT}] Loader error:`, errorMessage);
+    return new Response(errorMessage,
       {status: 200}
     );
   }
 };
 
-export const action = async ({request}: ActionFunctionArgs) => {
+export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
   const {admin, session} = await authenticate.admin(request);
   try {
-    console.log("FastEditor API integration request");
+    console.log(`[${ENDPOINT}] FastEditor API integration request for shop ${session.shop}`);
     const formData = await request.formData();
 
     const apiKey = String(formData.get("apiKey")) || "";
@@ -56,32 +60,49 @@ export const action = async ({request}: ActionFunctionArgs) => {
     }
 
     if (Object.keys(errorsData).length > 0) {
-      return Response.json({
-        statusCode: 400,
-        statusText: "Validation errors",
-        body: {errors: errorsData},
-        ok: false
-      });
+      return new Response(JSON.stringify({
+          statusCode: 400,
+          statusText: "Validation errors",
+          body: {errors: errorsData},
+          ok: false,
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
     }
 
     await fastEditorIntegration(admin.graphql, session.shop, apiKey, apiDomain);
-    return Response.json({
+    return new Response(JSON.stringify({
         statusCode: 200,
         statusText: "FastEditor integration is successful.",
         ok: true
-      },
-      {status: 200}
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
 
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error("FastEditor integration failed.", errorMessage);
-    return Response.json({
+    console.error(`[${ENDPOINT}] FastEditor integration failed.`, errorMessage);
+    return new Response(JSON.stringify({
         statusCode: 500,
         statusText: errorMessage,
         ok: false
-      },
-      {status: 200}
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 };
@@ -136,7 +157,6 @@ export default function Index() {
   return (
     <Page fullWidth>
       <BlockStack gap="500">
-
         <Layout>
           <Layout.Section>
             <ShopIntegrationCard integration={fasteditorIntegration}>
