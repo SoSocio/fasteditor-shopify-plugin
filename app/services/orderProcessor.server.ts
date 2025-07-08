@@ -1,38 +1,17 @@
-import {getFastEditorAPIForShop} from './fastEditorFactory.server';
-import {ShopifyAPI} from './shopifyAPI.server';
+import {getFastEditorAPIForShop} from "./fastEditorFactory.server";
+import {ShopifyAPI} from "./shopifyAPI.server";
+import type {ShopifyLineItem, ShopifyOrder} from "../types/shopify";
+import {
+  createFastEditorOrderItem,
+  fastEditorOrderItemExists
+} from "../models/fastEditorOrderItems.server";
+import {FEE_RATE, MIN_FEE_EUR} from "../constants";
 
 interface FastEditorOrderItem {
-  projectKey: string | number;
+  projectKey: string;
   orderItemId: string;
   quantity: number;
   totalSaleValue: number;
-}
-
-interface ShopifyLineItem {
-  id: number;
-  quantity: number;
-  price: string;
-  properties?: Array<{ name: string; value: string }>;
-}
-
-interface ShopifyOrder {
-  id: string;
-  name: string;
-  line_items: ShopifyLineItem[];
-  billing_address: Address;
-  shipping_address: Address;
-  customer: {
-    email: string;
-  };
-}
-
-interface Address {
-  name: string;
-  address1: string;
-  address2?: string;
-  city: string;
-  zip: string;
-  country: string;
 }
 
 /**
@@ -60,21 +39,15 @@ export class OrderProcessor {
 
   /**
    * Processes a paid Shopify order by sending items customized through FastEditor.
-   * Finds line items that were customized with FastEditor, prepares payload, and calls the API.
    * @param order - Shopify order object.
    * @param shop - The shop domain.
    * @returns An array of results for each processed group of customized items.
    */
-  async processPaidOrder(order: any, shop: string): Promise<any[]> {
-    const customItems = this.extractCustomLineItems(order.line_items);
-
-    if (customItems.length === 0) {
-      console.log(`No FastEditor custom items found in order ${order.name}`);
-      return [];
-    }
-
+  async processPaidOrder(order: ShopifyOrder, shop: string): Promise<any[]> {
+    const customItems = this.extractCustomLineItems(order.line_items, order.name);
     const orderItems = this.mapToFastEditorOrderItems(customItems)
     const callbackUrl = `${process.env.SHOPIFY_APP_URL}/webhooks/fasteditor-sale-result?shop=${encodeURIComponent(shop)}`;
+
     const results: any[] = [];
 
     try {
@@ -85,7 +58,7 @@ export class OrderProcessor {
       results.push({
         success: false,
         items: customItems,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
 
@@ -95,31 +68,69 @@ export class OrderProcessor {
   }
 
   /**
-   * Extracts line items that were customized using FastEditor.
-   * Looks for a specific line item property `_fasteditor_project_key`.
-   * @param lineItems - Array of Shopify line items.
-   * @returns Array of line items customized via FastEditor.
+   * Adds customized FastEditor items to the database if they don't exist yet.
+   * @param order - Shopify order.
+   * @param shop - Shopify shop domain.
+   * @returns Array of inserted FastEditor items.
    */
-  private extractCustomLineItems(lineItems: ShopifyLineItem[]): ShopifyLineItem[] {
-    return lineItems.filter(item =>
-      item.properties?.some(prop => prop.name === '_fasteditor_project_key')
-    );
+  async addCustomItemsToDatabase(order: ShopifyOrder, shop: string): Promise<any[]> {
+    const customItems = this.extractCustomLineItems(order.line_items, order.name);
+    const insertedItems: any[] = [];
+
+    for (const item of customItems) {
+      const projectKey = this.extractProjectKeyFromItem(item);
+      const orderId = String(order.id);
+      const lineItemId = String(item.id);
+
+      const exists = await fastEditorOrderItemExists(shop, orderId, lineItemId);
+      if (exists) {
+        console.log(`Line item ${lineItemId} for shop ${shop} already exists. Skipping.`);
+        continue;
+      }
+
+      const usageFee = this.calculateItemUsageFee(parseFloat(item.price))
+
+      const created = await createFastEditorOrderItem(shop, order, item, projectKey, usageFee)
+      insertedItems.push(created);
+    }
+
+    return insertedItems;
+  }
+
+  private calculateItemUsageFee(price: number): number {
+    const fee = price * FEE_RATE;
+    return fee < MIN_FEE_EUR ? MIN_FEE_EUR : fee;
   }
 
   /**
-   * Maps Shopify line items to the format required by the FastEditor API.
-   * @param items - Line items that were customized via FastEditor.
-   * @returns Array of formatted FastEditor order items.
+   * Extracts line items that were customized using FastEditor.
+   * @param lineItems - Array of Shopify line items.
+   * @param orderName - Name of the Shopify order (for logging).
+   * @returns Array of line items customized via FastEditor.
+   */
+  private extractCustomLineItems(lineItems: ShopifyLineItem[], orderName: string): ShopifyLineItem[] {
+    const items = lineItems.filter((item) =>
+      item.properties?.some((prop) => prop.name === "_fasteditor_project_key"),
+    );
+
+    if (items.length === 0) {
+      console.log(`No FastEditor custom items found in order ${orderName}`);
+    }
+
+    return items;
+  }
+
+  /**
+   * Maps Shopify line items to FastEditor API format.
+   * @param items - Customized line items.
+   * @returns Array of FastEditorOrderItem.
    */
   private mapToFastEditorOrderItems(items: ShopifyLineItem[]): FastEditorOrderItem[] {
     return items.map((item) => {
-      const projectKeyProp = item.properties?.find((p) => p.name === '_fasteditor_project_key');
-      if (!projectKeyProp) {
-        throw new Error(`Missing _fasteditor_project_key in item ${item.id}`);
-      }
+      const projectKey = this.extractProjectKeyFromItem(item);
 
       return {
-        projectKey: projectKeyProp.value,
+        projectKey,
         orderItemId: item.id.toString(),
         quantity: item.quantity,
         totalSaleValue: parseFloat(item.price),
@@ -128,10 +139,27 @@ export class OrderProcessor {
   }
 
   /**
-   * Sends customized item data to the FastEditor API for processing.
-   * @param order - The original Shopify order.
+   * Extracts `_fasteditor_project_key` from a Shopify line item.
+   * @param item - Shopify line item.
+   * @returns The project key as string.
+   * @throws Error if the key is missing.
+   */
+  private extractProjectKeyFromItem(item: ShopifyLineItem): string {
+    const projectKeyProp = item.properties?.find((p) => p.name === "_fasteditor_project_key");
+    const projectKey = projectKeyProp?.value ?? "";
+
+    if (!projectKey) {
+      throw new Error(`Item ${item.id} is missing _fasteditor_project_key value`);
+    }
+
+    return projectKey;
+  }
+
+  /**
+   * Sends customized item data to FastEditor API.
+   * @param order - Original Shopify order.
    * @param orderItems - Array of customized items to send.
-   * @param callbackUrl - URL FastEditor should use to report the result.
+   * @param callbackUrl - URL for FastEditor result webhook.
    * @returns Response from the FastEditor API.
    */
   private async processCustomItem(
@@ -139,24 +167,23 @@ export class OrderProcessor {
     orderItems: FastEditorOrderItem[],
     callbackUrl: string,
   ): Promise<any> {
-
     const payload = {
       orderId: order.name,
       orderItems,
       billingInfo: {
         name: order.billing_address.name,
-        email: order.customer?.email || '',
+        email: order.customer?.email || "",
         address1: order.billing_address.address1,
-        address2: order.billing_address.address2 || '',
+        address2: order.billing_address.address2 || "",
         city: order.billing_address.city,
         zip: order.billing_address.zip,
         country: order.billing_address.country,
       },
       shippingInfo: {
         name: order.shipping_address.name,
-        email: order.customer?.email || '',
+        email: order.customer?.email || "",
         address1: order.shipping_address.address1,
-        address2: order.shipping_address.address2 || '',
+        address2: order.shipping_address.address2 || "",
         city: order.shipping_address.city,
         zip: order.shipping_address.zip,
         country: order.shipping_address.country,
@@ -164,15 +191,14 @@ export class OrderProcessor {
       callbackUrl
     };
 
-    console.log('Sending FastEditor payload:', payload);
+    console.log("Sending FastEditor payload:", payload);
     return await this.fastEditorAPI.sendSaleNotification(payload);
   }
 
   /**
-   * Updates order tags and metafields to reflect the result of FastEditor processing.
-   * Adds a tag like `fasteditor-processing:2/3` and saves detailed results in a metafield.
+   * Updates tags and metafields in Shopify to reflect FastEditor processing result.
    * @param orderId - Shopify order ID.
-   * @param results - Array of processing results for the order.
+   * @param results - Processing results.
    */
   private async updateOrderProcessingStatus(orderId: string, results: any[]): Promise<void> {
     try {
@@ -185,9 +211,9 @@ export class OrderProcessor {
 
       // Store processing results in metafield
       await this.shopifyAPI.setOrderMetafield(orderId, {
-        namespace: 'fasteditor',
-        key: 'processing_results',
-        type: 'json',
+        namespace: "fasteditor",
+        key: "processing_results",
+        type: "json",
         value: JSON.stringify(results),
       });
 
