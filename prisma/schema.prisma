@@ -45,3 +45,23 @@ model ShopSettings {
   country                      String?
   currency                     String?
 }
+
+model FastEditorOrderItems {
+  id         String    @id @default(cuid())
+  shop       String
+  orderId    String
+  orderName  String
+  lineItemId String
+  quantity   Int
+  unitPrice  Float
+  projectKey Int
+  productId  String
+  variantId  String?
+  createdAt  DateTime  @default(now())
+  usageFee   Float
+  billed     Boolean   @default(false)
+  billedAt   DateTime?
+
+  @@unique([shop, orderId, lineItemId])
+  @@index([shop])
+}
