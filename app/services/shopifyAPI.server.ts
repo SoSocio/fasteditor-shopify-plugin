@@ -1,14 +1,27 @@
-import { unauthenticated } from "../shopify.server";
+import {apiVersion, unauthenticated} from "../shopify.server";
+
+interface ShopifySession {
+  shop: string;
+  accessToken: string;
+}
 
 /**
  * Service class for interacting with Shopify API.
  * Provides methods for order management, metafields, and more.
  */
 export class ShopifyAPI {
-  private session: any;
+  private session: ShopifySession;
 
-  constructor(session: any) {
+  constructor(session: ShopifySession) {
     this.session = session;
+  }
+
+  private get shop() {
+    return this.session.shop;
+  }
+
+  private get token() {
+    return this.session.accessToken;
   }
 
   /**
@@ -17,8 +30,17 @@ export class ShopifyAPI {
    * @returns ShopifyAPI instance configured for the shop.
    */
   static async forShop(shop: string): Promise<ShopifyAPI> {
-    const session = await unauthenticated.admin(shop);
-    return new ShopifyAPI(session);
+    const {session} = await unauthenticated.admin(shop);
+    if (!session?.accessToken || !session?.shop) {
+      const message = "Missing access token or shop in unauthenticated session."
+      console.log(message, session);
+      throw new Error(message);
+    }
+
+    return new ShopifyAPI({
+      shop: session.shop,
+      accessToken: session.accessToken,
+    });
   }
 
   /**
@@ -27,9 +49,9 @@ export class ShopifyAPI {
    * @returns Order details from Shopify API.
    */
   async getOrder(orderId: string): Promise<any> {
-    const response = await fetch(`/admin/api/2024-01/orders/${orderId}.json`, {
+    const response = await fetch(`https://${this.shop}/admin/api/${apiVersion}/orders/${orderId}.json`, {
       headers: {
-        'X-Shopify-Access-Token': this.session.accessToken,
+        'X-Shopify-Access-Token': this.token,
       },
     });
 
@@ -47,9 +69,9 @@ export class ShopifyAPI {
    * @returns Order details from Shopify API or null if not found.
    */
   async findOrderByName(orderName: string): Promise<any | null> {
-    const response = await fetch(`/admin/api/2024-01/orders.json?name=${encodeURIComponent(orderName)}&limit=1`, {
+    const response = await fetch(`https://${this.shop}/admin/api/${apiVersion}/orders.json?name=${encodeURIComponent(orderName)}&limit=1`, {
       headers: {
-        'X-Shopify-Access-Token': this.session.accessToken,
+        'X-Shopify-Access-Token': this.token,
       },
     });
 
@@ -73,11 +95,11 @@ export class ShopifyAPI {
     type: string;
     value: string;
   }): Promise<any> {
-    const response = await fetch(`/admin/api/2024-01/orders/${orderId}/metafields.json`, {
+    const response = await fetch(`https://${this.shop}/admin/api/${apiVersion}/orders/${orderId}/metafields.json`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': this.session.accessToken,
+        'X-Shopify-Access-Token': this.token,
       },
       body: JSON.stringify({
         metafield: metafield
@@ -99,9 +121,9 @@ export class ShopifyAPI {
    * @returns Array of metafields for the order.
    */
   async getOrderMetafields(orderId: string): Promise<any[]> {
-    const response = await fetch(`/admin/api/2024-01/orders/${orderId}/metafields.json`, {
+    const response = await fetch(`https://${this.shop}/admin/api/${apiVersion}/orders/${orderId}/metafields.json`, {
       headers: {
-        'X-Shopify-Access-Token': this.session.accessToken,
+        'X-Shopify-Access-Token': this.token,
       },
     });
 
@@ -120,11 +142,11 @@ export class ShopifyAPI {
    * @returns Updated order.
    */
   async updateOrderTags(orderId: string, tags: string[]): Promise<any> {
-    const response = await fetch(`/admin/api/2024-01/orders/${orderId}.json`, {
+    const response = await fetch(`https://${this.shop}/admin/api/${apiVersion}/orders/${orderId}.json`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': this.session.accessToken,
+        'X-Shopify-Access-Token': this.token,
       },
       body: JSON.stringify({
         order: {
@@ -142,4 +164,4 @@ export class ShopifyAPI {
     const data = await response.json();
     return data.order;
   }
-} 
+}

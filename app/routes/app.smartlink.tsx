@@ -5,6 +5,7 @@ import {shopifyGraphqlRequest} from "../services/shopifyGraphqlRequest.server";
 import {GET_PRODUCT_VARIANT_SKU} from "../graphql/query/getProductVariantSKU";
 import {actionMethodNotAllowed} from "../errors/actionMethodNotAllowed";
 import {loaderMethodNotAllowed} from "../errors/loaderMethodNotAllowed";
+import {unauthenticated} from "../shopify.server";
 
 const ENDPOINT = "/app/smartlink";
 
@@ -31,6 +32,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
     console.info(`[${ENDPOINT}] POST request. Payload:`, data);
 
     const {shop, variantId, productHandle, quantity} = data;
+    const {admin} = await unauthenticated.admin(shop);
 
     if (!shop || !variantId || !productHandle || !quantity) {
       console.warn(`[${ENDPOINT}] Validation failed: Missing required fields.`);
@@ -81,7 +83,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
       );
     }
 
-    const productVariantData = await shopifyGraphqlRequest(session, GET_PRODUCT_VARIANT_SKU, {
+    const productVariantData = await shopifyGraphqlRequest(admin.graphql, GET_PRODUCT_VARIANT_SKU, {
       variables: {id: `gid://shopify/ProductVariant/${variantId}`},
     });
 
