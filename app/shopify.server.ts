@@ -5,7 +5,7 @@ import {
   BillingInterval,
   shopifyApp,
 } from "@shopify/shopify-app-remix/server";
-import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
+import {PrismaSessionStorage} from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
 
 export const MONTHLY_PLAN = "Monthly subscription";
@@ -24,12 +24,18 @@ const shopify = shopifyApp({
   sessionStorage: new PrismaSessionStorage(prisma),
   distribution: AppDistribution.AppStore,
   billing: {
-    [MONTHLY_PLAN] : {
+    [MONTHLY_PLAN]: {
       lineItems: [
         {
           amount: 95,
           currencyCode: 'USD',
           interval: BillingInterval.Every30Days,
+        },
+        {
+          amount: 9999,
+          currencyCode: 'USD',
+          interval: BillingInterval.Usage,
+          terms: "2% of the total sales value of products customized using FastEditor"
         }
       ],
     }
@@ -39,7 +45,7 @@ const shopify = shopifyApp({
     removeRest: true,
   },
   ...(process.env.SHOP_CUSTOM_DOMAIN
-    ? { customShopDomains: [process.env.SHOP_CUSTOM_DOMAIN] }
+    ? {customShopDomains: [process.env.SHOP_CUSTOM_DOMAIN]}
     : {}),
 });
 
