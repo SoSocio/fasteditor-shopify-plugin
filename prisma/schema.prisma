@@ -65,3 +65,13 @@ model FastEditorOrderItems {
   @@unique([shop, orderId, lineItemId])
   @@index([shop])
 }
+
+model UsageBillingHistory {
+  id         String   @id @default(cuid())
+  shop       String
+  totalPrice Float
+  itemsCount Int
+  createdAt  DateTime @default(now())
+
+  @@index([shop])
+}
