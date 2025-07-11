@@ -29,10 +29,6 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
     // Process customized FastEditor items in the order
     const processingResults = await orderProcessor.processPaidOrder(order, shop);
 
-    // Persist customized items to the database
-    const savedItems = await orderProcessor.addCustomItemsToDatabase(order, shop);
-    console.log(`[${topic}] Saved ${savedItems.length} customized items to DB`);
-
     console.log(`[${topic}] Order ${order.name} processing complete`, {
       results: processingResults,
     });
