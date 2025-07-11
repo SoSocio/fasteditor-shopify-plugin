@@ -9,28 +9,27 @@ import type {
   FormValues,
   LoaderData
 } from "../components/HomePage/ShopIntegrationForm.types";
-import {getFastEditorAPIForShop} from "../services/fastEditorFactory.server";
-import {fastEditorIntegration} from "../services/fastEditorIntegration";
+import {fastEditorIntegration, getFastEditorAPIForShop} from "../services/fastEditorFactory.server";
 import ShopIntegrationForm from "../components/HomePage/ShopIntegrationForm";
 import ShopIntegrationCard from "../components/HomePage/ShopIntegrationCard";
-import {shopifyBilling} from "../services/shopifyBilling.server";
+import {billingCheck, billingRequire} from "../services/billing.server";
 
 const ENDPOINT = "/app/_index";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
-  const {billing, session} = await authenticate.admin(request);
-  await shopifyBilling(session.shop, billing);
+  const {admin, billing, session} = await authenticate.admin(request);
+  await billingRequire(admin.graphql, billing, session.shop);
+
   try {
-    const {hasActivePayment, appSubscriptions} = await billing.check();
-    console.log(`[${ENDPOINT}] Loader hasActivePayment:`, hasActivePayment);
-    console.log(`[${ENDPOINT}] Loader appSubscriptions:`, appSubscriptions);
+    const subscription = await billingCheck(billing)
+    console.log(`[${ENDPOINT}] Loader subscription:`, subscription);
 
     const fasteditorIntegration = await getFastEditorAPIForShop(session.shop)
     console.log(`[${ENDPOINT}] Loader fasteditorIntegration:`, fasteditorIntegration);
 
     return {
-      hasActivePayment,
-      appSubscriptions,
+      hasActivePayment: subscription.hasActivePayment,
+      appSubscriptions: subscription.appSubscriptions,
       fasteditorIntegration,
     };
   } catch (error) {

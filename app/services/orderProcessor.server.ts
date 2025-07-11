@@ -45,6 +45,7 @@ export class OrderProcessor {
    */
   async processPaidOrder(order: ShopifyOrder, shop: string): Promise<any[]> {
     const customItems = this.extractCustomLineItems(order.line_items, order.name);
+    console.log("processPaidOrder customItems:", customItems);
     const orderItems = this.mapToFastEditorOrderItems(customItems)
     const callbackUrl = `${process.env.SHOPIFY_APP_URL}/webhooks/fasteditor-sale-result?shop=${encodeURIComponent(shop)}`;
 
@@ -64,17 +65,22 @@ export class OrderProcessor {
 
     // Update order tags and metafields to reflect processing status
     await this.updateOrderProcessingStatus(order.id, results);
+
+    // Persist customized items to the database
+    const savedItems = await this.addCustomItemsToDatabase(shop, order, customItems);
+    console.log(`Saved ${savedItems.length} customized items to DB`);
+
     return results;
   }
 
   /**
    * Adds customized FastEditor items to the database if they don't exist yet.
-   * @param order - Shopify order.
    * @param shop - Shopify shop domain.
+   * @param order - Shopify order.
+   * @param customItems - Customized line items.
    * @returns Array of inserted FastEditor items.
    */
-  async addCustomItemsToDatabase(order: ShopifyOrder, shop: string): Promise<any[]> {
-    const customItems = this.extractCustomLineItems(order.line_items, order.name);
+  async addCustomItemsToDatabase(shop: string, order: ShopifyOrder, customItems: ShopifyLineItem[]): Promise<any[]> {
     const insertedItems: any[] = [];
 
     for (const item of customItems) {
@@ -88,7 +94,7 @@ export class OrderProcessor {
         continue;
       }
 
-      const usageFee = this.calculateItemUsageFee(parseFloat(item.price))
+      const usageFee = await this.calculateItemUsageFee(order.currency, parseFloat(item.price))
 
       const created = await createFastEditorOrderItem(shop, order, item, projectKey, usageFee)
       insertedItems.push(created);
@@ -97,8 +103,9 @@ export class OrderProcessor {
     return insertedItems;
   }
 
-  private calculateItemUsageFee(price: number): number {
-    const fee = price * FEE_RATE;
+  private async calculateItemUsageFee(currency: string, price: number): Promise<number> {
+    const priceEUR = await this.shopifyAPI.currencyConvertorToEUR(currency, price)
+    const fee = priceEUR * FEE_RATE;
     return fee < MIN_FEE_EUR ? MIN_FEE_EUR : fee;
   }
 
