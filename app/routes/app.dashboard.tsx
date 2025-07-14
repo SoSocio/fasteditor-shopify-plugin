@@ -6,7 +6,7 @@ import {Page, Layout, Card, BlockStack} from "@shopify/polaris";
 import type {DashboardLoader} from "../components/DashboardPage/dashboard.types";
 import {authenticate} from "../shopify.server";
 import {pagination} from "../utils/pagination";
-import {GET_PRODUCTS_BY_QUERY} from "../graphql/query/getProductsByTag";
+import {GET_PRODUCTS_BY_QUERY} from "../graphql/product/getProductsByTag";
 import {getShopSettings} from "../models/shopSettings.server";
 import {ProductsTable} from "../components/DashboardPage/ProductsTable";
 import {ProductsTableInfo} from "../components/DashboardPage/ProductsTableInfo";

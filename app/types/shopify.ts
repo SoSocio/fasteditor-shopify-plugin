@@ -1,3 +1,5 @@
+import type {authenticate, unauthenticated} from "../shopify.server";
+
 export interface ShopifyLineItem {
   id: number;
   quantity: number;
@@ -27,4 +29,10 @@ export interface ShopifyOrder {
   billing_address: ShopifyAddress;
   shipping_address: ShopifyAddress;
   customer: ShopifyCustomer;
+  currency: string;
 }
+
+export type unauthenticatedAdmin = Awaited<ReturnType<typeof unauthenticated.admin>>["admin"]
+
+export type authenticateAdmin = Awaited<ReturnType<typeof authenticate.admin>>["admin"]
+

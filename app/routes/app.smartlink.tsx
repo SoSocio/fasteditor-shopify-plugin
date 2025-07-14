@@ -2,10 +2,11 @@ import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import {FastEditorAPI} from "../services/fastEditorAPI.server";
 import prisma from "../db.server";
 import {shopifyGraphqlRequest} from "../services/shopifyGraphqlRequest.server";
-import {GET_PRODUCT_VARIANT_SKU} from "../graphql/query/getProductVariantSKU";
+import {GET_PRODUCT_VARIANT_SKU} from "../graphql/product/getProductVariantSKU";
 import {actionMethodNotAllowed} from "../errors/actionMethodNotAllowed";
 import {loaderMethodNotAllowed} from "../errors/loaderMethodNotAllowed";
 import {unauthenticated} from "../shopify.server";
+import {getShopSettings} from "../models/shopSettings.server";
 
 const ENDPOINT = "/app/smartlink";
 
@@ -49,7 +50,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
       });
     }
 
-    const shopSettings = await prisma.shopSettings.findFirst({where: {shop}});
+    const shopSettings = await getShopSettings(shop)
 
     if (!shopSettings) {
       console.warn(`[${ENDPOINT}] Shop settings not found for shop: ${shop}`);
