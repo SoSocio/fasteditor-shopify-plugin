@@ -1,30 +1,44 @@
-import type { AppSubscription, BillingCheckResponseObject, UsageRecord } from "@shopify/shopify-api";
-import type { AdminGraphqlClient } from "@shopify/shopify-app-remix/server";
-import { type authenticate, MONTHLY_PLAN } from "../shopify.server";
-import { IS_TEST_BILLING } from "../constants";
-import { getAppInfoByKey } from "./app.server";
+import type {AppSubscription, BillingCheckResponseObject, UsageRecord} from "@shopify/shopify-api";
+import {IS_TEST_BILLING} from "../constants";
+import {adminGraphqlRequest, getAppByKey} from "./app.server";
+import {CREATE_APP_USAGE_RECORD} from "../graphql/billing/createAppUsageRecord";
+import type {authenticate} from "../shopify.server";
+import {MONTHLY_PLAN} from "../shopify.server";
+import type {authenticateAdmin, unauthenticatedAdmin} from "../types/shopify";
 
-type UsagePrice = {
+interface UsagePrice {
   amount: number;
   currencyCode: string;
-};
+}
+
+interface CreateAppUsageRecordResponse {
+  appUsageRecordCreate: {
+    userErrors: {
+      field: string;
+      message: string;
+    }
+    appUsageRecord: {
+      id: string;
+    }
+  }
+}
 
 /**
  * Ensures the shop has an active subscription.
  * If not, it triggers a billing request with a redirect to the success URL.
  *
- * @param graphql - Admin GraphQL client
+ * @param admin - Shopify Admin GraphQL client
  * @param billing - Billing object from `authenticate.admin`
  * @param shop - The full shop domain (e.g. `example.myshopify.com`)
  * @returns Billing check response object
  */
 export async function billingRequire(
-  graphql: AdminGraphqlClient,
+  admin: authenticateAdmin,
   billing: Awaited<ReturnType<typeof authenticate.admin>>["billing"],
   shop: string
 ): Promise<BillingCheckResponseObject> {
   const shopName = shop.replace(".myshopify.com", "");
-  const appInfo = await getAppInfoByKey(graphql);
+  const appInfo = await getAppByKey(admin);
 
   return await billing.require({
     plans: [MONTHLY_PLAN],
@@ -88,4 +102,30 @@ export async function billingCreateUsageRecord(
     price,
     isTest: IS_TEST_BILLING,
   });
+}
+
+/**
+ * Creates a usage record using a direct GraphQL mutation to Shopify Admin API.
+ *
+ * @param admin - Shopify Admin GraphQL client
+ * @param description - Usage charge description
+ * @param price - Object with amount and currency code
+ * @param subscriptionLineItemId - The ID of the usage subscription line item
+ * @returns Raw result from appUsageRecordCreate mutation
+ */
+export async function createAppUsageRecord(
+  admin: unauthenticatedAdmin,
+  description: string,
+  price: UsagePrice,
+  subscriptionLineItemId: string,
+): Promise<any> {
+  const response = await adminGraphqlRequest<CreateAppUsageRecordResponse>(
+    admin, CREATE_APP_USAGE_RECORD, {
+      variables: {
+        description,
+        price,
+        subscriptionLineItemId,
+      }
+    })
+  return response.appUsageRecordCreate
 }
