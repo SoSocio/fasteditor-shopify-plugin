@@ -30,8 +30,8 @@ export interface Product {
 
 export interface ShopData {
   name: string;
-  locale: string;
-  currency: string;
+  locale: string | null;
+  currency: string | null;
 }
 
 export interface DashboardLoader {
