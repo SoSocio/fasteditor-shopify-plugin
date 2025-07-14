@@ -36,7 +36,7 @@ interface AppByKeyResponse {
 /**
  * Executes a GraphQL query via Shopify Admin API client with proper error handling.
  */
-export async function adminGraphqlRequest<T>(
+export async function adminGraphqlRequest<T = any>(
   admin: any,
   query: string,
   variables?: Record<string, any>
