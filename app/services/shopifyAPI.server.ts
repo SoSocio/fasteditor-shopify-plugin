@@ -164,12 +164,4 @@ export class ShopifyAPI {
     const data = await response.json();
     return data.order;
   }
-
-  async currencyConvertorToEUR(currency: string, amount: number): Promise<any> {
-    // const currencies = await fetch(`https://${this.shop}/cdn/s/javascripts/currencies.js`)
-    // const data = await currencies.text();
-    // console.log("currencyConvertor currencies", currencies)
-    // console.log("currencyConvertor data", data)
-    return amount
-  }
 }

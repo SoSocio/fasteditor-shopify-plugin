@@ -6,6 +6,7 @@ import {
   fastEditorOrderItemExists
 } from "../models/fastEditorOrderItems.server";
 import {FEE_RATE, MIN_FEE_EUR} from "../constants";
+import {convertToEUR} from "./currency.server";
 
 interface FastEditorOrderItem {
   projectKey: string;
@@ -94,7 +95,11 @@ export class OrderProcessor {
         continue;
       }
 
-      const usageFee = await this.calculateItemUsageFee(order.currency, parseFloat(item.price))
+      const usageFee = await this.calculateItemUsageFee(
+        order.currency,
+        parseFloat(item.price),
+        item.quantity
+      )
 
       const created = await createFastEditorOrderItem(shop, order, item, projectKey, usageFee)
       insertedItems.push(created);
@@ -103,10 +108,25 @@ export class OrderProcessor {
     return insertedItems;
   }
 
-  private async calculateItemUsageFee(currency: string, price: number): Promise<number> {
-    const priceEUR = await this.shopifyAPI.currencyConvertorToEUR(currency, price)
-    const fee = priceEUR * FEE_RATE;
-    return fee < MIN_FEE_EUR ? MIN_FEE_EUR : fee;
+  /**
+   * Calculates usage fee for a customized line item, converted to EUR.
+   * @param currency - The original currency code of the item price.
+   * @param unitPrice - The price of a single item (in original currency).
+   * @param quantity - Number of items ordered.
+   * @returns Calculated fee in EUR, rounded to 2 decimal places.
+   */
+  private async calculateItemUsageFee(
+    currency: string,
+    unitPrice: number,
+    quantity: number
+  ): Promise<number> {
+    const priceInEUR = await convertToEUR(currency, unitPrice);
+    console.log(`priceInEUR: ${priceInEUR}`);
+    const feePerItem = Math.max(priceInEUR * FEE_RATE, MIN_FEE_EUR);
+    console.log(`feePerItem: ${feePerItem}`);
+    const totalFee = feePerItem * quantity;
+    console.log(`totalFee: ${totalFee}`);
+    return parseFloat(totalFee.toFixed(2));
   }
 
   /**
