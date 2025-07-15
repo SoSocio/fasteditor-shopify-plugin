@@ -18,7 +18,7 @@ const ENDPOINT = "/app/_index";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const {admin, billing, session} = await authenticate.admin(request);
-  await billingRequire(admin.graphql, billing, session.shop);
+  await billingRequire(admin, billing, session.shop);
 
   try {
     const subscription = await billingCheck(billing)
@@ -74,7 +74,7 @@ export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
       );
     }
 
-    await fastEditorIntegration(admin.graphql, session.shop, apiKey, apiDomain);
+    await fastEditorIntegration(admin, session.shop, apiKey, apiDomain);
     return new Response(JSON.stringify({
         statusCode: 200,
         statusText: "FastEditor integration is successful.",
