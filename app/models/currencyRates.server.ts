@@ -15,6 +15,7 @@ interface CurrencyRate {
 
 /**
  * Creates multiple records in the `CurrencyRates` table.
+ *
  * @param rates - Array of currency rate objects to create.
  * @returns Number of created records.
  */
@@ -30,12 +31,13 @@ export async function createCurrencyRates(
 
 /**
  * Updates multiple currency rates using Prisma transaction.
+ *
  * @param rates - Array of currency rates to update with new values.
- * @returns Promise that resolves after transaction completes.
+ * @returns Number of updated records.
  */
 export async function updateCurrencyRates(
   rates: { code: string; rate: number; }[]
-): Promise<any> {
+): Promise<number> {
   const result = await prisma.$transaction(
     rates.map(({code, rate}) =>
       prisma.currencyRates.update({
@@ -44,12 +46,14 @@ export async function updateCurrencyRates(
       })
     )
   );
+
   return result.length;
 }
 
 /**
  * Finds a specific currency rate for a given currency code.
- * @param code - The currency code (e.g., "USD").
+ *
+ * @param code - The currency code.
  * @returns CurrencyRate object or null if not found.
  */
 export async function findCurrencyRate(code: string): Promise<CurrencyRate | null> {

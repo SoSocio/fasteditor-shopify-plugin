@@ -1,9 +1,7 @@
 import { FastEditorAPI } from './fastEditorAPI.server';
 import {getShopSettings, upsertFastEditorShopSettings} from '../models/shopSettings.server';
-import {GET_SHOP_INFO} from "../graphql/shop/getShopInfo";
-import {GET_SHOP_LOCALES} from "../graphql/shop/getShopLocales";
-import {adminGraphqlRequest} from "./app.server";
 import type {authenticateAdmin} from "../types/shopify";
+import {getShopInfo, getShopLocale} from "./shop.server";
 
 export interface FastEditorIntegrationData {
   URL: string;
@@ -33,19 +31,14 @@ export async function fastEditorIntegration(
   apiKey: string,
   apiDomain: string
 ): Promise<FastEditorIntegrationData> {
-  const shopInfoData = await adminGraphqlRequest(admin, GET_SHOP_INFO)
-  const shopLocalesData = await adminGraphqlRequest(admin, GET_SHOP_LOCALES)
-
-  const shopInfo = shopInfoData.shop
-  const primaryLang = shopLocalesData.shopLocales.find((locale: {
-    primary: boolean
-  }) => locale.primary);
+  const shopInfo = await getShopInfo(admin)
+  const shopLocale = await getShopLocale(admin)
 
   const fastEditor = new FastEditorAPI(apiKey, apiDomain);
 
   const response: FastEditorIntegrationData = await fastEditor.checkShopIntegration();
 
-  await upsertFastEditorShopSettings(shop, apiKey, apiDomain, primaryLang.locale, shopInfo)
+  await upsertFastEditorShopSettings(shop, apiKey, apiDomain, shopLocale, shopInfo)
 
   return response;
 }

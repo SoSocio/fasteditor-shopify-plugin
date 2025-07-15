@@ -1,12 +1,12 @@
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import {FastEditorAPI} from "../services/fastEditorAPI.server";
-import prisma from "../db.server";
 import {shopifyGraphqlRequest} from "../services/shopifyGraphqlRequest.server";
 import {GET_PRODUCT_VARIANT_SKU} from "../graphql/product/getProductVariantSKU";
 import {actionMethodNotAllowed} from "../errors/actionMethodNotAllowed";
 import {loaderMethodNotAllowed} from "../errors/loaderMethodNotAllowed";
 import {unauthenticated} from "../shopify.server";
 import {getShopSettings} from "../models/shopSettings.server";
+import {getSessionForShop} from "../models/session.server";
 
 const ENDPOINT = "/app/smartlink";
 
@@ -74,7 +74,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
       throw new Error("FastEditor API key or domain not configured.");
     }
 
-    const session = await prisma.session.findFirst({where: {shop}});
+    const session = await getSessionForShop(shop)
     if (!session) {
       console.warn(`[${ENDPOINT}] Session not found for shop: ${shop}`);
       return new Response(JSON.stringify({

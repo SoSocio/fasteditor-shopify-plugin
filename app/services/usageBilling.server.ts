@@ -6,7 +6,7 @@ import {
 
 import {createAppUsageRecord} from "./billing.server";
 import {getUsageAppSubscriptionLineItemId} from "./app.server";
-import {createUsageBillingHistoryForShop} from "../models/usageBillingHistory";
+import {createUsageBillingHistoryForShop} from "../models/usageBillingHistory.server";
 import {unauthenticated} from "../shopify.server";
 import type {unauthenticatedAdmin} from "../types/shopify";
 
@@ -36,7 +36,7 @@ export async function processMonthlyUsageBilling(): Promise<void> {
  * Handles billing of FastEditor services for a specific shop.
  *
  * @param admin - Shopify Admin GraphQL client
- * @param shop - The shop's domain.
+ * @param shop - The shop domain.
  */
 export async function handleShopBilling(
   admin: unauthenticatedAdmin,
@@ -84,7 +84,7 @@ async function getShopsWithActivity(): Promise<Shop[]> {
 /**
  * Retrieves all unbilled order items customized via FastEditor for a shop.
  *
- * @param shop - The shop's domain.
+ * @param shop - The shop domain.
  * @param since - Date after which to look for customized items.
  */
 async function getUnbilledItems(shop: string, since: Date): Promise<UnbilledOrderItem[]> {
@@ -104,7 +104,7 @@ export function calculateTotalUsageFee(items: UnbilledOrderItem[]): number {
  * Creates a Shopify usage billing record.
  *
  * @param admin - Shopify Admin GraphQL client
- * @param shop - The shop's domain.
+ * @param shop - The shop domain.
  * @param amount - Total fee to bill.
  * @param subscriptionLineItemId - The ID of the usage subscription line item
  */
@@ -127,18 +127,18 @@ async function billShop(
 /**
  * Updates all unbilled items as billed.
  *
- * @param shop - The shop's domain.
+ * @param shop - The shop domain.
  * @param sinceDate - The cutoff date used to select items.
  */
 async function markItemsAsBilled(shop: string, sinceDate: Date): Promise<void> {
-  const result = await updateUnbilledFastEditorOrderItemsLastMonth(shop, sinceDate);
-  console.info(`[${ENDPOINT}] Marked ${result.count} customized items as billed for shop: ${shop}`);
+  const resultCount = await updateUnbilledFastEditorOrderItemsLastMonth(shop, sinceDate);
+  console.info(`[${ENDPOINT}] Marked ${resultCount} customized items as billed for shop: ${shop}`);
 }
 
 /**
  * Saves billing history in the database for audit purposes.
  *
- * @param shop - The shop's domain.
+ * @param shop - The shop domain.
  * @param amount - Total billed amount.
  * @param itemCount -  Number of billed items.
  */
