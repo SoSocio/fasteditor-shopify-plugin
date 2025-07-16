@@ -1,37 +1,13 @@
-import {APP_CLIENT_ID} from "../constants";
-import {GET_APP_BY_KEY} from "../graphql/app/getAppByKey";
-import {GET_CURRENT_APP_INSTALLATION} from "../graphql/app/getCurrentAppInstallation";
+import type {
+  AppByKeyResponse,
+  AppInfo,
+  AppSubscription,
+  CurrentAppInstallationResponse
+} from "../types/app.types";
 import type {unauthenticatedAdmin} from "../types/shopify";
-
-interface AppInfo {
-  title: string;
-  handle: string;
-}
-
-interface AppSubscriptionLineItem {
-  id: string;
-  plan: {
-    pricingDetails: {
-      __typename: "AppUsagePricing" | "AppRecurringPricing";
-    }
-  }
-}
-
-interface AppSubscription {
-  id: string;
-  name: string;
-  lineItems: AppSubscriptionLineItem[];
-}
-
-interface CurrentAppInstallationResponse {
-  currentAppInstallation: {
-    activeSubscriptions: AppSubscription[];
-  };
-}
-
-interface AppByKeyResponse {
-  appByKey: AppInfo;
-}
+import {GET_APP_BY_KEY} from "../graphql/app/getAppByKey";
+import {APP_CLIENT_ID} from "../constants";
+import {GET_CURRENT_APP_INSTALLATION} from "../graphql/app/getCurrentAppInstallation";
 
 /**
  * Executes a GraphQL query via Shopify Admin API client with proper error handling.

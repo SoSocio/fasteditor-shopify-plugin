@@ -21,22 +21,9 @@ export interface ShopIntegrationFormProps {
 }
 
 export interface ShopIntegrationCardProps {
-  integration?: {
-    apiKey: string;
-    domain: string;
-  };
+  fastEditorApiKey: string | null;
+  fastEditorDomain: string | null;
   children?: ReactNode;
-}
-
-export interface FastEditorIntegration {
-  apiKey: string;
-  domain: string;
-}
-
-export interface LoaderData {
-  hasActivePayment: boolean;
-  appSubscriptions: unknown[];
-  fasteditorIntegration?: FastEditorIntegration;
 }
 
 export interface ActionData {
