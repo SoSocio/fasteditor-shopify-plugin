@@ -76,7 +76,7 @@ export class OrderProcessor {
 
   /**
    * Adds customized FastEditor items to the database if they don't exist yet.
-   * @param shop - Shopify shop domain.
+   * @param shop - The shop domain.
    * @param order - Shopify order.
    * @param customItems - Customized line items.
    * @returns Array of inserted FastEditor items.

@@ -29,7 +29,7 @@ interface CreateAppUsageRecordResponse {
  *
  * @param admin - Shopify Admin GraphQL client
  * @param billing - Billing object from `authenticate.admin`
- * @param shop - The full shop domain (e.g. `example.myshopify.com`)
+ * @param shop - The shop domain.
  * @returns Billing check response object
  */
 export async function billingRequire(
