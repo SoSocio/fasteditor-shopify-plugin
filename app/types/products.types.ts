@@ -28,22 +28,19 @@ export interface Product {
   };
 }
 
-export interface ShopData {
-  name: string;
-  locale: string | null;
-  currency: string | null;
+export interface Products {
+  edges: { node: Product }[];
+  pageInfo: {
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor: string | null;
+    endCursor: string | null;
+  };
 }
 
-export interface DashboardLoader {
-  productsData: {
-    edges: { node: Product }[];
-    pageInfo: {
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-      startCursor: string | null;
-      endCursor: string | null;
-    };
-  };
-  shopData: ShopData;
-  productsLimit: number;
+export interface ProductsPagination {
+  first?: number;
+  after?: string;
+  last?: number;
+  before?: string;
 }

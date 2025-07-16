@@ -1,61 +1,79 @@
 import React from "react";
 import {useLoaderData} from "@remix-run/react";
 import type {LoaderFunctionArgs} from "@remix-run/node";
-import {Page, Layout, Card, BlockStack} from "@shopify/polaris";
-
-import type {DashboardLoader} from "../components/DashboardPage/dashboard.types";
-import {authenticate} from "../shopify.server";
-import {pagination} from "../utils/pagination";
-import {GET_PRODUCTS_BY_QUERY} from "../graphql/product/getProductsByTag";
-import {getShopSettings} from "../models/shopSettings.server";
+import {BlockStack, Card, Layout, Page} from "@shopify/polaris";
 import {ProductsTable} from "../components/DashboardPage/ProductsTable";
 import {ProductsTableInfo} from "../components/DashboardPage/ProductsTableInfo";
 
-export const loader = async ({request}: LoaderFunctionArgs): Promise<DashboardLoader> => {
-  const {admin, session} = await authenticate.admin(request);
+import type {DashboardData} from "../types/dashboard.types";
+import {authenticate} from "../shopify.server";
+import {getProductsByQuery, pagination} from "../services/products.server";
+import {getShopSettings} from "../models/shopSettings.server";
+import ErrorBanner from "../components/DashboardPage/ErrorBanner";
+import {billingRequire} from "../services/billing.server";
 
-  const limit = 10;
-  const cursorVars = pagination(request, limit);
+const ENDPOINT = "/app/dashboard";
 
-  console.log("[Dashboard Loader] Pagination variables:", cursorVars);
+export const loader = async (
+  {request}: LoaderFunctionArgs
+): Promise<DashboardData | Response> => {
+  const {admin, session, billing} = await authenticate.admin(request);
+  await billingRequire(admin, billing, session.shop);
 
-  const response = await admin.graphql(GET_PRODUCTS_BY_QUERY, {
-    variables: {
-      query: "tag:fasteditor",
-      ...cursorVars,
-    },
-  });
+  try {
+    const limit = 10;
+    const productsPagination = pagination(request, limit);
+    const productsData = await getProductsByQuery(admin, productsPagination);
 
-  const json = await response.json();
-  const productsData = json.data.products;
+    const shopSettings = await getShopSettings(session.shop);
+    if (!shopSettings) {
+      console.log(`[${ENDPOINT}] Loader Error: Shop settings not found for shop: ${session.shop}`);
+      throw new Error("Shop settings not found");
+    }
 
-  console.log(`[Dashboard Loader] Fetched ${productsData.edges.length} products`);
+    const shopName = session.shop.replace(".myshopify.com", "");
 
-  const shopSettings = await getShopSettings(session.shop);
-  if (!shopSettings) {
-    const message = `[Dashboard Loader Error] No shop settings found for ${session.shop}`
-    console.log(message);
-    throw new Error(message);
-  }
-
-  const shopName = session.shop.replace(".myshopify.com", "");
-
-  return {
-    productsData,
-    shopData: {
-      name: shopName,
-      locale: shopSettings.language,
-      currency: shopSettings.currency,
-    },
-    productsLimit: limit,
+    return {
+      productsData,
+      shopName,
+      shopSettings: {
+        locale: shopSettings.language,
+        currency: shopSettings.currency,
+        fastEditorApiKey: shopSettings?.fastEditorApiKey,
+        fastEditorDomain: shopSettings?.fastEditorDomain,
+      },
+      productsLimit: limit,
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error(`[${ENDPOINT}] Loader Error:`, errorMessage);
+    return new Response(errorMessage,
+      {status: 200}
+    );
   }
 };
 
-export default function Dashboard() {
-  const data = useLoaderData<DashboardLoader>();
-  const {productsData, productsLimit, shopData} = data;
+const Dashboard = () => {
+  const data = useLoaderData<DashboardData>();
+  const missingRequiredData =
+    !data?.productsData ||
+    !data?.shopSettings ||
+    !data?.shopSettings?.fastEditorApiKey ||
+    !data?.shopSettings?.fastEditorDomain
 
-  console.log("[Dashboard Client] Rendering Dashboard for", shopData.name);
+  if (missingRequiredData) {
+    return (
+      <Page fullWidth>
+        <Layout>
+          <Layout.Section>
+            <ErrorBanner/>
+          </Layout.Section>
+        </Layout>
+      </Page>
+    );
+  }
+
+  const {productsData, shopName, shopSettings, productsLimit} = data;
 
   return (
     <Page fullWidth>
@@ -66,7 +84,8 @@ export default function Dashboard() {
               <ProductsTableInfo/>
               <ProductsTable
                 productsData={productsData}
-                shopData={shopData}
+                shopName={shopName}
+                shopSettings={shopSettings}
                 productsLimit={productsLimit}
               />
             </BlockStack>
@@ -76,3 +95,4 @@ export default function Dashboard() {
     </Page>
   );
 }
+export default Dashboard;

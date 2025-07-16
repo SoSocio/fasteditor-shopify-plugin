@@ -1,11 +1,23 @@
-type PaginationVariables = {
-  first?: number;
-  after?: string;
-  last?: number;
-  before?: string;
-};
+import type {authenticateAdmin} from "../types/shopify";
+import type {Products, ProductsPagination} from "../types/products.types";
+import {GET_PRODUCTS_BY_QUERY} from "../graphql/product/getProductsByTag";
+import {adminGraphqlRequest} from "./app.server";
 
-export function pagination(request: Request, defaultLimit: number): PaginationVariables {
+export async function getProductsByQuery(
+  admin: authenticateAdmin,
+  pagination:ProductsPagination
+): Promise<Products> {
+  const productsData = await adminGraphqlRequest(admin, GET_PRODUCTS_BY_QUERY, {
+    variables: {
+      query: "tag:fasteditor",
+      ...pagination,
+    },
+  });
+
+  return productsData.products;
+}
+
+export function pagination(request: Request, defaultLimit: number): ProductsPagination {
   const url = new URL(request.url);
   const searchParam = url.searchParams;
   const rel = searchParam.get("rel");
@@ -13,7 +25,7 @@ export function pagination(request: Request, defaultLimit: number): PaginationVa
   const limitParam = searchParam.get("limit");
   const limit = Number(limitParam ?? defaultLimit);
 
-  const variables: PaginationVariables = {};
+  const variables: ProductsPagination = {};
 
   if (isNaN(limit) || limit <= 0) {
     throw new Error("Invalid pagination limit");
