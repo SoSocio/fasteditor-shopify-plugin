@@ -1,3 +1,5 @@
+import type {authenticate, unauthenticated} from "../shopify.server";
+
 export interface AppInfo {
   title: string;
   handle: string;
@@ -27,3 +29,7 @@ export interface CurrentAppInstallationResponse {
 export interface AppByKeyResponse {
   appByKey: AppInfo;
 }
+
+export type unauthenticatedAdmin = Awaited<ReturnType<typeof unauthenticated.admin>>["admin"]
+
+export type authenticateAdmin = Awaited<ReturnType<typeof authenticate.admin>>["admin"]
