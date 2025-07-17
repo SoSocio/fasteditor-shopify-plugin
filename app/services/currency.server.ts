@@ -1,33 +1,11 @@
-import {
-  createCurrencyRates,
-  findCurrencyRate,
-  updateCurrencyRates
-} from "../models/currencyRates.server";
+import {findCurrencyRate} from "../models/currencyRates.server";
 import {Decimal} from "@prisma/client/runtime/library";
-
-/**
- * Triggers initial creation of currency rates from external API.
- */
-export async function createCurrency() {
-  const rates = await fetchAndParseCurrencyRates()
-  const createdCount = await createCurrencyRates(rates);
-  console.log("Created currency rates:", createdCount);
-}
-
-/**
- * Updates all existing currency rates from external API.
- */
-export async function updateCurrency() {
-  const rates = await fetchAndParseCurrencyRates()
-  const updatedCount = await updateCurrencyRates(rates);
-  console.log("Updated currency rates:", updatedCount);
-}
 
 /**
  * Fetches and transforms currency rates from the third-party API.
  * @returns Array of objects containing currency code, rate, and base.
  */
-async function fetchAndParseCurrencyRates(): Promise<{
+export async function fetchAndParseCurrencyRates(): Promise<{
   code: string;
   rate: number;
   base: string
