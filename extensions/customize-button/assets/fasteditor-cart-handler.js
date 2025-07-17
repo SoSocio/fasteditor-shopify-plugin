@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!fasteditorCartUrl) throw new Error("Missing fe_cart_url parameter");
 
-    const url = new URL("/apps/embedded/app/resolve-product", window.location.origin);
+    const url = new URL("/apps/embedded/app/fasteditor/product", window.location.origin);
     url.searchParams.set("url", fasteditorCartUrl);
 
     const response = await fetch(url.toString(), {

@@ -19,7 +19,7 @@ window.addEventListener("load", function () {
 
       const responseData = await response.json();
 
-      if (responseData.ok && responseData.data?.url) {
+      if (response.ok && responseData.data?.url) {
         window.location.href = responseData.data.url;
       } else {
         console.error("FastEditor error response:", responseData);
