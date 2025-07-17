@@ -86,3 +86,84 @@ export async function getCurrentAppInstallation(
 
   return response.currentAppInstallation.activeSubscriptions
 }
+
+/**
+ * Throws 405 Method Not Allowed response if the HTTP method is not in the allowed list.
+ *
+ * @param request - Incoming request object
+ * @param allowedMethods - Array of allowed HTTP methods (e.g., ['POST'])
+ * @param endpoint - Endpoint path string for logging context
+ * @throws Response with 405 status if method is not allowed
+ */
+export function actionMethodNotAllowed(
+  {
+    request,
+    allowedMethods,
+    endpoint,
+  }: {
+    request: Request;
+    allowedMethods: string[];
+    endpoint: string;
+  }) {
+  if (!allowedMethods.includes(request.method)) {
+    console.error(`${request.method} not allowed on ${endpoint}. URL: ${request.url}`);
+    throw new Response(null, {status: 405, statusText: "Method Not Allowed"});
+  }
+}
+
+/**
+ * Throws 405 Method Not Allowed response for GET requests (commonly for loaders).
+ *
+ * @param request - Incoming request object
+ * @param endpoint - Endpoint path string for logging context
+ * @throws Response with 405 status for GET requests
+ */
+export function loaderMethodNotAllowed(
+  {
+    request,
+    endpoint,
+  }: {
+    request: Request;
+    endpoint: string;
+  }) {
+  console.error(`GET not allowed on ${endpoint}. URL: ${request.url}`);
+  throw new Response(null, {status: 405, statusText: "Method Not Allowed"});
+}
+
+/**
+ * Generates a consistent JSON error response and logs the error.
+ *
+ * @param error - Error object or Response instance caught during processing
+ * @param endpoint - Endpoint path string for contextual logging
+ * @param defaultMessage - Optional default error message for response body
+ * @returns JSON Response with error message and HTTP status code
+ */
+export async function errorResponse(
+  error: unknown,
+  endpoint: string,
+  defaultMessage = "Request failed"
+): Promise<Response> {
+  const status = error instanceof Response ? error.status : 500;
+
+  const message =
+    error instanceof Response
+      ? await error.text()
+      : error instanceof Error
+        ? error.message
+        : String(error);
+
+  console.error(`[${endpoint}] Error:`, message);
+
+  return new Response(
+    JSON.stringify({
+      error: defaultMessage,
+      message,
+    }),
+    {
+      status,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+}
