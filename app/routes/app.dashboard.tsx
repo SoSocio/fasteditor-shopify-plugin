@@ -14,9 +14,14 @@ import {billingRequire} from "../services/billing.server";
 
 const ENDPOINT = "/app/dashboard";
 
+/**
+ * Loader function for the Dashboard page.
+ */
 export const loader = async (
   {request}: LoaderFunctionArgs
 ): Promise<DashboardData | Response> => {
+  console.info(`[${ENDPOINT}] Loader start`);
+
   const {admin, session, billing} = await authenticate.admin(request);
   await billingRequire(admin, billing, session.shop);
 
@@ -27,7 +32,7 @@ export const loader = async (
 
     const shopSettings = await getShopSettings(session.shop);
     if (!shopSettings) {
-      console.log(`[${ENDPOINT}] Loader Error: Shop settings not found for shop: ${session.shop}`);
+      console.error(`[${ENDPOINT}] Loader Error: Shop settings not found for shop: ${session.shop}`);
       throw new Error("Shop settings not found");
     }
 
@@ -53,6 +58,9 @@ export const loader = async (
   }
 };
 
+/**
+ * Renders the Dashboard UI for managing FastEditor-enabled products.
+ */
 const Dashboard = () => {
   const data = useLoaderData<DashboardData>();
   const missingRequiredData =

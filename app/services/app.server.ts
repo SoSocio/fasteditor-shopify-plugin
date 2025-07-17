@@ -2,18 +2,25 @@ import type {
   AppByKeyResponse,
   AppInfo,
   AppSubscription,
-  CurrentAppInstallationResponse
+  authenticateAdmin,
+  CurrentAppInstallationResponse,
+  unauthenticatedAdmin
 } from "../types/app.types";
-import type {unauthenticatedAdmin} from "../types/shopify";
 import {GET_APP_BY_KEY} from "../graphql/app/getAppByKey";
 import {APP_CLIENT_ID} from "../constants";
 import {GET_CURRENT_APP_INSTALLATION} from "../graphql/app/getCurrentAppInstallation";
 
 /**
- * Executes a GraphQL query via Shopify Admin API client with proper error handling.
+ * Executes a Shopify Admin API GraphQL query with error handling.
+ *
+ * @param admin - Shopify Admin API client
+ * @param query - GraphQL query string
+ * @param variables - Optional query variables
+ * @returns The data field from the GraphQL response
+ * @throws Error when response is not ok or parsing fails
  */
 export async function adminGraphqlRequest<T = any>(
-  admin: any,
+  admin: unauthenticatedAdmin | authenticateAdmin,
   query: string,
   variables?: Record<string, any>
 ): Promise<T> {
@@ -22,60 +29,80 @@ export async function adminGraphqlRequest<T = any>(
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Shopify GraphQL error:", errorText);
+      console.error("[ShopifyGraphQL] Response error:", errorText);
       throw new Error(errorText);
     }
 
-    const responseJson = await response.json();
-    return responseJson.data;
+    const jsonResponse = await response.json();
+    return jsonResponse.data;
   } catch (error) {
-    console.error("Shopify GraphQL error:", error);
+    console.error("[ShopifyGraphQL] Execution error:", error);
     throw error;
   }
 }
 
 /**
- * Fetches App info from Shopify by the public app client ID.
+ * Retrieves the app information by the public app client ID.
+ *
+ * @param admin - Shopify Admin API client
+ * @returns App information object
  */
 export async function getAppByKey(
   admin: unauthenticatedAdmin
 ): Promise<AppInfo> {
-  const response = await adminGraphqlRequest<AppByKeyResponse>(admin, GET_APP_BY_KEY, {
-    variables: {clientId: APP_CLIENT_ID}
-  })
+  const response = await adminGraphqlRequest<AppByKeyResponse>(
+    admin,
+    GET_APP_BY_KEY,
+    {variables: {clientId: APP_CLIENT_ID}}
+  );
 
-  return response.appByKey
+  return response.appByKey;
 }
 
 /**
- * Returns the ID of the usage-based subscription line item.
+ * Retrieves the subscription line item ID corresponding to usage-based billing.
+ *
+ * @param admin - Shopify Admin API client
+ * @returns Line item ID string or null if not found
  */
-export async function getUsageAppSubscriptionLineItemId(
+export async function getUsageBillingLineItemId(
   admin: unauthenticatedAdmin
 ): Promise<string | null> {
-  const monthSubscription = await getMonthlyAppSubscription(admin)
-  const lineItem = monthSubscription?.lineItems.find(
+  const monthlySubscription = await fetchMonthlySubscription(admin)
+
+  if (!monthlySubscription) {
+    console.warn("[Subscription] Monthly subscription not found");
+    return null;
+  }
+
+  const usageLineItem = monthlySubscription.lineItems.find(
     (item) => item.plan.pricingDetails.__typename === "AppUsagePricing"
   );
 
-  return lineItem?.id ?? null;
+  return usageLineItem?.id ?? null;
 }
 
 /**
- * Finds the monthly subscription from current active subscriptions.
+ * Finds the monthly subscription from the active subscriptions list.
+ *
+ * @param admin - Shopify Admin API client
+ * @returns The monthly AppSubscription or null if none found
  */
-export async function getMonthlyAppSubscription(
+export async function fetchMonthlySubscription(
   admin: unauthenticatedAdmin
 ): Promise<AppSubscription | null> {
-  const appSubscriptions = await getCurrentAppInstallation(admin)
+  const activeSubscriptions = await fetchCurrentAppSubscriptions(admin);
 
-  return appSubscriptions.find((sub) => sub.name === "Monthly subscription") || null;
+  return activeSubscriptions.find((sub) => sub.name === "Monthly subscription") || null;
 }
 
 /**
- * Returns the current app installation info with all active subscriptions.
+ * Retrieves the current app installation details including active subscriptions.
+ *
+ * @param admin - Shopify Admin API client
+ * @returns Array of active AppSubscription objects
  */
-export async function getCurrentAppInstallation(
+export async function fetchCurrentAppSubscriptions(
   admin: unauthenticatedAdmin
 ): Promise<AppSubscription[]> {
   const response = await adminGraphqlRequest<CurrentAppInstallationResponse>(

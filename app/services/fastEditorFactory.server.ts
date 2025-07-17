@@ -1,19 +1,15 @@
+import type {authenticateAdmin} from "../types/app.types";
+import type {FastEditorIntegrationData, FastEditorShopSettings} from "../types/fastEditor.types";
 import { FastEditorAPI } from './fastEditorAPI.server';
 import {getShopSettings, upsertFastEditorShopSettings} from '../models/shopSettings.server';
-import type {authenticateAdmin} from "../types/shopify";
 import {getShopInfo, getShopLocale} from "./shop.server";
-import type {FastEditorIntegrationData, FastEditorShopSettings} from "../types/fastEditor.types";
 
-export async function getFastEditorShopSettings(shop: string): Promise<FastEditorShopSettings | null> {
+export async function getFastEditorShopSettings(shop: string): Promise<FastEditorShopSettings> {
   const shopSettings = await getShopSettings(shop);
 
-  if (!shopSettings || !shopSettings.fastEditorApiKey || !shopSettings.fastEditorDomain) {
-    return null;
-  }
-
   return {
-    fastEditorApiKey: shopSettings.fastEditorApiKey,
-    fastEditorDomain: shopSettings.fastEditorDomain,
+    fastEditorApiKey: shopSettings?.fastEditorApiKey ?? "",
+    fastEditorDomain: shopSettings?.fastEditorDomain ?? "",
   }
 }
 
