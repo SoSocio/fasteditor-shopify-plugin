@@ -1,19 +1,13 @@
+import type {ShopifyLineItem, ShopifyOrder} from "../types/order.types";
+import type {FastEditorOrderItem} from "../types/fastEditor.types";
 import {getFastEditorAPIForShop} from "./fastEditorFactory.server";
 import {ShopifyAPI} from "./shopifyAPI.server";
-import type {ShopifyLineItem, ShopifyOrder} from "../types/shopify";
 import {
   createFastEditorOrderItem,
   fastEditorOrderItemExists
 } from "../models/fastEditorOrderItems.server";
 import {FEE_RATE, MIN_FEE_EUR} from "../constants";
 import {convertToEUR} from "./currency.server";
-
-interface FastEditorOrderItem {
-  projectKey: string;
-  orderItemId: string;
-  quantity: number;
-  totalSaleValue: number;
-}
 
 /**
  * Service responsible for processing Shopify orders with items customized via FastEditor.

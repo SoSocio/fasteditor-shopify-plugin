@@ -3,22 +3,16 @@ import {
   findUnbilledFastEditorOrderItemsLastMonth,
   updateUnbilledFastEditorOrderItemsLastMonth,
 } from "../models/fastEditorOrderItems.server";
+import type {unauthenticatedAdmin} from "../types/app.types";
+import type {Shop} from "../types/shop.types";
+import type {UnbilledOrderItem} from "../types/billing.types";
 
 import {createAppUsageRecord} from "./billing.server";
-import {getUsageAppSubscriptionLineItemId} from "./app.server";
+import {getUsageBillingLineItemId} from "./app.server";
 import {createUsageBillingHistoryForShop} from "../models/usageBillingHistory.server";
 import {unauthenticated} from "../shopify.server";
-import type {unauthenticatedAdmin} from "../types/shopify";
 
 const ENDPOINT = "cron/usage-billing";
-
-interface Shop {
-  shop: string;
-}
-
-interface UnbilledOrderItem {
-  usageFee: number;
-}
 
 /**
  * Triggers usage billing for all shops with FastEditor activity in the last month.
@@ -44,7 +38,7 @@ export async function handleShopBilling(
 ): Promise<void> {
   const sinceDate = getOneMonthAgoDate();
 
-  const subscriptionLineItemId = await getUsageAppSubscriptionLineItemId(admin);
+  const subscriptionLineItemId = await getUsageBillingLineItemId(admin);
   if (!subscriptionLineItemId) {
     console.warn(`[${ENDPOINT}] No active subscription for shop: ${shop}`);
     return;

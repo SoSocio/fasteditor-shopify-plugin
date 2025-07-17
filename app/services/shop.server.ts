@@ -1,22 +1,31 @@
-import type {authenticateAdmin} from "../types/shopify";
+import type {authenticateAdmin} from "../types/app.types";
+import type {ShopInfo} from "../types/shop.types";
 import {adminGraphqlRequest} from "./app.server";
 import {GET_SHOP_INFO} from "../graphql/shop/getShopInfo";
 import {GET_SHOP_LOCALES} from "../graphql/shop/getShopLocales";
 
-export interface ShopInfo {
-  countryCode: string;
-  currency: string;
-}
-
+/**
+ * Fetches country and currency information for the current shop.
+ *
+ * @param admin - Authenticated Shopify Admin client
+ * @returns Object containing country code and currency code
+ */
 export async function getShopInfo(admin: authenticateAdmin): Promise<ShopInfo> {
   const shopInfoData = await adminGraphqlRequest(admin, GET_SHOP_INFO)
 
   return {
-    countryCode: shopInfoData.billingAddress.countryCodeV2,
-    currency: shopInfoData.currencyCode
+    countryCode: shopInfoData.shop.billingAddress.countryCodeV2,
+    currency: shopInfoData.shop.currencyCode
   }
 }
 
+/**
+ * Fetches the primary locale for the current shop.
+ *
+ * @param admin - Authenticated Shopify Admin client
+ * @returns Primary locale (e.g., "en", "fr", "de")
+ * @throws Error if no primary locale is found
+ */
 export async function getShopLocale(admin: authenticateAdmin): Promise<string> {
   const shopLocalesData = await adminGraphqlRequest(admin, GET_SHOP_LOCALES)
 

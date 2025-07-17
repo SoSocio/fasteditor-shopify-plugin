@@ -1,5 +1,6 @@
 import prisma from '../db.server';
-import type {ShopifyLineItem, ShopifyOrder} from "../types/shopify";
+import type {ShopifyLineItem, ShopifyOrder} from "../types/order.types";
+
 
 /**
  * Interface representing an order item that was customized using FastEditor.
