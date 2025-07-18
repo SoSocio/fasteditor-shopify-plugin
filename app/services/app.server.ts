@@ -9,6 +9,8 @@ import type {
 import {GET_APP_BY_KEY} from "../graphql/app/getAppByKey";
 import {APP_CLIENT_ID} from "../constants";
 import {GET_CURRENT_APP_INSTALLATION} from "../graphql/app/getCurrentAppInstallation";
+import {CREATE_APP_DATA_METAFIELD} from "../graphql/app/createAppDataMetafield";
+import {APP_INSTALLATION_ID_FRAGMENT} from "../graphql/app/fragments/appInstallationIdFragment";
 
 /**
  * Executes a Shopify Admin API GraphQL query with error handling.
@@ -25,16 +27,16 @@ export async function adminGraphqlRequest<T = any>(
   variables?: Record<string, any>
 ): Promise<T> {
   try {
-    const response = await admin.graphql(query, variables);
+    const request = await admin.graphql(query, variables);
 
-    if (!response.ok) {
-      const errorText = await response.text();
+    if (!request.ok) {
+      const errorText = await request.text();
       console.error("[ShopifyGraphQL] Response error:", errorText);
       throw new Error(errorText);
     }
 
-    const jsonResponse = await response.json();
-    return jsonResponse.data;
+    const response = await request.json();
+    return response.data;
   } catch (error) {
     console.error("[ShopifyGraphQL] Execution error:", error);
     throw error;
@@ -193,4 +195,84 @@ export async function errorResponse(
       },
     }
   );
+}
+
+/**
+ * Updates the "paid" metafield for the current app installation.
+ *
+ * @param admin - Authenticated Shopify Admin API client
+ * @param isActive - Boolean string value representing subscription status
+ * @returns Shopify metafieldsSet response
+ * @throws Response if app installation ID is missing or GraphQL request fails
+ */
+export async function updatePaidStatusMetafield(
+  admin: authenticateAdmin,
+  isActive: string
+): Promise<any> {
+  const appInstallationId = await fetchAppInstallationId(admin);
+  const response = await setPaidMetafield(admin, appInstallationId, isActive);
+
+  console.info("[updatePaidStatusMetafield] Metafield updated:", response.metafieldsSet);
+  return response;
+}
+
+/**
+ * Fetches the current app installation ID via Shopify Admin GraphQL.
+ *
+ * @param admin - Authenticated Shopify Admin API client
+ * @returns App installation ID string
+ * @throws Response if ID is not found
+ */
+async function fetchAppInstallationId(admin: authenticateAdmin): Promise<string> {
+  console.info("[fetchAppInstallationId] Fetching app installation ID...");
+
+  const response = await adminGraphqlRequest(admin, `
+    #graphql
+    query GetCurrentAppInstallation {
+      currentAppInstallation {
+        ...AppInstallationIdFragment
+      }
+    }
+    ${APP_INSTALLATION_ID_FRAGMENT}
+  `);
+
+  const appInstallationId = response?.currentAppInstallation?.id;
+
+  if (!appInstallationId) {
+    console.error("[fetchAppInstallationId] App installation ID not found");
+    throw new Response("App installation ID not found", {status: 404});
+  }
+
+  console.info("[fetchAppInstallationId] Found app installation ID:", appInstallationId);
+  return appInstallationId;
+}
+
+/**
+ * Sends a metafield mutation to Shopify to update the "paid" status.
+ *
+ * @param admin - Authenticated Shopify Admin API client
+ * @param appInstallationId - ID of the app installation
+ * @param value - Boolean string value ("true" or "false")
+ * @returns Shopify metafieldsSet response
+ */
+async function setPaidMetafield(
+  admin: authenticateAdmin,
+  appInstallationId: string,
+  value: string
+): Promise<any> {
+  console.info("[setPaidMetafield] Setting paid metafield with value:", value);
+
+  return await adminGraphqlRequest(admin, CREATE_APP_DATA_METAFIELD, {
+    variables: {
+      metafieldsSetInput: [
+        {
+          namespace: "appInstallation",
+          key: "paid",
+          type: "boolean",
+          value,
+          ownerId: appInstallationId,
+        },
+      ],
+    },
+  });
 }
