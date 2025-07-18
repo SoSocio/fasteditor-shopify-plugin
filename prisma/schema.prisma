@@ -30,3 +30,60 @@ model Session {
   collaborator  Boolean?  @default(false)
   emailVerified Boolean?  @default(false)
 }
+
+model ShopSettings {
+  id                           String    @id @default(cuid())
+  shop                         String    @unique // Shopify shop domain (e.g. myshop.myshopify.com)
+  shopifySubscriptionId        String?
+  subscriptionStatus           String?
+  subscriptionCurrentPeriodEnd DateTime?
+  fastEditorApiKey             String?
+  fastEditorDomain             String? // Should be in format {{your_brand}}.staging.fasteditor.com
+  language                     String?
+  country                      String?
+  currency                     String?
+  createdAt                    DateTime  @default(now())
+  updatedAt                    DateTime  @updatedAt
+}
+
+model FastEditorOrderItems {
+  id         String    @id @default(cuid())
+  shop       String
+  orderId    String
+  orderName  String
+  lineItemId String
+  quantity   Int
+  unitPrice  Float
+  projectKey Int
+  productId  String
+  variantId  String?
+  createdAt  DateTime  @default(now())
+  usageFee   Float
+  billed     Boolean   @default(false)
+  billedAt   DateTime?
+
+  @@unique([shop, orderId, lineItemId])
+  @@index([shop])
+}
+
+model UsageBillingHistory {
+  id         String   @id @default(cuid())
+  shop       String
+  totalPrice Float
+  itemsCount Int
+  createdAt  DateTime @default(now())
+
+  @@index([shop])
+}
+
+model CurrencyRates {
+  id        String   @id @default(cuid())
+  code      String
+  rate      Decimal
+  base      String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@unique([code])
+  @@index([code])
+}

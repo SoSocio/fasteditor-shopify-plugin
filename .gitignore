@@ -12,11 +12,8 @@ node_modules
 database.sqlite
 
 .env
-.env.*
 
-
-
-
+PROJECT_RULES.md
 
 /extensions/*/dist
 
