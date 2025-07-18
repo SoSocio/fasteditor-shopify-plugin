@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "69420"
       },
     });
 
@@ -22,14 +23,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const responseData = await response.json();
 
-    const { variantId, quantity, projectKey } = responseData.data || {};
+    const {variantId, quantity, projectKey} = responseData.data || {};
     if (!variantId || !quantity || !projectKey) throw new Error("Invalid product data from server");
 
     const formData = {
       items: [{
         id: variantId,
         quantity,
-        properties: { _fasteditor_project_key: projectKey },
+        properties: {_fasteditor_project_key: projectKey},
       }],
     };
 
