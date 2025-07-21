@@ -1,7 +1,8 @@
 import prisma from '../db.server';
+import type {ShopInfo} from "../types/shop.types";
 
 /**
- * Interface representing the FastEditor settings for a shop.
+ * Interface representing the FastEditor settings for a specific shop.
  */
 export interface ShopSettings {
   id: string;
@@ -18,13 +19,6 @@ export interface ShopSettings {
   updatedAt: Date;
 }
 
-interface ShopInfo {
-  billingAddress: {
-    countryCodeV2: string
-  };
-  currencyCode: string;
-}
-
 /**
  * Retrieves FastEditor settings for a specific shop from the database.
  *
@@ -38,10 +32,10 @@ export async function getShopSettings(shop: string): Promise<ShopSettings | null
 }
 
 /**
- * Updates or creates the shop settings with subscription information.
+ * Upserts (updates or creates) app subscription info for a shop.
  *
  * @param shop - The shop domain.
- * @param chargeId - The Shopify subscription charge ID.
+ * @param chargeId - Shopify subscription charge ID.
  * @returns The updated or created ShopSettings record.
  */
 export async function upsertSubscriptionShopSettings(
@@ -66,19 +60,19 @@ export async function upsertSubscriptionShopSettings(
 
 
 /**
- * Updates or creates the FastEditor API and localization settings for a shop.
+ * Upserts (updates or creates) FastEditor API and localization settings for a shop.
  *
  * @param shop - The shop domain.
- * @param apiKey - FastEditor API key.
- * @param apiDomain - FastEditor API domain.
- * @param language - Preferred shop language (e.g. 'en', 'uk').
- * @param shopInfo - Shopify shop object containing billing and currency info.
+ * @param fastEditorApiKey - FastEditor API key.
+ * @param fastEditorDomain - FastEditor API domain.
+ * @param language - Primary shop language.
+ * @param shopInfo - Shopify shop info containing country and currency codes.
  * @returns The updated or created ShopSettings record.
  */
 export async function upsertFastEditorShopSettings(
   shop: string,
-  apiKey: string,
-  apiDomain: string,
+  fastEditorApiKey: string,
+  fastEditorDomain: string,
   language: string,
   shopInfo: ShopInfo,
 ): Promise<ShopSettings> {
@@ -87,19 +81,19 @@ export async function upsertFastEditorShopSettings(
       shop: shop,
     },
     update: {
-      fastEditorApiKey: apiKey,
-      fastEditorDomain: apiDomain,
+      fastEditorApiKey,
+      fastEditorDomain,
       language,
-      country: shopInfo.billingAddress.countryCodeV2,
-      currency: shopInfo.currencyCode
+      country: shopInfo.countryCode,
+      currency: shopInfo.currency
     },
     create: {
       shop: shop,
-      fastEditorApiKey: apiKey,
-      fastEditorDomain: apiDomain,
+      fastEditorApiKey,
+      fastEditorDomain,
       language,
-      country: shopInfo.billingAddress.countryCodeV2,
-      currency: shopInfo.currencyCode
+      country: shopInfo.countryCode,
+      currency: shopInfo.currency
     },
   });
 }

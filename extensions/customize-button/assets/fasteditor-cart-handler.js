@@ -5,13 +5,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!fasteditorCartUrl) throw new Error("Missing fe_cart_url parameter");
 
-    const url = new URL("/apps/embedded/app/resolve-product", window.location.origin);
+    const url = new URL("/apps/embedded/app/fasteditor/product", window.location.origin);
     url.searchParams.set("url", fasteditorCartUrl);
 
     const response = await fetch(url.toString(), {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "69420"
       },
     });
 
@@ -22,14 +23,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const responseData = await response.json();
 
-    const { variantId, quantity, projectKey } = responseData.data || {};
+    const {variantId, quantity, projectKey} = responseData.data || {};
     if (!variantId || !quantity || !projectKey) throw new Error("Invalid product data from server");
 
     const formData = {
       items: [{
         id: variantId,
         quantity,
-        properties: { _fasteditor_project_key: projectKey },
+        properties: {_fasteditor_project_key: projectKey},
       }],
     };
 

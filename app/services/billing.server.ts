@@ -1,27 +1,11 @@
+import type {authenticateAdmin, unauthenticatedAdmin} from "../types/app.types";
 import type {AppSubscription, BillingCheckResponseObject, UsageRecord} from "@shopify/shopify-api";
+import type {CreateAppUsageRecordResponse, UsagePrice} from "../types/billing.types";
 import {IS_TEST_BILLING} from "../constants";
 import {adminGraphqlRequest, getAppByKey} from "./app.server";
 import {CREATE_APP_USAGE_RECORD} from "../graphql/billing/createAppUsageRecord";
 import type {authenticate} from "../shopify.server";
 import {MONTHLY_PLAN} from "../shopify.server";
-import type {authenticateAdmin, unauthenticatedAdmin} from "../types/shopify";
-
-interface UsagePrice {
-  amount: number;
-  currencyCode: string;
-}
-
-interface CreateAppUsageRecordResponse {
-  appUsageRecordCreate: {
-    userErrors: {
-      field: string;
-      message: string;
-    }
-    appUsageRecord: {
-      id: string;
-    }
-  }
-}
 
 /**
  * Ensures the shop has an active subscription.
@@ -29,7 +13,7 @@ interface CreateAppUsageRecordResponse {
  *
  * @param admin - Shopify Admin GraphQL client
  * @param billing - Billing object from `authenticate.admin`
- * @param shop - The full shop domain (e.g. `example.myshopify.com`)
+ * @param shop - The shop domain.
  * @returns Billing check response object
  */
 export async function billingRequire(

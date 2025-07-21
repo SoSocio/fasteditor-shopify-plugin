@@ -1,8 +1,8 @@
 import React from "react";
 import {BlockStack, Button, Form, FormLayout, InlineError, TextField} from "@shopify/polaris";
-import type {ShopIntegrationFormProps} from "./ShopIntegrationForm.types";
+import type {IntegrationFormProps} from "../../types/integration.types";
 
-const ShopIntegrationForm: React.FC<ShopIntegrationFormProps> = (
+const ShopIntegrationForm: React.FC<IntegrationFormProps> = (
   {
     formValues,
     handleChange,
