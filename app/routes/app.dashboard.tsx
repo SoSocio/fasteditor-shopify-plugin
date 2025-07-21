@@ -20,7 +20,7 @@ const ENDPOINT = "/app/dashboard";
 export const loader = async (
   {request}: LoaderFunctionArgs
 ): Promise<DashboardData | Response> => {
-  console.info(`[${ENDPOINT}] Loader start`);
+  console.info(`[${ENDPOINT}] Dashboard Loader`);
 
   const {admin, session, billing} = await authenticate.admin(request);
   await billingRequire(admin, billing, session.shop);

@@ -1,21 +1,19 @@
 import {useCallback, useEffect, useState} from "react";
 import {useFetcher, useLoaderData} from "@remix-run/react";
 import {BlockStack, Layout, Page,} from "@shopify/polaris";
-import type {
-  ActionData,
-  ErrorsData,
-  FormValues,
-} from "../components/HomePage/ShopIntegrationForm.types";
 import ShopIntegrationForm from "../components/HomePage/ShopIntegrationForm";
 import ShopIntegrationCard from "../components/HomePage/ShopIntegrationCard";
 
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import type {FastEditorShopSettings} from "../types/fastEditor.types";
+import type {IntegrationActionData, IntegrationFormValues} from "../types/integration.types";
 import {authenticate} from "../shopify.server";
 import {billingRequire} from "../services/billing.server";
 import {
-  fastEditorIntegration,
-  getFastEditorShopSettings
+  getFastEditorShopSettings,
+  parseFormData,
+  setupFastEditorIntegration,
+  validateFormData
 } from "../services/fastEditorFactory.server";
 
 const ENDPOINT = "/app/_index";
@@ -44,26 +42,17 @@ export const loader = async (
 
 export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
   const {admin, session} = await authenticate.admin(request);
+
   try {
-    console.log(`[${ENDPOINT}] FastEditor API integration request for shop ${session.shop}`);
-    const formData = await request.formData();
+    console.info(`[${ENDPOINT}] FastEditor API integration request for shop ${session.shop}`);
+    const {apiKey, apiDomain} = await parseFormData(request);
+    const errors = validateFormData(apiKey, apiDomain);
 
-    const apiKey = String(formData.get("apiKey")) || "";
-    const apiDomain = String(formData.get("apiDomain")) || "";
-
-    const errorsData: ErrorsData = {};
-    if (apiKey === "") {
-      errorsData.apiKey = "API Key is required";
-    }
-    if (apiDomain === "") {
-      errorsData.apiDomain = "API Domain is required";
-    }
-
-    if (Object.keys(errorsData).length > 0) {
+    if (Object.keys(errors).length > 0) {
       return new Response(JSON.stringify({
           statusCode: 400,
           statusText: "Validation errors",
-          body: {errors: errorsData},
+          body: {errors},
           ok: false,
         }),
         {
@@ -75,7 +64,8 @@ export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
       );
     }
 
-    await fastEditorIntegration(admin, session.shop, apiKey, apiDomain);
+    await setupFastEditorIntegration(admin, session.shop, apiKey, apiDomain);
+
     return new Response(JSON.stringify({
         statusCode: 200,
         statusText: "FastEditor integration is successful.",
@@ -88,7 +78,6 @@ export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
         },
       }
     );
-
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.error(`[${ENDPOINT}] FastEditor integration failed.`, errorMessage);
@@ -109,8 +98,8 @@ export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
 
 const Index = () => {
   const {fastEditorApiKey, fastEditorDomain} = useLoaderData<FastEditorShopSettings>()
-  const fetcher = useFetcher<ActionData>();
-  const [formValues, setFormValues] = useState<FormValues>({
+  const fetcher = useFetcher<IntegrationActionData>();
+  const [formValues, setFormValues] = useState<IntegrationFormValues>({
     apiKey: fastEditorApiKey ?? "",
     apiDomain: fastEditorDomain ?? "",
   });

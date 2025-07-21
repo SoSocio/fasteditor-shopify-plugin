@@ -4,7 +4,7 @@ import {updateSessionScopes} from "../models/session.server";
 
 export const action = async ({request}: ActionFunctionArgs) => {
   const {payload, session, topic, shop} = await authenticate.webhook(request);
-  console.log(`Received ${topic} webhook for ${shop}`);
+  console.info(`Received ${topic} webhook for ${shop}`);
 
   const current = payload.current as string[];
 

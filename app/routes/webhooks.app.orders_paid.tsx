@@ -30,13 +30,7 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
     const orderProcessor = await OrderProcessor.forShop(shop);
 
     // Process FastEditor customizations in the order
-    const processingResults = await orderProcessor.processPaidOrder(order, shop);
-
-    console.info(`[${topic}] Order processed successfully`, {
-      order: order.name,
-      shop,
-      results: processingResults,
-    });
+    await orderProcessor.processPaidOrder(order, shop);
 
     return new Response("OK", {status: 200});
   } catch (error) {

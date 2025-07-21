@@ -33,7 +33,7 @@ export class ShopifyAPI {
     const {session} = await unauthenticated.admin(shop);
     if (!session?.accessToken || !session?.shop) {
       const message = "Missing access token or shop in unauthenticated session."
-      console.log(message, session);
+      console.error(message, session);
       throw new Error(message);
     }
 
