@@ -1,9 +1,9 @@
 import React from 'react';
 import {Badge, BlockStack, Box, Card, Text} from "@shopify/polaris";
-import type {ShopIntegrationCardProps} from "./ShopIntegrationForm.types";
+import type {IntegrationCardProps} from "../../types/integration.types";
 
 
-const ShopIntegrationCard: React.FC<ShopIntegrationCardProps> = (
+const ShopIntegrationCard: React.FC<IntegrationCardProps> = (
   {
     fastEditorApiKey,
     fastEditorDomain,

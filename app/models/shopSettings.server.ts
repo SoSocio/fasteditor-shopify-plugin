@@ -1,5 +1,5 @@
 import prisma from '../db.server';
-import type {ShopInfo} from "../services/shop.server";
+import type {ShopInfo} from "../types/shop.types";
 
 /**
  * Interface representing the FastEditor settings for a specific shop.
