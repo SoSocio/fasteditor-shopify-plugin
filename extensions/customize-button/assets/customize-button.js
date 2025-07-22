@@ -13,13 +13,16 @@ window.addEventListener("load", function () {
     try {
       const response = await fetch("/apps/embedded/app/smartlink", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "69420"
+        },
         body: JSON.stringify({shop, variantId, quantity, productHandle}),
       });
 
       const responseData = await response.json();
 
-      if (responseData.ok && responseData.data?.url) {
+      if (response.ok && responseData.data?.url) {
         window.location.href = responseData.data.url;
       } else {
         console.error("FastEditor error response:", responseData);

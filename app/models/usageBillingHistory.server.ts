@@ -1,9 +1,9 @@
 import prisma from "../db.server";
 
 /**
- * Interface representing a single usage billing history record.
+ * Interface representing a usage billing history record for a shop.
  */
-interface UsageBillingHistory {
+interface UsageBillingHistoryServer {
   id: string;
   shop: string;
   totalPrice: number;
@@ -12,18 +12,18 @@ interface UsageBillingHistory {
 }
 
 /**
- * Creates a new usage billing history record for a specific shop.
+ * Creates a new usage billing history record for a shop.
  *
  * @param shop - The shop domain.
- * @param totalPrice - Total price billed (in EUR).
- * @param itemsCount - Number of customized items billed.
+ * @param totalPrice - The total amount billed in EUR.
+ * @param itemsCount - The number of order items customized via FastEditor.
  * @returns The created UsageBillingHistory record.
  */
 export async function createUsageBillingHistoryForShop(
   shop: string,
   totalPrice: number,
   itemsCount: number
-): Promise<UsageBillingHistory> {
+): Promise<UsageBillingHistoryServer> {
   return await prisma.usageBillingHistory.create({
     data: {
       shop,

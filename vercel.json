@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/cron/usage-billing",
+      "schedule": "0 0 1 * *"
+    },
+    {
+      "path": "/cron/currency-rates/update",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}

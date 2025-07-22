@@ -1,19 +1,13 @@
+import type {ShopifyLineItem, ShopifyOrder} from "../types/order.types";
+import type {FastEditorOrderItem} from "../types/fastEditor.types";
 import {getFastEditorAPIForShop} from "./fastEditorFactory.server";
 import {ShopifyAPI} from "./shopifyAPI.server";
-import type {ShopifyLineItem, ShopifyOrder} from "../types/shopify";
 import {
   createFastEditorOrderItem,
   fastEditorOrderItemExists
 } from "../models/fastEditorOrderItems.server";
 import {FEE_RATE, MIN_FEE_EUR} from "../constants";
 import {convertToEUR} from "./currency.server";
-
-interface FastEditorOrderItem {
-  projectKey: string;
-  orderItemId: string;
-  quantity: number;
-  totalSaleValue: number;
-}
 
 /**
  * Service responsible for processing Shopify orders with items customized via FastEditor.
@@ -46,7 +40,6 @@ export class OrderProcessor {
    */
   async processPaidOrder(order: ShopifyOrder, shop: string): Promise<any[]> {
     const customItems = this.extractCustomLineItems(order.line_items, order.name);
-    console.log("processPaidOrder customItems:", customItems);
     const orderItems = this.mapToFastEditorOrderItems(customItems)
     const callbackUrl = `${process.env.SHOPIFY_APP_URL}/webhooks/fasteditor-sale-result?shop=${encodeURIComponent(shop)}`;
 
@@ -69,14 +62,14 @@ export class OrderProcessor {
 
     // Persist customized items to the database
     const savedItems = await this.addCustomItemsToDatabase(shop, order, customItems);
-    console.log(`Saved ${savedItems.length} customized items to DB`);
+    console.info(`Saved ${savedItems.length} customized item(s) to DB`);
 
     return results;
   }
 
   /**
    * Adds customized FastEditor items to the database if they don't exist yet.
-   * @param shop - Shopify shop domain.
+   * @param shop - The shop domain.
    * @param order - Shopify order.
    * @param customItems - Customized line items.
    * @returns Array of inserted FastEditor items.
@@ -91,7 +84,7 @@ export class OrderProcessor {
 
       const exists = await fastEditorOrderItemExists(shop, orderId, lineItemId);
       if (exists) {
-        console.log(`Line item ${lineItemId} for shop ${shop} already exists. Skipping.`);
+        console.info(`Line item ${lineItemId} for shop ${shop} already exists. Skipping.`);
         continue;
       }
 
@@ -121,11 +114,9 @@ export class OrderProcessor {
     quantity: number
   ): Promise<number> {
     const priceInEUR = await convertToEUR(currency, unitPrice);
-    console.log(`priceInEUR: ${priceInEUR}`);
     const feePerItem = Math.max(priceInEUR * FEE_RATE, MIN_FEE_EUR);
-    console.log(`feePerItem: ${feePerItem}`);
     const totalFee = feePerItem * quantity;
-    console.log(`totalFee: ${totalFee}`);
+
     return parseFloat(totalFee.toFixed(2));
   }
 
@@ -141,7 +132,7 @@ export class OrderProcessor {
     );
 
     if (items.length === 0) {
-      console.log(`No FastEditor custom items found in order ${orderName}`);
+      console.info(`No FastEditor custom items found in order ${orderName}`);
     }
 
     return items;
@@ -218,7 +209,6 @@ export class OrderProcessor {
       callbackUrl
     };
 
-    console.log("Sending FastEditor payload:", payload);
     return await this.fastEditorAPI.sendSaleNotification(payload);
   }
 
