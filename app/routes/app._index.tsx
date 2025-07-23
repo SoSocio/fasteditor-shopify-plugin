@@ -15,6 +15,7 @@ import {
   setupFastEditorIntegration,
   validateFormData
 } from "../services/fastEditorFactory.server";
+import {createOrderMetafieldDefinition} from "../services/metafield.server";
 
 const ENDPOINT = "/app/_index";
 
@@ -65,6 +66,8 @@ export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
     }
 
     await setupFastEditorIntegration(admin, session.shop, apiKey, apiDomain);
+
+    await createOrderMetafieldDefinition(admin)
 
     return new Response(JSON.stringify({
         statusCode: 200,
