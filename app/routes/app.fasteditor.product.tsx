@@ -26,6 +26,7 @@ export const loader = async ({request}: LoaderFunctionArgs): Promise<Response> =
         variantId: product.customAttributes.variantId,
         quantity: product.quantity,
         projectKey: product.projectKey,
+        imageUrl: product.imageUrl
       },
     }), {
       status: 200,
