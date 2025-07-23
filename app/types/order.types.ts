@@ -28,5 +28,6 @@ export interface ShopifyOrder {
   shipping_address: ShopifyAddress;
   customer: ShopifyCustomer;
   currency: string;
+  admin_graphql_api_id: string;
 }
 

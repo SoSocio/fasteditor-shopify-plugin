@@ -8,6 +8,8 @@ import {
 } from "../models/fastEditorOrderItems.server";
 import {FEE_RATE, MIN_FEE_EUR} from "../constants";
 import {convertToEUR} from "./currency.server";
+import type {authenticateAdmin} from "../types/app.types";
+import {METAFIELD_SET} from "../graphql/metafields/metafieldsSet";
 
 /**
  * Service responsible for processing Shopify orders with items customized via FastEditor.
@@ -34,15 +36,17 @@ export class OrderProcessor {
 
   /**
    * Processes a paid Shopify order by sending items customized through FastEditor.
+   * @param admin - Authenticated Shopify admin.
    * @param order - Shopify order object.
    * @param shop - The shop domain.
    * @returns An array of results for each processed group of customized items.
    */
-  async processPaidOrder(order: ShopifyOrder, shop: string): Promise<any[]> {
+  async processPaidOrder(admin: authenticateAdmin, order: ShopifyOrder, shop: string): Promise<any[]> {
     const customItems = this.extractCustomLineItems(order.line_items, order.name);
     const orderItems = this.mapToFastEditorOrderItems(customItems)
     const callbackUrl = `${process.env.SHOPIFY_APP_URL}/webhooks/fasteditor-sale-result?shop=${encodeURIComponent(shop)}`;
 
+    await this.processOrderImagesMetafieldSet(admin, customItems, order.admin_graphql_api_id);
     const results: any[] = [];
 
     try {
@@ -236,6 +240,81 @@ export class OrderProcessor {
 
     } catch (error) {
       console.error(`Failed to update order ${orderId} processing metadata:`, error);
+    }
+  }
+
+  /**
+   * Processes setting the order_images metafield for a given order.
+   *
+   * @param admin - Authenticated Shopify admin.
+   * @param customItems - Array of Shopify line items with custom FastEditor properties.
+   * @param orderId - Shopify order GID.
+   */
+  private async processOrderImagesMetafieldSet(
+    admin: authenticateAdmin,
+    customItems: ShopifyLineItem[],
+    orderId: string
+  ): Promise<void> {
+    const imagesUrl = this.extractImagesUrlFromOrderItems(customItems);
+
+    await this.orderImagesMetafieldSet(admin, orderId, imagesUrl);
+  }
+
+  /**
+   * Extracts image URLs from FastEditor line item properties.
+   *
+   * @param customItems - Shopify line items.
+   * @returns Array of image URLs.
+   * @throws If any line item is missing the _fasteditor_image_url property.
+   */
+  private extractImagesUrlFromOrderItems(customItems: ShopifyLineItem[]): string[] {
+    return customItems.map((item) => {
+      const imageUrlProp = item.properties?.find((p) => p.name === "_fasteditor_image_url")
+      const imageUrl = imageUrlProp?.value ?? "";
+
+      if (!imageUrl) {
+        console.warn(`[extractImagesUrlFromOrderItems] Missing _fasteditor_image_url for item ${item.id}`);
+        throw new Error(`Item ${item.id} is missing _fasteditor_image_url value`);
+      }
+
+      return imageUrl;
+    })
+  }
+
+  /**
+   * Sends a GraphQL mutation to set the order_images metafield as a list.url.
+   *
+   * @param admin - Authenticated Shopify admin.
+   * @param orderId - Shopify order GID.
+   * @param imagesUrl - Array of image URLs to store.
+   */
+  private async orderImagesMetafieldSet(
+    admin: authenticateAdmin,
+    orderId: string,
+    imagesUrl: string[]
+  ): Promise<void> {
+    try {
+      await admin.graphql(METAFIELD_SET, {
+        variables: {
+          metafields: [
+            {
+              key: "order_images",
+              namespace: "fasteditor",
+              ownerId: orderId,
+              type: "list.url",
+              value: JSON.stringify(imagesUrl),
+            },
+          ],
+        },
+      });
+
+      console.info(`[orderImagesMetafieldSet] Successfully set order_images metafield for order ${orderId}`, {
+        count: imagesUrl.length,
+        urls: imagesUrl,
+      });
+    } catch (error) {
+      console.error(`[orderImagesMetafieldSet] Failed to set metafield for order ${orderId}:`, error);
+      throw error;
     }
   }
 }
