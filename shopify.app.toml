@@ -1,9 +1,9 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-client_id = "133a0311103d792b38947a75cfd9ed2a"
+client_id = "e6d3d94db638b1926bb0c757a913134a"
 name = "FastEditor"
-handle = "fasteditor-1"
-application_url = "https://refined-dassie-concrete.ngrok-free.app"
+handle = "fast-editor-1"
+application_url = "https://fasteditor-plugin-gilt.vercel.app"
 embedded = true
 
 [build]
@@ -34,10 +34,14 @@ api_version = "2025-04"
 scopes = "read_locales,read_orders,read_products,write_orders"
 
 [auth]
-redirect_urls = ["https://refined-dassie-concrete.ngrok-free.app/auth/callback", "https://refined-dassie-concrete.ngrok-free.app/auth/shopify/callback", "https://refined-dassie-concrete.ngrok-free.app/api/auth/callback"]
+redirect_urls = [
+  "https://fasteditor-plugin-gilt.vercel.app/auth/callback",
+  "https://fasteditor-plugin-gilt.vercel.app/auth/shopify/callback",
+  "https://fasteditor-plugin-gilt.vercel.app/api/auth/callback"
+]
 
 [app_proxy]
-url = "https://refined-dassie-concrete.ngrok-free.app"
+url = "https://fasteditor-plugin-gilt.vercel.app"
 subpath = "embedded"
 prefix = "apps"
 
