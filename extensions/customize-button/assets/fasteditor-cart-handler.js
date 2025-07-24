@@ -23,14 +23,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const responseData = await response.json();
 
-    const {variantId, quantity, projectKey} = responseData.data || {};
-    if (!variantId || !quantity || !projectKey) throw new Error("Invalid product data from server");
+    const {variantId, quantity, projectKey, imageUrl} = responseData.data || {};
+
+    if (!variantId || !quantity || !projectKey || !imageUrl) throw new Error("Invalid product data from server");
 
     const formData = {
       items: [{
         id: variantId,
         quantity,
-        properties: {_fasteditor_project_key: projectKey},
+        properties: {
+          _fasteditor_project_key: projectKey,
+          _fasteditor_image_url: imageUrl,
+        },
       }],
     };
 

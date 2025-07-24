@@ -14,6 +14,7 @@ export interface ProductDataFromFastEditor {
     variantId?: string;
     [key: string]: any;
   };
+  imageUrl: string;
 }
 
 export interface FastEditorOrderItem {
