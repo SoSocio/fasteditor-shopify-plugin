@@ -1,8 +1,8 @@
 import type {authenticateAdmin, unauthenticatedAdmin} from "../types/app.types";
 import type {Products, ProductsPagination} from "../types/products.types";
-import {GET_PRODUCTS_BY_QUERY} from "../graphql/product/getProductsByTag";
 import {adminGraphqlRequest} from "./app.server";
 import {GET_PRODUCT_VARIANT_SKU} from "../graphql/product/getProductVariantSKU";
+import {GET_PRODUCTS_BY_QUERY} from "../graphql/product/getProductsByQuery";
 
 /**
  * Fetches products with a specific tag using Shopify Admin GraphQL API.
@@ -13,12 +13,14 @@ import {GET_PRODUCT_VARIANT_SKU} from "../graphql/product/getProductVariantSKU";
  */
 export async function getProductsByQuery(
   admin: authenticateAdmin,
-  pagination: ProductsPagination
+  pagination: ProductsPagination,
+  sorting: any
 ): Promise<Products> {
   const data = await adminGraphqlRequest(admin, GET_PRODUCTS_BY_QUERY, {
     variables: {
       query: "tag:fasteditor",
-      ...pagination,
+      ...sorting,
+      ...pagination
     },
   });
 

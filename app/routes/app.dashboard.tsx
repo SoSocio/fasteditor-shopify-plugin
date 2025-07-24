@@ -11,6 +11,9 @@ import {getProductsByQuery, pagination} from "../services/products.server";
 import {getShopSettings} from "../models/shopSettings.server";
 import ErrorBanner from "../components/DashboardPage/ErrorBanner";
 import {billingRequire} from "../services/billing.server";
+import {
+  IndexTableWithFilteringExample
+} from "../components/DashboardPage/IndexTableWithFilteringExample";
 
 const ENDPOINT = "/app/dashboard";
 
@@ -26,9 +29,23 @@ export const loader = async (
   await billingRequire(admin, billing, session.shop);
 
   try {
-    const limit = 10;
+    const limit = 2;
     const productsPagination = pagination(request, limit);
-    const productsData = await getProductsByQuery(admin, productsPagination);
+    // const sort = "TITLE"
+
+    const url = new URL(request.url);
+    const searchParam = url.searchParams;
+    const order = searchParam.get("order") ?? "title asc";
+    const [sortKeyRaw, sortDirectionRaw] = order.split(" ");
+    const sortKey = sortKeyRaw?.toUpperCase() || "TITLE";
+    const sortDirection = sortDirectionRaw?.toLowerCase() === "desc" ? "desc" : "asc";
+    const sort = {
+      sortKey: sortKey,
+      reverse: sortDirection !== "asc",
+    }
+
+
+    const productsData = await getProductsByQuery(admin, productsPagination, sort);
 
     const shopSettings = await getShopSettings(session.shop);
     if (!shopSettings) {
@@ -82,6 +99,7 @@ const Dashboard = () => {
   }
 
   const {productsData, shopName, shopSettings, productsLimit} = data;
+  console.log('productsData', productsData);
 
   return (
     <Page fullWidth>
@@ -89,6 +107,7 @@ const Dashboard = () => {
         <Layout.Section>
           <Card>
             <BlockStack gap="400">
+              <IndexTableWithFilteringExample productsData={productsData}/>
               <ProductsTableInfo/>
               <ProductsTable
                 productsData={productsData}

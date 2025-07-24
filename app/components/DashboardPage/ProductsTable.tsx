@@ -71,6 +71,7 @@ export const ProductsTable = (
 
           {product.variants.nodes.map((variant, variantIndex) => {
             const variantUrl = `https://admin.shopify.com/store/${shopName}/products/${product.legacyResourceId}/variants/${variant.legacyResourceId}`;
+            console.log("variant", variant)
             return (
               <IndexTable.Row
                 key={`${product.id}-${variantIndex}`}
@@ -86,7 +87,7 @@ export const ProductsTable = (
                       size="small"
                     />
                     <Link removeUnderline url={variantUrl} target="_top">
-                      {variant.title}
+                      {variant.title !== "Default Title" ? variant.title : product.title}
                     </Link>
                   </InlineStack>
                 </IndexTable.Cell>
