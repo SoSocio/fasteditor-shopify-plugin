@@ -32,7 +32,7 @@ const Index = () => {
                 <Text as="h2" variant="headingMd">
                   FastEditor Integration
                 </Text>
-                <Text as="p" tone="subdued" variant="bodyMd">
+                <Text as="p" variant="bodyMd">
                   Before using FastEditor, connect your store to the platform via the Settings page.
                 </Text>
                 <Text as="span">
@@ -48,7 +48,7 @@ const Index = () => {
                 <Text as="h2" variant="headingMd">
                   Customization Button
                 </Text>
-                <Text as="p" tone="subdued" variant="bodyMd">
+                <Text as="p" variant="bodyMd">
                   Add a customization button to your product page template and style it to match
                   your
                   theme.
@@ -71,7 +71,7 @@ const Index = () => {
                 <Text as="h2" variant="headingMd">
                   Product Setup
                 </Text>
-                <Text as="p" tone="subdued" variant="bodyMd">
+                <Text as="p" variant="bodyMd">
                   To link a Shopify product with FastEditor, follow these steps:
                 </Text>
                 <List>
@@ -95,7 +95,7 @@ const Index = () => {
                   </List.Item>
                 </List>
 
-                <Text as="p" tone="subdued" variant="bodyMd">
+                <Text as="p" variant="bodyMd">
                   To display the customization button on the product page:
                 </Text>
                 <List>
