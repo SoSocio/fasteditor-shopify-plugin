@@ -6,25 +6,22 @@ export const StatusBadge = ({status}: { status: string }) => {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
   }
 
-  let tone: 'info' | 'success' | 'warning' | 'critical';
-
-  switch (status) {
-    case "ACTIVE":
-      tone = "success";
-      break;
-    case "CANCELLED":
-    case "DECLINED":
-      tone = "critical";
-      break;
-    case "EXPIRED":
-    case "FROZEN":
-      break;
-    case "PENDING":
-      tone = "info";
-      break;
-    default:
-      tone = "warning";
-  }
+  const tone: 'info' | 'success' | 'warning' | 'critical' = (() => {
+    switch (status) {
+      case "ACTIVE":
+        return "success";
+      case "CANCELLED":
+      case "DECLINED":
+        return "critical";
+      case "PENDING":
+        return "info";
+      case "EXPIRED":
+      case "FROZEN":
+        return "warning";
+      default:
+        return "warning";
+    }
+  })();
 
   return <Badge tone={tone}>{capitalize(status)}</Badge>;
 }

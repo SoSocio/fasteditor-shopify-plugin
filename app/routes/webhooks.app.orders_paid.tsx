@@ -1,7 +1,8 @@
 import type {ActionFunctionArgs} from "@remix-run/node";
+import type {ShopifyOrder} from "../types/order.types";
 import {authenticate} from "../shopify.server";
 import {OrderProcessor} from "../services/orderProcessor.server";
-import type {ShopifyOrder} from "../types/order.types";
+import {handleShopBilling} from "../services/usageBilling.server";
 
 /**
  * Handles the `orders/paid` webhook from Shopify.
@@ -36,6 +37,8 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
 
     // Process FastEditor customizations in the order
     await orderProcessor.processPaidOrder(admin, order, shop);
+
+    await handleShopBilling(admin, shop);
 
     return new Response("OK", {status: 200});
   } catch (error) {

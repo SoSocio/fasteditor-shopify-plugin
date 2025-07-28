@@ -1,8 +1,8 @@
 import {useCallback, useEffect, useState} from "react";
 import {useFetcher, useLoaderData} from "@remix-run/react";
 import {BlockStack, Layout, Page,} from "@shopify/polaris";
-import ShopIntegrationForm from "../components/HomePage/ShopIntegrationForm";
-import ShopIntegrationCard from "../components/HomePage/ShopIntegrationCard";
+import ShopIntegrationCard from "../components/SettingsPage/ShopIntegrationCard";
+import ShopIntegrationForm from "../components/SettingsPage/ShopIntegrationForm";
 
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import type {FastEditorShopSettings} from "../types/fastEditor.types";

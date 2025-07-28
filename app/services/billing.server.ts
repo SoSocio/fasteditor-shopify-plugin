@@ -102,13 +102,15 @@ export async function billingCreateUsageRecord(
 }
 
 /**
- * Creates a usage record using a direct GraphQL mutation to Shopify Admin API.
+ * Creates an app usage record via Shopify Admin GraphQL API.
  *
- * @param admin - Shopify Admin GraphQL client
- * @param description - Usage charge description
- * @param price - Object with amount and currency code
- * @param subscriptionLineItemId - The ID of the usage subscription line item
- * @returns Raw result from appUsageRecordCreate mutation
+ * @param admin - Shopify Admin GraphQL client instance.
+ * @param description - Description of the usage charge.
+ * @param price - Object containing amount and currencyCode.
+ * @param subscriptionLineItemId - The ID of the subscription line item to which the usage charge
+ *   applies.
+ * @returns The result of `appUsageRecordCreate`, or throws an error if userErrors are returned.
+ * @throws {Error} If the mutation returns userErrors.
  */
 export async function createAppUsageRecord(
   admin: unauthenticatedAdmin,
@@ -117,7 +119,9 @@ export async function createAppUsageRecord(
   subscriptionLineItemId: string,
 ): Promise<any> {
   const response = await adminGraphqlRequest<CreateAppUsageRecordResponse>(
-    admin, CREATE_APP_USAGE_RECORD, {
+    admin,
+    CREATE_APP_USAGE_RECORD,
+    {
       variables: {
         description,
         price,
@@ -125,7 +129,14 @@ export async function createAppUsageRecord(
       }
     })
 
-  return response.appUsageRecordCreate
+  const { userErrors } = response.appUsageRecordCreate;
+
+  if (userErrors.length > 0) {
+    console.error("[createAppUsageRecord] User errors:", userErrors);
+    throw new Error("Failed to create app usage record due to user errors");
+  }
+
+  return response.appUsageRecordCreate;
 }
 
 /**

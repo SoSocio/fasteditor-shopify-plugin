@@ -1,7 +1,11 @@
 import {BlockStack, Box, Button, ProgressBar, Text} from '@shopify/polaris';
 import React from 'react';
+import type {ActiveSubscription} from "../../types/billing.types";
 
-export const UsageSubscription = ({subscription, shopName}) => {
+export const UsageSubscription = ({subscription, shopName}: {
+  subscription: ActiveSubscription,
+  shopName: string
+}) => {
   const percent = (subscription.appUsagePricing.balanceUsed.amount * 100) / subscription.appUsagePricing.cappedAmount.amount
   const remainingAmount = Number(subscription.appUsagePricing.cappedAmount.amount - subscription.appUsagePricing.balanceUsed.amount).toFixed(2) + " " + subscription.appUsagePricing.cappedAmount.currencyCode
 
