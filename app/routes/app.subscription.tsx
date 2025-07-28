@@ -1,10 +1,17 @@
-import {useLoaderData} from "@remix-run/react";
+import {useFetcher, useLoaderData} from "@remix-run/react";
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
-import type {AppSubscription} from "@shopify/shopify-api";
-import {BlockStack, Card, Layout, Page,} from "@shopify/polaris";
-import {SubscriptionTable} from "../components/SubscriptionPage/SubscriptionTable";
+import {BlockStack, Card, InlineGrid, Layout, Page,} from "@shopify/polaris";
 import {authenticate} from "../shopify.server";
-import {billingCheck, billingRequire} from "../services/billing.server";
+import {
+  billingCancel,
+  billingRequire,
+  fetchActiveSubscriptions,
+  getActiveSubscription
+} from "../services/billing.server";
+import {TitleBar} from "@shopify/app-bridge-react";
+import {CurrentSubscription} from "../components/SubscriptionPage/CurrentSubscription";
+import {UsageSubscription} from "../components/SubscriptionPage/UsageSubscription";
+import {useCallback} from "react";
 
 const ENDPOINT = "/app/subscription";
 
@@ -17,33 +24,68 @@ export const loader = async (
   await billingRequire(admin, billing, session.shop);
 
   try {
-    const subscription = await billingCheck(billing);
-    console.log("Subscription Loader billing:", subscription)
-    return subscription.appSubscriptions;
+    const subscriptions = await fetchActiveSubscriptions(admin)
+    const subscription = getActiveSubscription(subscriptions)
+    const shopName = session.shop.replace(".myshopify.com", "");
+
+    return {
+      subscription,
+      shopName
+    };
   } catch (error) {
     console.log(`[${ENDPOINT}] Subscription Loader Error:`, error);
+    return null;
   }
 };
 
 export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
-  await authenticate.admin(request);
+  const {billing} = await authenticate.admin(request);
+
+  const formData = await request.formData();
+  const subscriptionId = String(formData.get("id") || "")
+
+  const test = await billingCancel(billing, subscriptionId)
+  console.log("billingCancel test:", test)
+
   return null
 };
 
 const Subscription = () => {
-  const subscriptions = useLoaderData<AppSubscription[]>()
-  console.log("subscriptions", subscriptions)
-  console.log("lineItems", subscriptions[0].lineItems)
+  const fetcher = useFetcher();
+  const {subscription, shopName} = useLoaderData<any>()
+  console.log("subscription", subscription)
+  const onCancelSubscription = useCallback(async () => {
+    fetcher.submit(
+      {
+        id: subscription.id,
+      },
+      {
+        method: "POST"
+      }
+    )
+  }, [fetcher, subscription])
+
   return (
     <Page fullWidth>
+      <TitleBar>
+        <button
+          variant="primary"
+          onClick={onCancelSubscription}
+        >
+          Cancel
+        </button>
+      </TitleBar>
       <BlockStack gap="200">
         <Layout>
           <Layout.Section>
-            <Card>
-              <BlockStack gap="400">
-                <SubscriptionTable subscriptions={subscriptions}/>
-              </BlockStack>
-            </Card>
+            <InlineGrid columns={{sm: 1, md: ['oneThird', 'twoThirds']}} gap="400">
+              <Card>
+                <CurrentSubscription subscription={subscription}/>
+              </Card>
+              <Card>
+                <UsageSubscription subscription={subscription} shopName={shopName}/>
+              </Card>
+            </InlineGrid>
           </Layout.Section>
         </Layout>
       </BlockStack>
