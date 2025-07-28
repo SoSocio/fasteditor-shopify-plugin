@@ -1,5 +1,5 @@
 import React from "react";
-import {BlockStack, List, Text, InlineCode} from "@shopify/polaris";
+import {BlockStack, List, Text} from "@shopify/polaris";
 
 export const ProductsTableInfo = () => {
   return (
@@ -7,7 +7,7 @@ export const ProductsTableInfo = () => {
       <Text as="h2" variant="headingMd">Products with the FastEditor tag</Text>
       <BlockStack gap="100">
         <Text as="p" variant="bodyMd">
-          The table below shows products tagged with <InlineCode>fasteditor</InlineCode>.
+          The table below shows products tagged with <code>fasteditor</code>.
         </Text>
         <Text as="h3" variant="headingSm">
           To tag a product:
