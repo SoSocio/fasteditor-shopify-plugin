@@ -6,17 +6,21 @@ import {NavMenu} from "@shopify/app-bridge-react";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
 
 import {authenticate} from "../shopify.server";
+import {BlockStack, Box, Link as PolarisLink, Text} from "@shopify/polaris";
 
 export const links = () => [{rel: "stylesheet", href: polarisStyles}];
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   await authenticate.admin(request);
 
-  return {apiKey: process.env.SHOPIFY_API_KEY || ""};
+  return {
+    apiKey: process.env.SHOPIFY_API_KEY || "",
+    supportEmail: process.env.SUPPORT_EMAIL || ""
+  };
 };
 
 export default function App() {
-  const {apiKey} = useLoaderData<typeof loader>();
+  const {apiKey, supportEmail} = useLoaderData<typeof loader>();
 
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
@@ -35,6 +39,19 @@ export default function App() {
         </Link>
       </NavMenu>
       <Outlet/>
+      <Box padding="500">
+        <BlockStack inlineAlign="center">
+          <Text as="p" variant="bodySm">
+            Need help? Contact our support team at{" "}
+            <PolarisLink
+              url={`mailto:${supportEmail}`}
+              target="_blank"
+            >
+              {supportEmail}
+            </PolarisLink>
+          </Text>
+        </BlockStack>
+      </Box>
     </AppProvider>
   );
 }
