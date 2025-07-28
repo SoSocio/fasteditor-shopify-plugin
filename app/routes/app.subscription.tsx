@@ -53,7 +53,7 @@ export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
 const Subscription = () => {
   const fetcher = useFetcher();
   const {subscription, shopName} = useLoaderData<any>()
-  console.log("subscription", subscription)
+
   const onCancelSubscription = useCallback(async () => {
     fetcher.submit(
       {

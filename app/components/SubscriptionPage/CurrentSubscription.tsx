@@ -1,8 +1,9 @@
 import {BlockStack, Box, Text} from '@shopify/polaris';
 import React from 'react';
 import {StatusBadge} from "./StatusBadge";
+import type {ActiveSubscription} from "../../types/billing.types";
 
-export const CurrentSubscription = ({subscription}) => {
+export const CurrentSubscription = ({subscription}: { subscription: ActiveSubscription }) => {
   const subscriptionPrice = `${Number(subscription.appRecurringPricing.price.amount).toFixed(0)} ${subscription.appRecurringPricing.price.currencyCode}`
 
   const formatted = (date: string) => (
