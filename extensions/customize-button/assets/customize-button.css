@@ -11,3 +11,7 @@
 .fasteditor__button:hover {
   opacity: .8;
 }
+.fasteditor__button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
