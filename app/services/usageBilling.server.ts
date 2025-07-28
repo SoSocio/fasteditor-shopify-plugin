@@ -3,7 +3,7 @@ import {
   findUnbilledFastEditorOrderItemsLastMonth,
   updateUnbilledFastEditorOrderItemsLastMonth,
 } from "../models/fastEditorOrderItems.server";
-import type {unauthenticatedAdmin} from "../types/app.types";
+import type {authenticateAdmin} from "../types/app.types";
 import type {Shop} from "../types/shop.types";
 import type {UnbilledOrderItem} from "../types/billing.types";
 
@@ -33,7 +33,7 @@ export async function processMonthlyUsageBilling(): Promise<void> {
  * @param shop - The shop domain.
  */
 export async function handleShopBilling(
-  admin: unauthenticatedAdmin,
+  admin: authenticateAdmin,
   shop: string,
 ): Promise<void> {
   const sinceDate = getOneMonthAgoDate();
@@ -103,7 +103,7 @@ export function calculateTotalUsageFee(items: UnbilledOrderItem[]): number {
  * @param subscriptionLineItemId - The ID of the usage subscription line item
  */
 async function billShop(
-  admin: unauthenticatedAdmin,
+  admin: authenticateAdmin,
   shop: string,
   amount: number,
   subscriptionLineItemId: string,
