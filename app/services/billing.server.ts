@@ -1,11 +1,24 @@
 import type {authenticateAdmin, unauthenticatedAdmin} from "../types/app.types";
-import type {AppSubscription, BillingCheckResponseObject, UsageRecord} from "@shopify/shopify-api";
-import type {CreateAppUsageRecordResponse, UsagePrice} from "../types/billing.types";
+import type {
+  AppSubscription,
+  BillingCheckResponseObject,
+  UsageRecord,
+  RecurringAppPlan,
+  UsageAppPlan,
+} from "@shopify/shopify-api";
+import type {
+  ActiveSubscription,
+  AppRecurringPricing,
+  AppUsagePricing,
+  CreateAppUsageRecordResponse,
+  UsagePrice
+} from "../types/billing.types";
 import {IS_TEST_BILLING} from "../constants";
 import {adminGraphqlRequest, getAppByKey} from "./app.server";
 import {CREATE_APP_USAGE_RECORD} from "../graphql/billing/createAppUsageRecord";
 import type {authenticate} from "../shopify.server";
 import {MONTHLY_PLAN} from "../shopify.server";
+import {ACTIVE_SUBSCRIPTIONS_FRAGMENT} from "../graphql/app/fragments/activeSubscriptionsFragment";
 
 /**
  * Ensures the shop has an active subscription.
@@ -111,5 +124,106 @@ export async function createAppUsageRecord(
         subscriptionLineItemId,
       }
     })
+
   return response.appUsageRecordCreate
 }
+
+/**
+ * Fetches active app subscriptions using the Shopify GraphQL Admin API.
+ *
+ * @param admin - Authenticated admin client
+ * @returns Array of active subscriptions
+ * @throws Error if the request fails or the response is malformed
+ */
+export async function fetchActiveSubscriptions(admin: authenticateAdmin): Promise<AppSubscription[]> {
+  const response = await adminGraphqlRequest(admin, `
+    #graphql
+    query ActiveSubscriptions {
+      currentAppInstallation {
+        ...ActiveSubscriptionsFragment
+      }
+    }
+    ${ACTIVE_SUBSCRIPTIONS_FRAGMENT}
+  `)
+
+  return response.currentAppInstallation.activeSubscriptions;
+}
+
+/**
+ * Returns the first transformed active subscription.
+ *
+ * @param subscriptions - Raw app subscriptions
+ * @returns Transformed active subscription object
+ */
+export function getActiveSubscription(subscriptions: AppSubscription[]): ActiveSubscription {
+  const transformedSubscriptions = subscriptions.map((item) => (
+      transformSubscription(item)
+    )
+  );
+
+  return transformedSubscriptions[0]
+}
+
+/**
+ * Extracts and formats recurring pricing details from a subscription.
+ *
+ * @param subscription - Single AppSubscription
+ * @returns Recurring pricing object or fallback with default price
+ */
+function getAppRecurringPricing(subscription: AppSubscription): AppRecurringPricing {
+  const line = subscription.lineItems?.find(
+    (item) => item.plan.pricingDetails.__typename === "AppRecurringPricing"
+  );
+
+  const pricing = line?.plan.pricingDetails as RecurringAppPlan;
+
+  return {
+    price: pricing?.price
+  }
+}
+
+/**
+ * Extracts and formats usage pricing details from a subscription.
+ *
+ * @param subscription - Single AppSubscription
+ * @returns Usage pricing object with balance, capped amount, and terms
+ */
+function getAppUsagePricing(subscription: AppSubscription): AppUsagePricing {
+  const line = subscription.lineItems?.find(
+    (item) => item.plan.pricingDetails.__typename === "AppUsagePricing"
+  );
+
+  const pricing = line?.plan.pricingDetails as UsageAppPlan;
+
+  return {
+    balanceUsed: {
+      amount: pricing?.balanceUsed?.amount ?? 0,
+      currencyCode: pricing?.balanceUsed?.currencyCode ?? "USD",
+    },
+    cappedAmount: {
+      amount: pricing?.cappedAmount?.amount ?? 0,
+      currencyCode: pricing?.cappedAmount?.currencyCode ?? "USD",
+    },
+    terms: pricing?.terms ?? "",
+  };
+}
+
+/**
+ * Transforms raw AppSubscription data into a typed and clean ActiveSubscription.
+ *
+ * @param subscription - Raw subscription object
+ * @returns Transformed ActiveSubscription
+ */
+function transformSubscription(subscription: AppSubscription): ActiveSubscription {
+  return {
+    id: subscription.id,
+    name: subscription.name,
+    status: subscription.status,
+    trialDays: subscription.trialDays,
+    createdAt: subscription.createdAt,
+    currentPeriodEnd: subscription.currentPeriodEnd,
+    appRecurringPricing: getAppRecurringPricing(subscription),
+    appUsagePricing: getAppUsagePricing(subscription),
+  };
+}
+
