@@ -12,6 +12,8 @@ node_modules
 database.sqlite
 
 .env
+.env.*
+!.env.example
 
 PROJECT_RULES.md
 
