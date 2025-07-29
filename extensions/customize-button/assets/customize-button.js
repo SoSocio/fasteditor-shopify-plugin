@@ -36,14 +36,3 @@ async function handleFastEditorRedirect(button, originalText) {
     setButtonState(button, "Error");
   }
 }
-
-window.addEventListener("load", () => {
-  const button = document.querySelector(".fasteditor__button");
-  if (!button) return;
-
-  const originalText = button.innerText;
-
-  button.addEventListener("click", () => {
-    handleFastEditorRedirect(button, originalText);
-  });
-});

@@ -76,10 +76,3 @@ async function handleFastEditorAutoAddToCart(button) {
     setButtonState(button, "Error");
   }
 }
-
-document.addEventListener("DOMContentLoaded", async () => {
-  const button = document.querySelector(".fasteditor__button");
-  if (!button) return;
-
-  await handleFastEditorAutoAddToCart(button);
-});

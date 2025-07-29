@@ -4,7 +4,8 @@
 <style>
   {{ font | font_face }}
 
-  .fasteditor__button {
+  /* Styles scoped by unique block class to avoid conflicts */
+  .block-{{ block.id }} {
     background-color: {{ block.settings.bg_color }};
     color: {{ block.settings.text_color }};
     font-size: {{ block.settings.text_size }}px;
@@ -18,18 +19,47 @@
 {% if request.design_mode or product.tags contains "fasteditor" %}
   <div class="fasteditor">
     <button
-      class="fasteditor__button"
+      id="fasteditor-{{ block.id }}"
+      class="fasteditor__button block-{{ block.id }}"
       data-shop="{{ shop.permanent_domain }}"
       data-handle="{{ product.handle }}"
+      aria-label="{{ block.settings.text | escape }}"
+      type="button"
     >
       {{ block.settings.text }}
     </button>
   </div>
 {% endif %}
 
+<script>
+  /**
+  * @description Handles the FastEditor add-to-cart logic on DOM load
+  */
+  document.addEventListener("DOMContentLoaded", async () => {
+    const button = document.querySelector("#fasteditor-{{ block.id }}");
+    if (!button) return;
+
+    await handleFastEditorAutoAddToCart(button);
+  });
+
+  /**
+  * @description Handles the FastEditor redirect logic on button click
+  */
+  window.addEventListener("load", () => {
+    const button = document.querySelector("#fasteditor-{{ block.id }}");
+    if (!button) return;
+
+    const originalText = button.innerText;
+
+    button.addEventListener("click", () => {
+      handleFastEditorRedirect(button, originalText);
+    });
+  });
+</script>
+
 {% schema %}
 {
-  "name": "FastEditor button",
+  "name": "FastEditor Button",
   "target": "section",
   "available_if": "{{ app.metafields.appInstallation.paid }}",
   "enabled_on": {
