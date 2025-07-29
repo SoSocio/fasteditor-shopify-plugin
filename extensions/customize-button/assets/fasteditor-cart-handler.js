@@ -1,10 +1,3 @@
-function setButtonState(button, text, disabled = true) {
-  if (!button) return;
-  button.textContent = text;
-  if (disabled) button.setAttribute("disabled", "true");
-  else button.removeAttribute("disabled");
-}
-
 async function addItemToCart(variantId, quantity, projectKey, imageUrl) {
   const formData = {
     items: [{
@@ -34,6 +27,7 @@ async function handleFastEditorAutoAddToCart(button) {
   const urlParams = new URLSearchParams(window.location.search);
   const fasteditorCartUrl = urlParams.get("fe_cart_url");
   const originalText = button.innerText;
+  const enableCartRedirect = button.dataset.redirect
 
   if (!fasteditorCartUrl) return;
 
@@ -65,11 +59,15 @@ async function handleFastEditorAutoAddToCart(button) {
     const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
     window.history.replaceState({}, "", newUrl);
 
-    window.location.href = "/cart";
-
     setTimeout(() => {
       setButtonState(button, originalText, false);
-    }, 4000);
+    }, 3000);
+
+    if (enableCartRedirect === true) {
+      window.location.href = "/cart";
+    } else {
+      location.reload();
+    }
 
   } catch (error) {
     console.error("[FastEditor cart init error]", error);
