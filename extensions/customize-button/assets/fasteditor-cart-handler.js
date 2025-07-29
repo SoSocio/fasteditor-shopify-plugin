@@ -1,9 +1,38 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const urlParams = new URLSearchParams(window.location.search);
-    const fasteditorCartUrl = urlParams.get("fe_cart_url");
+async function addItemToCart(variantId, quantity, projectKey, imageUrl) {
+  const formData = {
+    items: [{
+      id: variantId,
+      quantity,
+      properties: {
+        _fasteditor_project_key: projectKey,
+        _fasteditor_image_url: imageUrl,
+        "Customized": "Yes",
+      },
+    }],
+  };
 
-    if (!fasteditorCartUrl) throw new Error("Missing fe_cart_url parameter");
+  const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(formData),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error("Failed to add item to cart: " + error);
+  }
+}
+
+async function handleFastEditorAutoAddToCart(button) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const fasteditorCartUrl = urlParams.get("fe_cart_url");
+  const originalText = button.innerText;
+  const enableCartRedirect = button.dataset.redirect
+
+  if (!fasteditorCartUrl) return;
+
+  try {
+    setButtonState(button, "Adding to cart...");
 
     const url = new URL("/apps/embedded/app/fasteditor/product", window.location.origin);
     url.searchParams.set("url", fasteditorCartUrl);
@@ -16,42 +45,32 @@ document.addEventListener("DOMContentLoaded", async () => {
       },
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to resolve product.");
+    const {data} = await response.json();
+
+    if (!response.ok || !data?.variantId || !data?.quantity || !data?.projectKey || !data?.imageUrl) {
+      throw new Error("Invalid product data from server");
     }
 
-    const responseData = await response.json();
+    await addItemToCart(data.variantId, data.quantity, data.projectKey, data.imageUrl);
 
-    const {variantId, quantity, projectKey, imageUrl} = responseData.data || {};
+    setButtonState(button, "Added to cart");
 
-    if (!variantId || !quantity || !projectKey || !imageUrl) throw new Error("Invalid product data from server");
+    urlParams.delete("fe_cart_url");
+    const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+    window.history.replaceState({}, "", newUrl);
 
-    const formData = {
-      items: [{
-        id: variantId,
-        quantity,
-        properties: {
-          _fasteditor_project_key: projectKey,
-          _fasteditor_image_url: imageUrl,
-        },
-      }],
-    };
+    setTimeout(() => {
+      setButtonState(button, originalText, false);
+    }, 3000);
 
-    const addResponse = await fetch(`${window.Shopify.routes.root}cart/add.js`, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(formData),
-    });
-
-    if (!addResponse.ok) {
-      const error = await addResponse.text();
-      throw new Error("Failed to add item to cart: " + error);
+    if (enableCartRedirect === true) {
+      window.location.href = "/cart";
+    } else {
+      location.reload();
     }
-
-    window.location.href = "/cart";
 
   } catch (error) {
     console.error("[FastEditor cart init error]", error);
+    setButtonState(button, "Error");
   }
-});
+}
