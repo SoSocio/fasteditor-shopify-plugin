@@ -13,13 +13,14 @@ async function addItemToCart(variantId, quantity, projectKey, imageUrl) {
       properties: {
         _fasteditor_project_key: projectKey,
         _fasteditor_image_url: imageUrl,
+        "Customized": "Yes",
       },
     }],
   };
 
   const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify(formData),
   });
 
@@ -50,7 +51,7 @@ async function handleFastEditorAutoAddToCart(button) {
       },
     });
 
-    const { data } = await response.json();
+    const {data} = await response.json();
 
     if (!response.ok || !data?.variantId || !data?.quantity || !data?.projectKey || !data?.imageUrl) {
       throw new Error("Invalid product data from server");
