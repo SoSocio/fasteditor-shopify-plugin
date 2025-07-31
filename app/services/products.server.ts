@@ -1,5 +1,5 @@
 import type {authenticateAdmin, unauthenticatedAdmin} from "../types/app.types";
-import type {Products, ProductsPagination} from "../types/products.types";
+import type {Products, ProductsVariables} from "../types/products.types";
 import {adminGraphqlRequest} from "./app.server";
 import {GET_PRODUCT_VARIANT_SKU} from "../graphql/product/getProductVariantSKU";
 import {GET_PRODUCTS_BY_QUERY} from "../graphql/product/getProductsByQuery";
@@ -7,20 +7,18 @@ import {GET_PRODUCTS_BY_QUERY} from "../graphql/product/getProductsByQuery";
 /**
  * Fetches products with a specific tag using Shopify Admin GraphQL API.
  *
- * @param admin - Authenticated Shopify Admin API client
- * @param pagination - Pagination variables (first/after or last/before)
- * @returns Paginated list of products
+ * @param admin - Authenticated Shopify Admin API client.
+ * @param variables - Products variables.
+ * @returns Paginated list of products.
  */
 export async function getProductsByQuery(
   admin: authenticateAdmin,
-  pagination: ProductsPagination,
-  sorting: any
+  variables: ProductsVariables,
 ): Promise<Products> {
   const data = await adminGraphqlRequest(admin, GET_PRODUCTS_BY_QUERY, {
     variables: {
       query: "tag:fasteditor",
-      ...sorting,
-      ...pagination
+      ...variables
     },
   });
 
@@ -43,44 +41,60 @@ export async function getProductVariantSku(admin: unauthenticatedAdmin, variantI
 }
 
 /**
- * Parses pagination parameters from the request query.
+ * Builds Shopify GraphQL pagination and filtering variables from the request URL.
  *
- * @param request - Incoming HTTP request
- * @param defaultLimit - Default number of items per page
- * @returns Pagination object to use in GraphQL queries
- * @throws Error if limit is invalid
+ * @param request - Incoming HTTP request object from Remix.
+ * @param defaultLimit - Default number of products to return if no limit is provided in the query.
+ * @returns GraphQL-compatible pagination and sorting variables.
+ * @throws Error if the limit parameter is invalid (non-numeric or <= 0).
  */
-export function pagination(request: Request, defaultLimit: number): ProductsPagination {
+export function buildProductsVariables(
+  request: Request,
+  defaultLimit: number,
+): ProductsVariables {
   const url = new URL(request.url);
-  const searchParam = url.searchParams;
-  const rel = searchParam.get("rel");
-  const cursor = searchParam.get("cursor")?.trim() || null;
-  const limitParam = searchParam.get("limit");
+  const searchParams = url.searchParams;
+
+  const cursor = searchParams.get("cursor")?.trim() || null;
+  const rel = searchParams.get("rel");
+  const limitParam = searchParams.get("limit");
+  const rawQuery = searchParams.get("query")?.trim() || "";
+  const sortParam = searchParams.get("order") || "title asc";
+
   const limit = Number(limitParam ?? defaultLimit);
-
-  const variables: ProductsPagination = {};
-
   if (isNaN(limit) || limit <= 0) {
     throw new Error("Invalid pagination limit");
   }
 
+  const [sortKey, sortDirection] = sortParam.split(" ");
+  const sortKeyMap: Record<string, string> = {
+    title: "TITLE",
+  };
+  const gqlSortKey = sortKeyMap[sortKey] || "TITLE";
+  const reverse = sortDirection !== "asc";
+
+  // Ensure query includes "tag:fasteditor"
+  const formattedQuery = rawQuery.includes("tag:fasteditor")
+    ? rawQuery
+    : rawQuery
+      ? `(${rawQuery}) tag:fasteditor`
+      : "tag:fasteditor";
+
+  const variables: ProductsVariables = {
+    sortKey: gqlSortKey,
+    reverse,
+    query: formattedQuery,
+  };
+
   switch (rel) {
     case "next":
-      if (cursor) {
-        variables.first = limit;
-        variables.after = cursor;
-      } else {
-        variables.first = limit;
-      }
+      variables.first = limit;
+      if (cursor) variables.after = cursor;
       break;
 
     case "previous":
-      if (cursor) {
-        variables.last = limit;
-        variables.before = cursor;
-      } else {
-        variables.last = limit;
-      }
+      variables.last = limit;
+      if (cursor) variables.before = cursor;
       break;
 
     default:
