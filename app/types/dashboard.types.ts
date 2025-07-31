@@ -1,4 +1,4 @@
-import type {Products} from "./products.types";
+import type {PageInfo, Product} from "./products.types";
 
 interface ShopSettings {
   locale: string | null;
@@ -8,7 +8,8 @@ interface ShopSettings {
 }
 
 export interface DashboardData {
-  productsData: Products;
+  products: { node: Product }[];
+  pageInfo: PageInfo;
   shopName: string;
   shopSettings: ShopSettings;
   productsLimit: number;

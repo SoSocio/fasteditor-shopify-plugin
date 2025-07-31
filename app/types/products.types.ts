@@ -15,6 +15,7 @@ export interface Product {
   id: string;
   title: string;
   legacyResourceId: string;
+  status: string;
   featuredMedia?: {
     preview: {
       image: {
@@ -28,19 +29,25 @@ export interface Product {
   };
 }
 
-export interface Products {
-  edges: { node: Product }[];
-  pageInfo: {
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-    startCursor: string | null;
-    endCursor: string | null;
-  };
+export interface PageInfo {
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string | null;
+  endCursor: string | null;
 }
 
-export interface ProductsPagination {
+
+export interface Products {
+  edges: { node: Product }[];
+  pageInfo: PageInfo;
+}
+
+export interface ProductsVariables {
   first?: number;
   after?: string;
   last?: number;
   before?: string;
+  sortKey?: string;
+  reverse?: boolean;
+  query?: string;
 }
