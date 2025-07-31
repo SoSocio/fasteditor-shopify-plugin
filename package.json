@@ -4,9 +4,11 @@
   "scripts": {
     "build": "remix vite:build",
     "dev": "shopify app dev",
+    "dev:local": "shopify app dev --config shopify.app.dev.toml",
     "config:link": "shopify app config link",
     "generate": "shopify app generate",
     "deploy": "shopify app deploy",
+    "deploy:local": "shopify app deploy --config shopify.app.dev.toml",
     "config:use": "shopify app config use",
     "env": "shopify app env",
     "start": "remix-serve ./build/server/index.js",

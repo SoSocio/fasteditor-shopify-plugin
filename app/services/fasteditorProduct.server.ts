@@ -59,7 +59,7 @@ export async function fetchProductDataFromFastEditor(
 export async function fetchRawFastEditorResponse(
   url: string
 ): Promise<unknown> {
-  const response = await fetch(url, { method: "GET" });
+  const response = await fetch(url, {method: "GET"})
 
   if (!response.ok) {
     console.warn(`[${ENDPOINT}] FastEditor request failed with status ${response.status}`);
@@ -85,7 +85,7 @@ export function parseFastEditorProduct(
 
   if (!product) {
     console.warn(`[${ENDPOINT}] FastEditor returned empty product array`);
-    throw new Response("FastEditor returned empty product data.", { status: 422 });
+    throw new Response("FastEditor returned empty product data.", {status: 422});
   }
 
   return product as ProductDataFromFastEditor;

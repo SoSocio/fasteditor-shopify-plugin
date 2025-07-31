@@ -21,12 +21,11 @@ const ShopIntegrationCard: React.FC<IntegrationCardProps> = (
         <BlockStack gap="200">
           <Text as="h3" variant="headingMd">Connect Your Store to FastEditor</Text>
           <Text as="p" variant="bodyMd">
-            To connect your store with FastEditor, please enter the API Key and Domain provided to
-            you below, then
-            click <strong>Connect</strong>.
-            If the connection is successful, you will see a confirmation message and the status will
-            update
-            to <strong>Connected</strong>.
+            To connect your store, enter your FastEditor API Key and Domain below, then
+            click <strong>Connect</strong>. If the connection is successful, you will see a
+            confirmation message and the status will update to <strong>Connected</strong>. If you
+            have any issues while connecting FastEditor, please contact our support. You’ll
+            find the email at the bottom of the page.
           </Text>
         </BlockStack>
         {children}

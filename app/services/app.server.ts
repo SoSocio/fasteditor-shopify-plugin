@@ -9,7 +9,7 @@ import type {
 import {GET_APP_BY_KEY} from "../graphql/app/getAppByKey";
 import {APP_CLIENT_ID} from "../constants";
 import {GET_CURRENT_APP_INSTALLATION} from "../graphql/app/getCurrentAppInstallation";
-import {CREATE_APP_DATA_METAFIELD} from "../graphql/app/createAppDataMetafield";
+import {METAFIELD_SET} from "../graphql/metafields/metafieldsSet";
 import {APP_INSTALLATION_ID_FRAGMENT} from "../graphql/app/fragments/appInstallationIdFragment";
 
 /**
@@ -262,9 +262,9 @@ async function setPaidMetafield(
 ): Promise<any> {
   console.info("[setPaidMetafield] Setting paid metafield with value:", value);
 
-  return await adminGraphqlRequest(admin, CREATE_APP_DATA_METAFIELD, {
+  return await adminGraphqlRequest(admin, METAFIELD_SET, {
     variables: {
-      metafieldsSetInput: [
+      metafields: [
         {
           namespace: "appInstallation",
           key: "paid",

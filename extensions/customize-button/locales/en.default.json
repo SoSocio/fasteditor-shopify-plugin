@@ -1,3 +1,17 @@
 {
-  "customize-button": "Customize"
+  "blocks": {
+    "customize-button": {
+      "settings": {
+        "bg_color": "Button background color",
+        "text": "Button text",
+        "text_color": "Text color",
+        "text_size": "Font size",
+        "text_font": "Text font",
+        "border_width": "Border width",
+        "border_color": "Border color",
+        "border_radius": "Border radius",
+        "enable_cart_redirect": "Redirect to cart page after adding to cart"
+      }
+    }
+  }
 }

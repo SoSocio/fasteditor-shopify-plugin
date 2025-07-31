@@ -1,7 +1,8 @@
 import type {ActionFunctionArgs} from "@remix-run/node";
+import type {ShopifyOrder} from "../types/order.types";
 import {authenticate} from "../shopify.server";
 import {OrderProcessor} from "../services/orderProcessor.server";
-import type {ShopifyOrder} from "../types/order.types";
+import {handleShopBilling} from "../services/usageBilling.server";
 
 /**
  * Handles the `orders/paid` webhook from Shopify.
@@ -13,13 +14,18 @@ import type {ShopifyOrder} from "../types/order.types";
  * Returns HTTP 200 even on failure to avoid redundant retries by Shopify.
  */
 export const action = async ({request}: ActionFunctionArgs): Promise<Response> => {
-  const {shop, topic, payload} = await authenticate.webhook(request);
+  const {admin, shop, topic, payload} = await authenticate.webhook(request);
 
   console.info(`[${topic}] Webhook received for shop: ${shop}`);
 
+  if (!admin) {
+    console.error(`[${topic}] Missing admin context for shop: ${shop}`);
+    throw new Response("Admin context is missing", {status: 200});
+  }
+
   if (!payload) {
     console.error(`[${topic}] Missing order data in webhook payload`);
-    return new Response("No order data", {status: 400});
+    return new Response("No order data", {status: 200});
   }
 
   try {
@@ -30,7 +36,9 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
     const orderProcessor = await OrderProcessor.forShop(shop);
 
     // Process FastEditor customizations in the order
-    await orderProcessor.processPaidOrder(order, shop);
+    await orderProcessor.processPaidOrder(admin, order, shop);
+
+    await handleShopBilling(admin, shop);
 
     return new Response("OK", {status: 200});
   } catch (error) {

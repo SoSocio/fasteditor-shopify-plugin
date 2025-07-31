@@ -5,7 +5,8 @@ export const ErrorBanner = () => {
   return (
     <Banner
       title="We couldn't load your dashboard data"
-      action={{content: "Go back to home", url: "/app"}}
+      action={{ content: "Back to Getting Started", url: "/app" }}
+      secondaryAction={{ content: "Check Integration Settings", url: "/app/settings" }}
       tone="warning"
     >
       <BlockStack gap="200">
