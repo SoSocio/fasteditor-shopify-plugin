@@ -4,7 +4,7 @@ import type {LoaderFunctionArgs} from "@remix-run/node";
 import {BlockStack, Card, Layout, Page} from "@shopify/polaris";
 import {ProductsTableInfo} from "../components/DashboardPage/ProductsTableInfo";
 import {ProductsTable} from "../components/DashboardPage/ProductsTable";
-import ErrorBanner from "../components/DashboardPage/ErrorBanner";
+import {ErrorBanner} from "../components/DashboardPage/ErrorBanner";
 
 import type {DashboardData} from "../types/dashboard.types";
 import {authenticate} from "../shopify.server";
