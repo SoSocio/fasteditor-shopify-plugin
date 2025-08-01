@@ -1,6 +1,6 @@
 import type {ActionFunctionArgs} from "@remix-run/node";
 import {authenticate} from "../shopify.server";
-import {updatePaidStatusMetafield} from "../services/app.server";
+import {setAppAvailabilityMetafield, setPaidMetafield} from "../services/app.server";
 
 /**
  * Handles Shopify app subscription webhooks and updates the "paid" metafield.
@@ -21,8 +21,8 @@ export const action = async ({request}: ActionFunctionArgs): Promise<null> => {
   const isActive = payload.app_subscription.status === "ACTIVE" ? "true" : "false";
 
   try {
-    const result = await updatePaidStatusMetafield(admin, isActive);
-    console.info(`[${topic}] Metafield updated successfully:`, result);
+    await setPaidMetafield(admin, isActive);
+    await setAppAvailabilityMetafield(admin, "true")
   } catch (error) {
     console.error(`[${topic}] Failed to update metafield:`, error);
   }
