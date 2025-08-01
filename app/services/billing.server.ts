@@ -187,8 +187,10 @@ function getAppRecurringPricing(subscription: AppSubscription): AppRecurringPric
   );
 
   const pricing = line?.plan.pricingDetails as RecurringAppPlan;
+  const lineId = line?.id as string;
 
   return {
+    id: lineId,
     price: pricing?.price
   }
 }
@@ -199,14 +201,16 @@ function getAppRecurringPricing(subscription: AppSubscription): AppRecurringPric
  * @param subscription - Single AppSubscription
  * @returns Usage pricing object with balance, capped amount, and terms
  */
-function getAppUsagePricing(subscription: AppSubscription): AppUsagePricing {
+export function getAppUsagePricing(subscription: AppSubscription): AppUsagePricing {
   const line = subscription.lineItems?.find(
     (item) => item.plan.pricingDetails.__typename === "AppUsagePricing"
   );
 
   const pricing = line?.plan.pricingDetails as UsageAppPlan;
+  const lineId = line?.id as string;
 
   return {
+    id: lineId,
     balanceUsed: {
       amount: pricing?.balanceUsed?.amount ?? 0,
       currencyCode: pricing?.balanceUsed?.currencyCode ?? "USD",
@@ -233,6 +237,7 @@ function transformSubscription(subscription: AppSubscription): ActiveSubscriptio
     trialDays: subscription.trialDays,
     createdAt: subscription.createdAt,
     currentPeriodEnd: subscription.currentPeriodEnd,
+    usageLineItemId: getAppUsagePricing(subscription).id,
     appRecurringPricing: getAppRecurringPricing(subscription),
     appUsagePricing: getAppUsagePricing(subscription),
   };

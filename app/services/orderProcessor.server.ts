@@ -9,7 +9,7 @@ import {
 import {FEE_RATE, MIN_FEE_EUR} from "../constants";
 import {convertToEUR} from "./currency.server";
 import type {authenticateAdmin} from "../types/app.types";
-import {METAFIELD_SET} from "../graphql/metafields/metafieldsSet";
+import {setMetafield} from "./app.server";
 
 /**
  * Service responsible for processing Shopify orders with items customized via FastEditor.
@@ -294,19 +294,7 @@ export class OrderProcessor {
     imagesUrl: string[]
   ): Promise<void> {
     try {
-      await admin.graphql(METAFIELD_SET, {
-        variables: {
-          metafields: [
-            {
-              key: "order_images",
-              namespace: "fasteditor",
-              ownerId: orderId,
-              type: "list.url",
-              value: JSON.stringify(imagesUrl),
-            },
-          ],
-        },
-      });
+      await setMetafield(admin, "order_images", "list.url", JSON.stringify(imagesUrl), orderId)
 
       console.info(`[orderImagesMetafieldSet] Successfully set order_images metafield for order ${orderId}`, {
         count: imagesUrl.length,
