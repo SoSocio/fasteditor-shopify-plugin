@@ -4,23 +4,39 @@ import {BlockStack, Box, Button, Card, Layout, List, Page, Text} from "@shopify/
 import {authenticate} from "../shopify.server";
 import {useLoaderData} from "@remix-run/react";
 import {billingRequire} from "../services/billing.server";
+import {getAppMetafield} from "../services/app.server";
+import {UsageLimitBannerWithAction} from "../components/UsageLimitBannerWithAction";
 
 const ENDPOINT = "/app/_index";
+
+interface GettingStartedLoader {
+  shopName: string;
+  appAvailability: string;
+}
 
 /**
  * Loader for the Getting Started page.
  */
-export const loader = async ({request}: LoaderFunctionArgs): Promise<string> => {
+export const loader = async ({request}: LoaderFunctionArgs): Promise<GettingStartedLoader> => {
   console.info(`[${ENDPOINT}] Getting Started Loader`);
 
   const {admin, billing, session} = await authenticate.admin(request);
   await billingRequire(admin, billing, session.shop);
 
-  return session.shop.replace(".myshopify.com", "")
+  const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability")
+
+  return {
+    shopName: session.shop.replace(".myshopify.com", ""),
+    appAvailability: appAvailability?.value || "false"
+  }
 };
 
 const Index = () => {
-  const shopName = useLoaderData<string>()
+  const {shopName, appAvailability} = useLoaderData<GettingStartedLoader>()
+
+  if (appAvailability === "false") {
+    return <UsageLimitBannerWithAction shopName={shopName}/>
+  }
 
   return (
     <Page title="Getting Started">

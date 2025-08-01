@@ -1,10 +1,10 @@
 import prisma from '../db.server';
-import type {ShopInfo} from "../types/shop.types";
+import type {ShopInfo, ShopSettingsCore} from "../types/shop.types";
 
 /**
  * Interface representing the FastEditor settings for a specific shop.
  */
-export interface ShopSettings {
+export interface ShopSettings extends ShopSettingsCore{
   id: string;
   shop: string;
   shopifySubscriptionId: string | null;
@@ -13,8 +13,6 @@ export interface ShopSettings {
   fastEditorApiKey: string | null;
   fastEditorDomain: string | null;
   language: string | null;
-  country: string | null;
-  currency: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -27,9 +27,11 @@ async function handleFastEditorAutoAddToCart(button) {
   const urlParams = new URLSearchParams(window.location.search);
   const fasteditorCartUrl = urlParams.get("fe_cart_url");
   const originalText = button.innerText;
-  const enableCartRedirect = button.dataset.redirect
+  const enableCartRedirect = button.dataset.redirect === "true";
 
   if (!fasteditorCartUrl) return;
+
+  console.log("enableCartRedirect", enableCartRedirect);
 
   try {
     setButtonState(button, "Adding to cart...");
@@ -63,9 +65,11 @@ async function handleFastEditorAutoAddToCart(button) {
       setButtonState(button, originalText, false);
     }, 3000);
 
-    if (enableCartRedirect === true) {
+    if (enableCartRedirect) {
+      console.log("enableCartRedirect yes", enableCartRedirect);
       window.location.href = "/cart";
     } else {
+      console.log("enableCartRedirect no", enableCartRedirect);
       location.reload();
     }
 

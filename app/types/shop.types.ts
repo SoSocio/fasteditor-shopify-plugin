@@ -6,3 +6,8 @@ export interface ShopInfo {
 export interface Shop {
   shop: string;
 }
+
+export interface ShopSettingsCore {
+  country: string | null;
+  currency: string | null;
+}

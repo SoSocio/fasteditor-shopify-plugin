@@ -1,11 +1,10 @@
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useFetcher, useLoaderData} from "@remix-run/react";
 import {BlockStack, Layout, Page,} from "@shopify/polaris";
 import ShopIntegrationCard from "../components/SettingsPage/ShopIntegrationCard";
 import ShopIntegrationForm from "../components/SettingsPage/ShopIntegrationForm";
 
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
-import type {FastEditorShopSettings} from "../types/fastEditor.types";
 import type {IntegrationActionData, IntegrationFormValues} from "../types/integration.types";
 import {authenticate} from "../shopify.server";
 import {billingRequire} from "../services/billing.server";
@@ -16,21 +15,34 @@ import {
   validateFormData
 } from "../services/fastEditorFactory.server";
 import {createOrderMetafieldDefinition} from "../services/metafield.server";
+import {getAppMetafield} from "../services/app.server";
+import {UsageLimitBannerWithAction} from "../components/UsageLimitBannerWithAction";
 
 const ENDPOINT = "/app/settings";
 
+export interface SettingsLoader {
+  fastEditorApiKey: string;
+  fastEditorDomain: string;
+  appAvailability: string;
+  shopName: string;
+}
+
 export const loader = async (
   {request}: LoaderFunctionArgs
-): Promise<Response | FastEditorShopSettings> => {
+): Promise<Response | SettingsLoader> => {
   const {admin, billing, session} = await authenticate.admin(request);
   await billingRequire(admin, billing, session.shop);
 
   try {
     const shopSettings = await getFastEditorShopSettings(session.shop)
 
+    const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability")
+
     return {
-      fastEditorApiKey: shopSettings?.fastEditorApiKey ?? "",
-      fastEditorDomain: shopSettings?.fastEditorDomain ?? "",
+      fastEditorApiKey: shopSettings?.fastEditorApiKey || "",
+      fastEditorDomain: shopSettings?.fastEditorDomain || "",
+      appAvailability: appAvailability?.value || "false",
+      shopName: session.shop.replace(".myshopify.com", ""),
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
@@ -41,7 +53,7 @@ export const loader = async (
   }
 };
 
-export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
+export const action = async ({request}: ActionFunctionArgs): Promise<Response> => {
   const {admin, session} = await authenticate.admin(request);
 
   try {
@@ -100,7 +112,12 @@ export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
 };
 
 const Index = () => {
-  const {fastEditorApiKey, fastEditorDomain} = useLoaderData<FastEditorShopSettings>()
+  const {
+    fastEditorApiKey,
+    fastEditorDomain,
+    appAvailability,
+    shopName
+  } = useLoaderData<SettingsLoader>()
   const fetcher = useFetcher<IntegrationActionData>();
   const [formValues, setFormValues] = useState<IntegrationFormValues>({
     apiKey: fastEditorApiKey ?? "",
@@ -145,6 +162,10 @@ const Index = () => {
         method: "POST"
       });
   }, [formValues, fetcher]);
+
+  if (appAvailability === "false") {
+    return <UsageLimitBannerWithAction shopName={shopName}/>
+  }
 
   return (
     <Page fullWidth>

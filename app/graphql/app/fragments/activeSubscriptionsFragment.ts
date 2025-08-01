@@ -32,21 +32,6 @@ export const ACTIVE_SUBSCRIPTIONS_FRAGMENT = `
             }
           }
         }
-        usageRecords(first: 10) {
-          nodes {
-            id
-            createdAt
-            description
-            idempotencyKey
-            price {
-              amount
-              currencyCode
-            }
-            subscriptionLineItem {
-              id
-            }
-          }
-        }
       }
     }
   }

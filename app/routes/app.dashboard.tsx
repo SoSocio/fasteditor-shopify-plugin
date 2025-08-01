@@ -1,34 +1,63 @@
 import React from "react";
 import {useLoaderData} from "@remix-run/react";
 import type {LoaderFunctionArgs} from "@remix-run/node";
+import type {PageInfo, Product} from "../types/products.types";
+import type {ShopSettingsCore} from "../types/shop.types";
 import {BlockStack, Card, Layout, Page} from "@shopify/polaris";
-import {ProductsTable} from "../components/DashboardPage/ProductsTable";
 import {ProductsTableInfo} from "../components/DashboardPage/ProductsTableInfo";
+import {ProductsTable} from "../components/DashboardPage/ProductsTable";
 
-import type {DashboardData} from "../types/dashboard.types";
 import {authenticate} from "../shopify.server";
-import {getProductsByQuery, pagination} from "../services/products.server";
+import {buildProductsVariables, getProductsByQuery,} from "../services/products.server";
 import {getShopSettings} from "../models/shopSettings.server";
-import ErrorBanner from "../components/DashboardPage/ErrorBanner";
 import {billingRequire} from "../services/billing.server";
+import {ErrorBanner} from "../components/DashboardPage/ErrorBanner";
+import {getAppMetafield} from "../services/app.server";
+import {UsageLimitBannerWithAction} from "../components/UsageLimitBannerWithAction";
 
 const ENDPOINT = "/app/dashboard";
+
+export interface DashboardCoreLoader {
+  products: { node: Product }[];
+  pageInfo: PageInfo;
+  shopName: string;
+  shopSettings: ShopSettingsCore;
+  productsLimit: number;
+}
+
+export interface DashboardLoader extends DashboardCoreLoader {
+  appAvailability: string;
+}
 
 /**
  * Loader function for the Dashboard page.
  */
 export const loader = async (
   {request}: LoaderFunctionArgs
-): Promise<DashboardData | Response> => {
+): Promise<DashboardLoader | Response> => {
   console.info(`[${ENDPOINT}] Dashboard Loader`);
 
   const {admin, session, billing} = await authenticate.admin(request);
   await billingRequire(admin, billing, session.shop);
 
   try {
-    const limit = 10;
-    const productsPagination = pagination(request, limit);
-    const productsData = await getProductsByQuery(admin, productsPagination);
+    const limit = 2;
+
+    const url = new URL(request.url);
+    const searchParams = url.searchParams;
+    const selectedView = searchParams.get("selectedView") || "all";
+
+    const productsVariables = buildProductsVariables(request, limit);
+    const productsData = await getProductsByQuery(admin, productsVariables);
+
+    const allProducts = productsData.edges;
+
+    const products =
+      selectedView === "all"
+        ? allProducts
+        : allProducts.filter((item) =>
+          item.node.status.toLowerCase() === selectedView
+        );
 
     const shopSettings = await getShopSettings(session.shop);
     if (!shopSettings) {
@@ -38,16 +67,18 @@ export const loader = async (
 
     const shopName = session.shop.replace(".myshopify.com", "");
 
+    const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability")
+
     return {
-      productsData,
+      products: products || [],
+      pageInfo: productsData.pageInfo,
+      productsLimit: limit,
       shopName,
       shopSettings: {
-        locale: shopSettings.language,
+        country: shopSettings.language,
         currency: shopSettings.currency,
-        fastEditorApiKey: shopSettings?.fastEditorApiKey,
-        fastEditorDomain: shopSettings?.fastEditorDomain,
       },
-      productsLimit: limit,
+      appAvailability: appAvailability?.value || "false"
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
@@ -62,26 +93,20 @@ export const loader = async (
  * Renders the Dashboard UI for managing FastEditor-enabled products.
  */
 const Dashboard = () => {
-  const data = useLoaderData<DashboardData>();
-  const missingRequiredData =
-    !data?.productsData ||
-    !data?.shopSettings ||
-    !data?.shopSettings?.fastEditorApiKey ||
-    !data?.shopSettings?.fastEditorDomain
+  const data = useLoaderData<DashboardLoader>();
+  const {products, pageInfo, shopName, shopSettings, productsLimit, appAvailability} = data;
 
-  if (missingRequiredData) {
-    return (
-      <Page fullWidth>
-        <Layout>
-          <Layout.Section>
-            <ErrorBanner/>
-          </Layout.Section>
-        </Layout>
-      </Page>
-    );
+  if (appAvailability === "false") {
+    return <UsageLimitBannerWithAction shopName={shopName}/>
   }
 
-  const {productsData, shopName, shopSettings, productsLimit} = data;
+  if (!pageInfo) {
+    return (
+      <Page fullWidth>
+        <ErrorBanner/>
+      </Page>
+    )
+  }
 
   return (
     <Page fullWidth>
@@ -91,10 +116,11 @@ const Dashboard = () => {
             <BlockStack gap="400">
               <ProductsTableInfo/>
               <ProductsTable
-                productsData={productsData}
+                products={products}
+                pageInfo={pageInfo}
+                productsLimit={productsLimit}
                 shopName={shopName}
                 shopSettings={shopSettings}
-                productsLimit={productsLimit}
               />
             </BlockStack>
           </Card>

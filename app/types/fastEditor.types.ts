@@ -1,8 +1,3 @@
-export interface FastEditorShopSettings {
-  fastEditorApiKey: string;
-  fastEditorDomain: string;
-}
-
 export interface FastEditorIntegrationData {
   URL: string;
 }

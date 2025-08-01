@@ -20,6 +20,7 @@ export interface UnbilledOrderItem {
 }
 
 export interface AppRecurringPricing {
+  id: string;
   price: {
     amount: number;
     currencyCode: string;
@@ -27,6 +28,7 @@ export interface AppRecurringPricing {
 }
 
 export interface AppUsagePricing {
+  id: string;
   balanceUsed: {
     amount: number;
     currencyCode: string;
@@ -45,6 +47,7 @@ export interface ActiveSubscription {
   trialDays: number;
   createdAt: string;
   currentPeriodEnd: string;
+  usageLineItemId: string;
   appRecurringPricing: AppRecurringPricing;
   appUsagePricing: AppUsagePricing;
 }

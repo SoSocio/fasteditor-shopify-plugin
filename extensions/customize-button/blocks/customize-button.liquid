@@ -23,6 +23,7 @@
       class="fasteditor__button block-{{ block.id }}"
       data-shop="{{ shop.permanent_domain }}"
       data-handle="{{ product.handle }}"
+      data-availability="{{ app.metafields.fasteditor_app.availability }}"
       data-redirect="{{ block.settings.enable_cart_redirect }}"
       aria-label="{{ block.settings.text | escape }}"
       type="button"
@@ -36,6 +37,12 @@
   document.addEventListener("DOMContentLoaded", async () => {
     const button = document.querySelector("#fasteditor-{{ block.id }}");
     if (!button) return;
+
+    const button_availability = button.dataset.availability;
+    if (button_availability === "false") {
+       button.setAttribute("disabled", "true")
+       return;
+    }
 
     const originalText = button.textContent;
 
@@ -51,7 +58,7 @@
 {
   "name": "FastEditor Button",
   "target": "section",
-  "available_if": "{{ app.metafields.appInstallation.paid }}",
+  "available_if": "{{ app.metafields.fasteditor_app.paid }}",
   "enabled_on": {
     "templates": [
       "product"

@@ -6,6 +6,8 @@ export const GET_PRODUCTS_BY_QUERY = `
     $last: Int
     $before: String
     $query: String
+    $sortKey: ProductSortKeys
+    $reverse: Boolean
   ) {
     products(
       first: $first
@@ -13,6 +15,8 @@ export const GET_PRODUCTS_BY_QUERY = `
       last: $last
       before: $before
       query: $query
+      sortKey: $sortKey
+      reverse: $reverse
     ) {
       edges {
         cursor
@@ -20,6 +24,7 @@ export const GET_PRODUCTS_BY_QUERY = `
           id
           title
           legacyResourceId
+          status
 
           featuredMedia {
             preview {
