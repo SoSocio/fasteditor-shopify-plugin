@@ -1,4 +1,4 @@
-import type {DashboardData} from "../../types/dashboard.types";
+import type {DashboardCoreLoader} from "../../routes/app.dashboard";
 import {Fragment} from "react";
 import {
   Box,
@@ -35,7 +35,7 @@ export const ProductsTable = (
     shopName,
     shopSettings,
     productsLimit
-  }: DashboardData) => {
+  }: DashboardCoreLoader) => {
 
   const {
     mode,
@@ -118,7 +118,7 @@ export const ProductsTable = (
                 <IndexTable.Cell>
                   <Text as="span">
                     {variant.price
-                      ? formatCurrency(parseFloat(variant.price), shopSettings.currency, shopSettings.locale)
+                      ? formatCurrency(parseFloat(variant.price), shopSettings.currency, shopSettings.country)
                       : "-"}
                   </Text>
                 </IndexTable.Cell>
