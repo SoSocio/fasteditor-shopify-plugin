@@ -1,8 +1,9 @@
-import type {DashboardData} from "../../types/dashboard.types";
+import type {DashboardCoreLoader} from "../../routes/app.dashboard";
 import {Fragment} from "react";
 import {
   Box,
   EmptySearchResult,
+  IndexFilters,
   IndexTable,
   InlineStack,
   Link,
@@ -10,32 +11,51 @@ import {
   Thumbnail
 } from "@shopify/polaris";
 import {ImageIcon} from "@shopify/polaris-icons";
-import {usePagination} from "../../hooks/usePagination";
+import {useProductsTableControls} from "../../hooks/useProductsTableControls";
+
+/**
+ * Formats number to localized currency.
+ *
+ * @param amount - Raw numeric value
+ * @param currencyCode - ISO 4217 currency code
+ * @param locale - BCP 47 locale string
+ * @returns Localized currency string
+ */
+function formatCurrency(amount: number, currencyCode: string | null, locale: string | null): string {
+  return new Intl.NumberFormat(locale || "en-US", {
+    style: "currency",
+    currency: currencyCode || "USD",
+  }).format(amount);
+}
 
 export const ProductsTable = (
   {
-    productsData,
+    products,
+    pageInfo,
     shopName,
     shopSettings,
     productsLimit
-  }: DashboardData) => {
-  const products = productsData.edges
-  const pageInfo = productsData.pageInfo;
+  }: DashboardCoreLoader) => {
+
+  const {
+    mode,
+    setMode,
+    sortOptions,
+    sortSelected,
+    onSortChange,
+    pagination,
+    queryValue,
+    onQueryChange,
+    onQueryClear,
+    tabs,
+    selectedTab,
+    setSelectedTab,
+    loading
+  } = useProductsTableControls({products, pageInfo, productsLimit});
 
   const resourceName = {
     singular: "product",
     plural: "products",
-  };
-
-  const formatCurrency = (
-    amount: number,
-    currencyCode = shopSettings.currency,
-    locale = shopSettings.locale
-  ) => {
-    return new Intl.NumberFormat(locale ?? "en-US", {
-      style: "currency",
-      currency: currencyCode ?? "USD",
-    }).format(amount);
   };
 
   const emptyStateMarkup = (
@@ -52,9 +72,10 @@ export const ProductsTable = (
       return (
         <Fragment key={product.id}>
           <IndexTable.Row
-            rowType="data"
             id={`Product-${productIndex}`}
-            position={productIndex}>
+            position={productIndex}
+            rowType="data"
+          >
             <IndexTable.Cell>
               <InlineStack blockAlign="center" gap="200">
                 <Thumbnail
@@ -71,6 +92,7 @@ export const ProductsTable = (
 
           {product.variants.nodes.map((variant, variantIndex) => {
             const variantUrl = `https://admin.shopify.com/store/${shopName}/products/${product.legacyResourceId}/variants/${variant.legacyResourceId}`;
+
             return (
               <IndexTable.Row
                 key={`${product.id}-${variantIndex}`}
@@ -86,7 +108,7 @@ export const ProductsTable = (
                       size="small"
                     />
                     <Link removeUnderline url={variantUrl} target="_top">
-                      {variant.title}
+                      {variant.title !== "Default Title" ? variant.title : product.title}
                     </Link>
                   </InlineStack>
                 </IndexTable.Cell>
@@ -95,7 +117,9 @@ export const ProductsTable = (
                 </IndexTable.Cell>
                 <IndexTable.Cell>
                   <Text as="span">
-                    {variant.price ? formatCurrency(parseFloat(variant.price)) : "-"}
+                    {variant.price
+                      ? formatCurrency(parseFloat(variant.price), shopSettings.currency, shopSettings.country)
+                      : "-"}
                   </Text>
                 </IndexTable.Cell>
                 <IndexTable.Cell>
@@ -110,8 +134,7 @@ export const ProductsTable = (
       )
     },
   );
-
-  const pagination = usePagination({pageInfo, productsLimit});
+  const onHandleCancel = () => {};
 
   return (
     <Box
@@ -121,6 +144,29 @@ export const ProductsTable = (
       borderWidth="0165"
       borderColor="border-brand"
     >
+      <IndexFilters
+        tabs={tabs}
+        selected={selectedTab}
+        onSelect={setSelectedTab}
+        sortOptions={sortOptions}
+        sortSelected={sortSelected}
+        onSort={onSortChange}
+        queryValue={queryValue}
+        queryPlaceholder="Searching in all"
+        onQueryChange={onQueryChange}
+        onQueryClear={onQueryClear}
+        filters={[]}
+        onClearAll={() => {}}
+        mode={mode}
+        setMode={setMode}
+        canCreateNewView={false}
+        cancelAction={{
+          onAction: onHandleCancel,
+          disabled: false,
+          loading: false,
+        }}
+        loading={loading}
+      />
       <IndexTable
         resourceName={resourceName}
         itemCount={products.length}

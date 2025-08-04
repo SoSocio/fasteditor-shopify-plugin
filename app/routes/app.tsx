@@ -7,6 +7,7 @@ import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
 
 import {authenticate} from "../shopify.server";
 import {BlockStack, Box, Link as PolarisLink, Text} from "@shopify/polaris";
+import {SUPPORT_EMAIL} from "../constants";
 
 export const links = () => [{rel: "stylesheet", href: polarisStyles}];
 
@@ -15,7 +16,7 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
 
   return {
     apiKey: process.env.SHOPIFY_API_KEY || "",
-    supportEmail: process.env.SUPPORT_EMAIL || ""
+    supportEmail: SUPPORT_EMAIL
   };
 };
 
