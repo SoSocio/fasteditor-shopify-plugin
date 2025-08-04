@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect} from "react";
 import {useFetcher, useLoaderData} from "@remix-run/react";
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import type {ActiveSubscription} from "../types/billing.types";
@@ -73,6 +73,11 @@ export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
 const Subscription = () => {
   const fetcher = useFetcher();
   const {subscription, shopName, appAvailability} = useLoaderData<any>()
+  const [cancelSubmitting, setCancelSubmitting] = React.useState(false);
+
+  useEffect(() => {
+    setCancelSubmitting(fetcher.state !== "idle")
+  }, [fetcher, fetcher.state]);
 
   const onCancelSubscription = useCallback(async () => {
     fetcher.submit(
@@ -87,6 +92,7 @@ const Subscription = () => {
         <button
           variant="primary"
           onClick={onCancelSubscription}
+          disabled={cancelSubmitting}
         >
           Cancel
         </button>
