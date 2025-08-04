@@ -1,13 +1,11 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useFetcher, useLoaderData} from "@remix-run/react";
-import {BlockStack, Layout, Page,} from "@shopify/polaris";
-import ShopIntegrationCard from "../components/SettingsPage/ShopIntegrationCard";
-import ShopIntegrationForm from "../components/SettingsPage/ShopIntegrationForm";
-
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import type {IntegrationActionData, IntegrationFormValues} from "../types/integration.types";
+
+import {Page, Layout, BlockStack} from "@shopify/polaris";
+
 import {authenticate} from "../shopify.server";
-import {billingRequire} from "../services/billing.server";
 import {
   getFastEditorShopSettings,
   parseFormData,
@@ -16,7 +14,12 @@ import {
 } from "../services/fastEditorFactory.server";
 import {createOrderMetafieldDefinition} from "../services/metafield.server";
 import {getAppMetafield} from "../services/app.server";
-import {UsageLimitBannerWithAction} from "../components/UsageLimitBannerWithAction";
+
+import ShopIntegrationCard from "../components/SettingsPage/ShopIntegrationCard";
+import ShopIntegrationForm from "../components/SettingsPage/ShopIntegrationForm";
+import {
+  UsageLimitBannerWithAction
+} from "../components/banners/UsageLimit/UsageLimitBannerWithAction";
 
 const ENDPOINT = "/app/settings";
 
@@ -30,12 +33,10 @@ export interface SettingsLoader {
 export const loader = async (
   {request}: LoaderFunctionArgs
 ): Promise<Response | SettingsLoader> => {
-  const {admin, billing, session} = await authenticate.admin(request);
-  await billingRequire(admin, billing, session.shop);
+  const {admin, session} = await authenticate.admin(request);
 
   try {
     const shopSettings = await getFastEditorShopSettings(session.shop)
-
     const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability")
 
     return {
@@ -78,7 +79,6 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
     }
 
     await setupFastEditorIntegration(admin, session.shop, apiKey, apiDomain);
-
     await createOrderMetafieldDefinition(admin)
 
     return new Response(JSON.stringify({
@@ -117,15 +117,18 @@ const Index = () => {
     fastEditorDomain,
     appAvailability,
     shopName
-  } = useLoaderData<SettingsLoader>()
+  } = useLoaderData<typeof loader>()
   const fetcher = useFetcher<IntegrationActionData>();
+
   const [formValues, setFormValues] = useState<IntegrationFormValues>({
     apiKey: fastEditorApiKey ?? "",
     apiDomain: fastEditorDomain ?? "",
   });
+
   const [isApiKeyError, setApiKeyError] = useState<boolean>(false);
   const [isApiDomainError, setApiDomainError] = useState<boolean>(false);
   const [fastEditorError, setFastEditorError] = useState<boolean>(false);
+
   const formErrors = fetcher.data?.body?.errors
 
   useEffect(() => {
