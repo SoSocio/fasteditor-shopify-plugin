@@ -1,6 +1,7 @@
 import type {ActionFunctionArgs} from "@remix-run/node";
 import {authenticate} from "../shopify.server";
 import {deleteShopFromSession} from "../models/session.server";
+import {deactivateShopSubscription} from "../models/shopSettings.server";
 
 export const action = async ({request}: ActionFunctionArgs) => {
   const {shop, session, topic} = await authenticate.webhook(request);
@@ -9,6 +10,9 @@ export const action = async ({request}: ActionFunctionArgs) => {
 
   // Webhook requests can trigger multiple times and after an app has already been uninstalled.
   // If this webhook already ran, the session may have been deleted previously.
+
+  await deactivateShopSubscription(shop);
+  
   if (session) {
     await deleteShopFromSession(shop)
   }
