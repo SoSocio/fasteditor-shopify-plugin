@@ -1,11 +1,24 @@
 import React from "react";
-import type {LoaderFunctionArgs} from "@remix-run/node";
-import {BlockStack, Box, Button, Card, Layout, List, Page, Text} from "@shopify/polaris";
-import {authenticate} from "../shopify.server";
 import {useLoaderData} from "@remix-run/react";
-import {billingRequire} from "../services/billing.server";
+import type {LoaderFunctionArgs} from "@remix-run/node";
+
+import {
+  Page,
+  Layout,
+  Card,
+  BlockStack,
+  Box,
+  Text,
+  Button,
+  List,
+} from "@shopify/polaris";
+
+import {authenticate} from "../shopify.server";
 import {getAppMetafield} from "../services/app.server";
-import {UsageLimitBannerWithAction} from "../components/UsageLimitBannerWithAction";
+
+import {
+  UsageLimitBannerWithAction
+} from "../components/banners/UsageLimit/UsageLimitBannerWithAction";
 
 const ENDPOINT = "/app/_index";
 
@@ -17,12 +30,11 @@ interface GettingStartedLoader {
 /**
  * Loader for the Getting Started page.
  */
-export const loader = async ({request}: LoaderFunctionArgs): Promise<GettingStartedLoader> => {
+export const loader = async (
+  {request}: LoaderFunctionArgs): Promise<GettingStartedLoader> => {
   console.info(`[${ENDPOINT}] Getting Started Loader`);
 
-  const {admin, billing, session} = await authenticate.admin(request);
-  await billingRequire(admin, billing, session.shop);
-
+  const {admin, session} = await authenticate.admin(request);
   const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability")
 
   return {
@@ -32,7 +44,7 @@ export const loader = async ({request}: LoaderFunctionArgs): Promise<GettingStar
 };
 
 const Index = () => {
-  const {shopName, appAvailability} = useLoaderData<GettingStartedLoader>()
+  const {shopName, appAvailability} = useLoaderData<typeof loader>()
 
   if (appAvailability === "false") {
     return <UsageLimitBannerWithAction shopName={shopName}/>
