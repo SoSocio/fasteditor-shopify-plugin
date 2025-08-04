@@ -11,3 +11,8 @@ export interface ShopSettingsCore {
   country: string | null;
   currency: string | null;
 }
+
+export interface IntegrationShopSettings {
+  fastEditorApiKey: string | null;
+  fastEditorDomain: string | null;
+}

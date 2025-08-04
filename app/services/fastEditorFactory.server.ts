@@ -1,11 +1,12 @@
 import type {authenticateAdmin} from "../types/app.types";
-import type {FastEditorIntegrationData, FastEditorShopSettings} from "../types/fastEditor.types";
+import type {IntegrationShopSettings} from "../types/shop.types";
+import type {IntegrationErrorsData} from "../types/integration.types";
+import type {FastEditorIntegrationData} from "../types/fastEditor.types";
 import {FastEditorAPI} from './fastEditorAPI.server';
 import {getShopSettings, upsertFastEditorShopSettings} from '../models/shopSettings.server';
 import {getShopInfo, getShopLocale} from "./shop.server";
-import type {IntegrationErrorsData} from "../types/integration.types";
 
-export async function getFastEditorShopSettings(shop: string): Promise<FastEditorShopSettings> {
+export async function getFastEditorShopSettings(shop: string): Promise<IntegrationShopSettings> {
   const shopSettings = await getShopSettings(shop);
 
   return {
@@ -24,7 +25,7 @@ export async function getFastEditorAPIForShop(shop: string): Promise<FastEditorA
   // Fetch FastEditor settings for the shop from the database
   const settings = await getFastEditorShopSettings(shop);
 
-  if (!settings) {
+  if (!settings || !settings?.fastEditorApiKey || !settings?.fastEditorDomain) {
     throw new Error(`FastEditor settings not found for shop: ${shop}`);
   }
 
@@ -35,7 +36,7 @@ export async function getFastEditorAPIForShop(shop: string): Promise<FastEditorA
 /**
  * Sets up FastEditor integration for a shop.
  * @param admin - Shopify admin context
- * @param shop - Shop domain
+ * @param shop - The shop domain
  * @param apiKey - FastEditor API key
  * @param apiDomain - FastEditor domain
  * @returns FastEditor integration result
