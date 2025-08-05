@@ -24,7 +24,7 @@ import {ACTIVE_SUBSCRIPTIONS_FRAGMENT} from "../graphql/app/fragments/activeSubs
  * Ensures the shop has an active subscription.
  * If not, it triggers a billing request with a redirect to the success URL.
  *
- * @param admin - Shopify Admin GraphQL client
+ * @param admin - Shopify Admin API client
  * @param billing - Billing object from `authenticate.admin`
  * @param shop - The shop domain.
  * @returns Billing check response object
@@ -104,7 +104,7 @@ export async function billingCreateUsageRecord(
 /**
  * Creates an app usage record via Shopify Admin GraphQL API.
  *
- * @param admin - Shopify Admin GraphQL client instance.
+ * @param admin - Shopify Admin API client
  * @param description - Description of the usage charge.
  * @param price - Object containing amount and currencyCode.
  * @param subscriptionLineItemId - The ID of the subscription line item to which the usage charge
@@ -142,7 +142,7 @@ export async function createAppUsageRecord(
 /**
  * Fetches active app subscriptions using the Shopify GraphQL Admin API.
  *
- * @param admin - Authenticated admin client
+ * @param admin - Shopify Admin API client
  * @returns Array of active subscriptions
  * @throws Error if the request fails or the response is malformed
  */

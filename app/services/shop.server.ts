@@ -7,7 +7,7 @@ import {GET_SHOP_LOCALES} from "../graphql/shop/getShopLocales";
 /**
  * Fetches country and currency information for the current shop.
  *
- * @param admin - Authenticated Shopify Admin client
+ * @param admin - Shopify Admin API client
  * @returns Object containing country code and currency code
  */
 export async function getShopInfo(admin: authenticateAdmin): Promise<ShopInfo> {
@@ -22,7 +22,7 @@ export async function getShopInfo(admin: authenticateAdmin): Promise<ShopInfo> {
 /**
  * Fetches the primary locale for the current shop.
  *
- * @param admin - Authenticated Shopify Admin client
+ * @param admin - Shopify Admin API client
  * @returns Primary locale (e.g., "en", "fr", "de")
  * @throws Error if no primary locale is found
  */

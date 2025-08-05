@@ -35,7 +35,7 @@ export async function getFastEditorAPIForShop(shop: string): Promise<FastEditorA
 
 /**
  * Sets up FastEditor integration for a shop.
- * @param admin - Shopify admin context
+ * @param admin - Shopify Admin API client
  * @param shop - The shop domain
  * @param apiKey - FastEditor API key
  * @param apiDomain - FastEditor domain
