@@ -148,8 +148,6 @@ export async function getAppByKey(
  * @throws Response if ID is not found
  */
 async function fetchAppInstallationId(admin: authenticateAdmin): Promise<string> {
-  console.info("[fetchAppInstallationId] Fetching app installation ID...");
-
   const response = await adminGraphqlRequest(admin, `
     #graphql
     query GetCurrentAppInstallation {
@@ -167,7 +165,6 @@ async function fetchAppInstallationId(admin: authenticateAdmin): Promise<string>
     throw new Response("App installation ID not found", {status: 404});
   }
 
-  console.info("[fetchAppInstallationId] Found app installation ID:", appInstallationId);
   return appInstallationId;
 }
 

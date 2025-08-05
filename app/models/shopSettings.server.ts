@@ -95,3 +95,23 @@ export async function upsertFastEditorShopSettings(
     },
   });
 }
+
+
+/**
+ * Marks the shop's subscription as inactive in the database.
+ *
+ * @param shop - The shop domain (e.g., 'myshop.myshopify.com')
+ * @returns Updated shop settings
+ */
+export async function deactivateShopSubscription(
+  shop: string
+): Promise<ShopSettings> {
+  return await prisma.shopSettings.update({
+    where: {shop},
+    data: {
+      shopifySubscriptionId: null,
+      subscriptionStatus: null,
+      subscriptionCurrentPeriodEnd: null,
+    }
+  });
+}

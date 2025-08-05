@@ -1,60 +1,61 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useFetcher, useLoaderData} from "@remix-run/react";
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import type {ActiveSubscription} from "../types/billing.types";
-import {BlockStack, Card, InlineGrid, Layout, Page,} from "@shopify/polaris";
+import {BlockStack, Card, InlineGrid, Layout, Page} from "@shopify/polaris";
 import {TitleBar} from "@shopify/app-bridge-react";
-import {CurrentSubscription} from "../components/SubscriptionPage/CurrentSubscription";
-import {UsageSubscription} from "../components/SubscriptionPage/UsageSubscription";
+
 import {authenticate} from "../shopify.server";
 import {
   billingCancel,
-  billingRequire,
   fetchActiveSubscriptions,
   getActiveSubscription
 } from "../services/billing.server";
 import {getAppMetafield} from "../services/app.server";
-import {UsageLimitBanner} from "../components/UsageLimitBanner";
+
+import {CurrentSubscription} from "../components/SubscriptionPage/CurrentSubscription";
+import {UsageSubscription} from "../components/SubscriptionPage/UsageSubscription";
+import {UsageLimitBanner} from "../components/banners/UsageLimit/UsageLimitBanner";
 
 const ENDPOINT = "/app/subscription";
 
 interface SubscriptionLoader {
-  subscription: ActiveSubscription,
+  subscription: ActiveSubscription;
   shopName: string;
   appAvailability: string;
 }
 
 export const loader = async (
   {request}: LoaderFunctionArgs
-): Promise<SubscriptionLoader | null> => {
+): Promise<SubscriptionLoader | Response> => {
   console.info(`[${ENDPOINT}] Subscription Loader`);
 
-  const {admin, billing, session} = await authenticate.admin(request);
-  await billingRequire(admin, billing, session.shop);
-
-  await getAppMetafield(admin, "fasteditor_app", "availability")
+  const {admin, session} = await authenticate.admin(request);
 
   try {
     const subscriptions = await fetchActiveSubscriptions(admin)
     const subscription = getActiveSubscription(subscriptions)
+
     const shopName = session.shop.replace(".myshopify.com", "");
     const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability")
 
     return {
       subscription,
       shopName,
-      appAvailability: appAvailability?.value || "false"
+      appAvailability: appAvailability?.value || "false",
     };
   } catch (error) {
-    console.log(`[${ENDPOINT}] Subscription Loader Error:`, error);
-    return null;
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    console.error(`[${ENDPOINT}] Loader Error:`, errorMessage);
+    return new Response(errorMessage,
+      {status: 200}
+    );
   }
 };
 
-export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
+export const action = async ({request}: ActionFunctionArgs): Promise<null> => {
   try {
     const {billing} = await authenticate.admin(request);
-
     const formData = await request.formData();
     const subscriptionId = String(formData.get("id") || "")
 
@@ -63,16 +64,25 @@ export const action = async ({request}: ActionFunctionArgs): Promise<any> => {
     }
 
     await billingCancel(billing, subscriptionId)
-
-    return null
   } catch (error) {
     console.log(error)
   }
+
+  return null
 };
 
 const Subscription = () => {
   const fetcher = useFetcher();
-  const {subscription, shopName, appAvailability} = useLoaderData<any>()
+  const {
+    subscription,
+    shopName,
+    appAvailability,
+  } = useLoaderData<typeof loader>()
+  const [cancelSubmitting, setCancelSubmitting] = useState(false);
+
+  useEffect(() => {
+    setCancelSubmitting(fetcher.state !== "idle")
+  }, [fetcher, fetcher.state]);
 
   const onCancelSubscription = useCallback(async () => {
     fetcher.submit(
@@ -87,6 +97,7 @@ const Subscription = () => {
         <button
           variant="primary"
           onClick={onCancelSubscription}
+          disabled={cancelSubmitting}
         >
           Cancel
         </button>

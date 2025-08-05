@@ -1,19 +1,24 @@
 import React from "react";
 import {useLoaderData} from "@remix-run/react";
 import type {LoaderFunctionArgs} from "@remix-run/node";
-import type {PageInfo, Product} from "../types/products.types";
+import {Page, Layout, Card, BlockStack} from "@shopify/polaris";
+import type {Product, PageInfo} from "../types/products.types";
 import type {ShopSettingsCore} from "../types/shop.types";
-import {BlockStack, Card, Layout, Page} from "@shopify/polaris";
-import {ProductsTableInfo} from "../components/DashboardPage/ProductsTableInfo";
-import {ProductsTable} from "../components/DashboardPage/ProductsTable";
 
 import {authenticate} from "../shopify.server";
-import {buildProductsVariables, getProductsByQuery,} from "../services/products.server";
 import {getShopSettings} from "../models/shopSettings.server";
-import {billingRequire} from "../services/billing.server";
-import {ErrorBanner} from "../components/DashboardPage/ErrorBanner";
 import {getAppMetafield} from "../services/app.server";
-import {UsageLimitBannerWithAction} from "../components/UsageLimitBannerWithAction";
+import {
+  buildProductsVariables,
+  getProductsByQuery,
+} from "../services/products.server";
+
+import {ProductsTableInfo} from "../components/DashboardPage/ProductsTableInfo";
+import {ProductsTable} from "../components/DashboardPage/ProductsTable";
+import {ErrorBanner} from "../components/DashboardPage/ErrorBanner";
+import {
+  UsageLimitBannerWithAction
+} from "../components/banners/UsageLimit/UsageLimitBannerWithAction";
 
 const ENDPOINT = "/app/dashboard";
 
@@ -37,8 +42,7 @@ export const loader = async (
 ): Promise<DashboardLoader | Response> => {
   console.info(`[${ENDPOINT}] Dashboard Loader`);
 
-  const {admin, session, billing} = await authenticate.admin(request);
-  await billingRequire(admin, billing, session.shop);
+  const {admin, session} = await authenticate.admin(request);
 
   try {
     const limit = 2;
@@ -59,14 +63,12 @@ export const loader = async (
           item.node.status.toLowerCase() === selectedView
         );
 
-    const shopSettings = await getShopSettings(session.shop);
+    const shopSettings = await getShopSettings(session.shop)
     if (!shopSettings) {
       console.error(`[${ENDPOINT}] Loader Error: Shop settings not found for shop: ${session.shop}`);
       throw new Error("Shop settings not found");
     }
-
     const shopName = session.shop.replace(".myshopify.com", "");
-
     const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability")
 
     return {
@@ -78,7 +80,7 @@ export const loader = async (
         country: shopSettings.language,
         currency: shopSettings.currency,
       },
-      appAvailability: appAvailability?.value || "false"
+      appAvailability: appAvailability?.value || "false",
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
@@ -93,8 +95,14 @@ export const loader = async (
  * Renders the Dashboard UI for managing FastEditor-enabled products.
  */
 const Dashboard = () => {
-  const data = useLoaderData<DashboardLoader>();
-  const {products, pageInfo, shopName, shopSettings, productsLimit, appAvailability} = data;
+  const {
+    products,
+    pageInfo,
+    shopName,
+    shopSettings,
+    productsLimit,
+    appAvailability
+  } = useLoaderData<typeof loader>();
 
   if (appAvailability === "false") {
     return <UsageLimitBannerWithAction shopName={shopName}/>
