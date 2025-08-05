@@ -9,7 +9,9 @@ import {
 import {FEE_RATE, MIN_FEE_EUR} from "../constants";
 import {convertToEUR} from "./currency.server";
 import type {authenticateAdmin} from "../types/app.types";
-import {setMetafield} from "./app.server";
+import {setMetafield} from "./metafield.server";
+import {adminGraphqlRequest} from "./app.server";
+import {UPDATE_ORDER} from "../graphql/order/updateOrder";
 
 /**
  * Service responsible for processing Shopify orders with items customized via FastEditor.
@@ -36,7 +38,7 @@ export class OrderProcessor {
 
   /**
    * Processes a paid Shopify order by sending items customized through FastEditor.
-   * @param admin - Authenticated Shopify admin.
+   * @param admin - Shopify Admin API client
    * @param order - Shopify order object.
    * @param shop - The shop domain.
    * @returns An array of results for each processed group of customized items.
@@ -62,7 +64,7 @@ export class OrderProcessor {
     }
 
     // Update order tags and metafields to reflect processing status
-    await this.updateOrderProcessingStatus(order.id, results);
+    await this.updateOrderProcessingStatus(admin, order.admin_graphql_api_id, results);
 
     // Persist customized items to the database
     const savedItems = await this.addCustomItemsToDatabase(shop, order, customItems);
@@ -218,10 +220,16 @@ export class OrderProcessor {
 
   /**
    * Updates tags and metafields in Shopify to reflect FastEditor processing result.
+   *
+   * @param admin - Shopify Admin API client
    * @param orderId - Shopify order ID.
    * @param results - Processing results.
    */
-  private async updateOrderProcessingStatus(orderId: string, results: any[]): Promise<void> {
+  private async updateOrderProcessingStatus(
+    admin: authenticateAdmin,
+    orderId: string,
+    results: any[]
+  ): Promise<void> {
     try {
       const successResult = results.find(r => r.success);
       const successCount = successResult ? successResult.items.length : 0;
@@ -229,15 +237,9 @@ export class OrderProcessor {
 
       // Update order tags
       const tags = [`fasteditor-processing:${successCount}/${totalCount}`];
-      await this.shopifyAPI.updateOrderTags(orderId, tags);
+      await this.updateOrder(admin, tags, orderId)
 
-      // Store processing results in metafield
-      await this.shopifyAPI.setOrderMetafield(orderId, {
-        namespace: "fasteditor",
-        key: "processing_results",
-        type: "json",
-        value: JSON.stringify(results),
-      });
+      await setMetafield(admin, "processing_results", "json", JSON.stringify(results), orderId)
 
     } catch (error) {
       console.error(`Failed to update order ${orderId} processing metadata:`, error);
@@ -247,7 +249,7 @@ export class OrderProcessor {
   /**
    * Processes setting the order_images metafield for a given order.
    *
-   * @param admin - Authenticated Shopify admin.
+   * @param admin - Shopify Admin API client
    * @param customItems - Array of Shopify line items with custom FastEditor properties.
    * @param orderId - Shopify order GID.
    */
@@ -285,7 +287,7 @@ export class OrderProcessor {
   /**
    * Sends a GraphQL mutation to set the order_images metafield as a list.url.
    *
-   * @param admin - Authenticated Shopify admin.
+   * @param admin - Shopify Admin API client
    * @param orderId - Shopify order GID.
    * @param imagesUrl - Array of image URLs to store.
    */
@@ -305,5 +307,30 @@ export class OrderProcessor {
       console.error(`[orderImagesMetafieldSet] Failed to set metafield for order ${orderId}:`, error);
       throw error;
     }
+  }
+
+  /**
+   * Updates Shopify order with FastEditor-related tags and metafields.
+   *
+   * @param admin - Shopify Admin API client
+   * @param tags - Array of processing result tags
+   * @param orderId - Shopify GraphQL GID of the order
+   * @returns Response from Shopify GraphQL API
+   */
+  private async updateOrder(admin: authenticateAdmin, tags: string[], orderId: string): Promise<any> {
+    return await adminGraphqlRequest(admin, UPDATE_ORDER, {
+      variables: {
+        input: {
+          id: orderId,
+          tags: tags.join(', '),
+          metafields: {
+            key: "processing_results",
+            namespace: "fasteditor_app",
+            type: "list.single_line_text_field",
+            value: JSON.stringify(tags),
+          }
+        }
+      }
+    })
   }
 }
