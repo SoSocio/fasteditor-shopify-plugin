@@ -4,7 +4,7 @@ import type {ShopInfo, ShopSettingsCore} from "../types/shop.types";
 /**
  * Interface representing the FastEditor settings for a specific shop.
  */
-export interface ShopSettings extends ShopSettingsCore{
+export interface ShopSettings extends ShopSettingsCore {
   id: string;
   shop: string;
   shopifySubscriptionId: string | null;
@@ -100,7 +100,7 @@ export async function upsertFastEditorShopSettings(
 /**
  * Marks the shop's subscription as inactive in the database.
  *
- * @param shop - The shop domain (e.g., 'myshop.myshopify.com')
+ * @param shop - The shop domain
  * @returns Updated shop settings
  */
 export async function deactivateShopSubscription(
@@ -114,4 +114,16 @@ export async function deactivateShopSubscription(
       subscriptionCurrentPeriodEnd: null,
     }
   });
+}
+
+/**
+ * Deletes the shop settings record for a given shop.
+ *
+ * @param shop - The shop domain
+ * @returns Promise resolving to the deleted ShopSettings record
+ */
+export async function deleteShopSettings(
+  shop: string
+): Promise<ShopSettings> {
+  return await prisma.shopSettings.delete({where: {shop}});
 }

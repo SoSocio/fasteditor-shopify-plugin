@@ -1,7 +1,6 @@
 import prisma from '../db.server';
 import type {ShopifyLineItem, ShopifyOrder} from "../types/order.types";
 
-
 /**
  * Interface representing an order item that was customized using FastEditor.
  */
@@ -135,4 +134,16 @@ export async function updateUnbilledFastEditorOrderItemsLastMonth(
   });
 
   return result.count;
+}
+
+/**
+ * Deletes all FastEditor order item records associated with the given shop.
+ *
+ * @param shop - The shop domain
+ * @returns Promise resolving to the result of the delete operation
+ */
+export async function deleteFastEditorOrderItemsFoShop(
+  shop: string
+): Promise<any> {
+  return await prisma.fastEditorOrderItems.deleteMany({where: {shop}});
 }

@@ -57,10 +57,8 @@ export async function updateSessionScopes(id: string, scope: string): Promise<Se
  * @param shop - The shop domain.
  * @returns The number of sessions deleted.
  */
-export async function deleteShopFromSession(shop: string): Promise<number> {
-  const deleted = await prisma.session.deleteMany({
+export async function deleteShopFromSession(shop: string): Promise<any> {
+  return await prisma.session.deleteMany({
     where: {shop},
   });
-
-  return deleted.count;
 }

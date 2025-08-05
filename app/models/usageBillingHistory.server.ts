@@ -32,3 +32,15 @@ export async function createUsageBillingHistoryForShop(
     },
   });
 }
+
+/**
+ * Deletes all usage billing history records for a given shop.
+ *
+ * @param shop - The shop domain
+ * @returns Promise resolving to the result of the deletion operation
+ */
+export async function deleteUsageBillingHistoryForShop(
+  shop: string
+): Promise<any> {
+  return await prisma.usageBillingHistory.deleteMany({where: {shop}});
+}
