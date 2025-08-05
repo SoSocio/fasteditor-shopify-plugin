@@ -223,8 +223,9 @@ export class OrderProcessor {
    */
   private async updateOrderProcessingStatus(orderId: string, results: any[]): Promise<void> {
     try {
-      const successCount = results.filter(r => r.success).length;
-      const totalCount = results.length;
+      const successResult = results.find(r => r.success);
+      const successCount = successResult ? successResult.items.length : 0;
+      const totalCount = results.reduce((sum, item) => sum + item.items.length, 0);
 
       // Update order tags
       const tags = [`fasteditor-processing:${successCount}/${totalCount}`];
