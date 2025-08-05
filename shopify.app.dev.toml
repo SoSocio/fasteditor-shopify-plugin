@@ -14,8 +14,12 @@ include_config_on_deploy = true
 api_version = "2025-04"
 
   [[webhooks.subscriptions]]
+  uri = "/webhooks/app/gdpr"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+
+  [[webhooks.subscriptions]]
   topics = [ "app_subscriptions/update" ]
-  uri = "/webhook/app/subscriptions/update"
+  uri = "/webhooks/app/subscriptions/update"
 
   [[webhooks.subscriptions]]
   topics = [ "orders/paid" ]
