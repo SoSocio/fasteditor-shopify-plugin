@@ -42,7 +42,7 @@ export const loader = async (
     return {
       fastEditorApiKey: shopSettings?.fastEditorApiKey || "",
       fastEditorDomain: shopSettings?.fastEditorDomain || "",
-      appAvailability: appAvailability?.value || "false",
+      appAvailability: appAvailability?.value,
       shopName: session.shop.replace(".myshopify.com", ""),
     };
   } catch (error) {
