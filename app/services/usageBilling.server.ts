@@ -36,7 +36,7 @@ export async function processMonthlyUsageBilling(): Promise<void> {
  * Handles usage billing for a specific shop.
  *
  * @param admin - Authenticated Shopify Admin GraphQL client
- * @param shop - Shop domain
+ * @param shop - The shop domain
  * @returns void
  */
 export async function handleShopBilling(
@@ -148,7 +148,7 @@ export function calculateTotalUsageFee(items: UnbilledOrderItem[]): number {
 /**
  * Marks all unbilled items as billed.
  *
- * @param shop - Shop domain
+ * @param shop - The shop domain
  * @param sinceDate - Cutoff date for billing
  * @returns void
  */
@@ -160,7 +160,7 @@ async function markItemsAsBilled(shop: string, sinceDate: Date): Promise<void> {
 /**
  * Saves usage billing history in the database.
  *
- * @param shop - Shop domain
+ * @param shop - The shop domain
  * @param amount - Amount billed
  * @param itemCount - Number of billed items
  * @returns void

@@ -1,16 +1,21 @@
-import {BlockStack, Box, Button, ProgressBar, Text} from '@shopify/polaris';
 import React from 'react';
 import type {ActiveSubscription} from "../../types/billing.types";
+import {BlockStack, Box, Button, ProgressBar, Text} from '@shopify/polaris';
+import {formatSimpleCurrency} from "../../utils/formatCurrency";
 
 export const UsageSubscription = ({subscription, shopName}: {
   subscription: ActiveSubscription,
   shopName: string
 }) => {
-  const percent = (subscription.appUsagePricing.balanceUsed.amount * 100) / subscription.appUsagePricing.cappedAmount.amount
-  const remainingAmount = Number(subscription.appUsagePricing.cappedAmount.amount - subscription.appUsagePricing.balanceUsed.amount).toFixed(2) + " " + subscription.appUsagePricing.cappedAmount.currencyCode
+  const cappedAmount = subscription.appUsagePricing.cappedAmount.amount
+  const balanceUsed = subscription.appUsagePricing.balanceUsed.amount
+  const currency = subscription.appUsagePricing.cappedAmount.currencyCode
+  const percent = (balanceUsed * 100) / cappedAmount
 
-  const balanceUsed = `${subscription.appUsagePricing.balanceUsed.amount} ${subscription.appUsagePricing.balanceUsed.currencyCode}`
-  const cappedAmount = `${subscription.appUsagePricing.cappedAmount.amount} ${subscription.appUsagePricing.cappedAmount.currencyCode}`
+  const remainingAmount = formatSimpleCurrency(cappedAmount - balanceUsed, currency)
+
+  const formatedBalanceUsed = formatSimpleCurrency(balanceUsed, currency)
+  const formatedCappedAmount = formatSimpleCurrency(cappedAmount, currency)
 
   return (
     <BlockStack gap="300">
@@ -20,7 +25,7 @@ export const UsageSubscription = ({subscription, shopName}: {
         <Box>
           <ProgressBar progress={percent} size="small"/>
         </Box>
-        <Text as="p">{balanceUsed} spent | {cappedAmount} limit</Text>
+        <Text as="p">{formatedBalanceUsed} spent | {formatedCappedAmount} limit</Text>
       </BlockStack>
       <Box>
         <Button

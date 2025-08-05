@@ -12,21 +12,7 @@ import {
 } from "@shopify/polaris";
 import {ImageIcon} from "@shopify/polaris-icons";
 import {useProductsTableControls} from "../../hooks/useProductsTableControls";
-
-/**
- * Formats number to localized currency.
- *
- * @param amount - Raw numeric value
- * @param currencyCode - ISO 4217 currency code
- * @param locale - BCP 47 locale string
- * @returns Localized currency string
- */
-function formatCurrency(amount: number, currencyCode: string | null, locale: string | null): string {
-  return new Intl.NumberFormat(locale || "en-US", {
-    style: "currency",
-    currency: currencyCode || "USD",
-  }).format(amount);
-}
+import {formatCurrency} from "../../utils/formatCurrency";
 
 export const ProductsTable = (
   {

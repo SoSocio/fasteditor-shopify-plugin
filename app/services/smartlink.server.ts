@@ -63,7 +63,7 @@ export async function fetchShopSettings(shop: string): Promise<SmartLinkShopSett
  * Retrieves the SKU for a specific product variant.
  *
  * @param variantId - The numeric ID of the product variant.
- * @param shop - The Shopify domain of the store.
+ * @param shop - The shop domain.
  * @returns The variant SKU as a string.
  * @throws {Response} 404 - If the SKU is not found.
  */
