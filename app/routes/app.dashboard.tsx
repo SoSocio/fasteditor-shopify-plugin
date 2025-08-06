@@ -27,7 +27,6 @@ export interface DashboardCoreLoader {
   pageInfo: PageInfo;
   shopName: string;
   shopSettings: ShopSettingsCore;
-  productsLimit: number;
 }
 
 export interface DashboardLoader extends DashboardCoreLoader {
@@ -45,23 +44,11 @@ export const loader = async (
   const {admin, session} = await authenticate.admin(request);
 
   try {
-    const limit = 2;
-
-    const url = new URL(request.url);
-    const searchParams = url.searchParams;
-    const selectedView = searchParams.get("selectedView") || "all";
-
+    const limit = 15;
     const productsVariables = buildProductsVariables(request, limit);
+    console.log("productsVariables", productsVariables);
     const productsData = await getProductsByQuery(admin, productsVariables);
-
-    const allProducts = productsData.edges;
-
-    const products =
-      selectedView === "all"
-        ? allProducts
-        : allProducts.filter((item) =>
-          item.node.status.toLowerCase() === selectedView
-        );
+    const products = productsData.edges;
 
     const shopSettings = await getShopSettings(session.shop)
     if (!shopSettings) {
@@ -71,10 +58,11 @@ export const loader = async (
     const shopName = session.shop.replace(".myshopify.com", "");
     const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability")
 
+    console.log("productsData.pageInfo", productsData.pageInfo)
+
     return {
       products: products || [],
       pageInfo: productsData.pageInfo,
-      productsLimit: limit,
       shopName,
       shopSettings: {
         country: shopSettings.language,
@@ -100,7 +88,6 @@ const Dashboard = () => {
     pageInfo,
     shopName,
     shopSettings,
-    productsLimit,
     appAvailability
   } = useLoaderData<typeof loader>();
 
@@ -126,7 +113,6 @@ const Dashboard = () => {
               <ProductsTable
                 products={products}
                 pageInfo={pageInfo}
-                productsLimit={productsLimit}
                 shopName={shopName}
                 shopSettings={shopSettings}
               />
