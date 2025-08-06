@@ -3,7 +3,7 @@ import {useFetcher, useLoaderData} from "@remix-run/react";
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import type {IntegrationActionData, IntegrationFormValues} from "../types/integration.types";
 
-import {Page, Layout, BlockStack} from "@shopify/polaris";
+import {BlockStack, Layout, Page} from "@shopify/polaris";
 
 import {authenticate} from "../shopify.server";
 import {
@@ -12,7 +12,6 @@ import {
   setupFastEditorIntegration,
   validateFormData
 } from "../services/fastEditorFactory.server";
-import {createOrderMetafieldDefinition} from "../services/metafield.server";
 import {getAppMetafield} from "../services/app.server";
 
 import ShopIntegrationCard from "../components/SettingsPage/ShopIntegrationCard";
@@ -20,6 +19,7 @@ import ShopIntegrationForm from "../components/SettingsPage/ShopIntegrationForm"
 import {
   UsageLimitBannerWithAction
 } from "../components/banners/UsageLimit/UsageLimitBannerWithAction";
+import {createMetafieldDefinition} from "../services/metafield.server";
 
 const ENDPOINT = "/app/settings";
 
@@ -42,7 +42,7 @@ export const loader = async (
     return {
       fastEditorApiKey: shopSettings?.fastEditorApiKey || "",
       fastEditorDomain: shopSettings?.fastEditorDomain || "",
-      appAvailability: appAvailability?.value || "false",
+      appAvailability: appAvailability?.value,
       shopName: session.shop.replace(".myshopify.com", ""),
     };
   } catch (error) {
@@ -79,7 +79,23 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
     }
 
     await setupFastEditorIntegration(admin, session.shop, apiKey, apiDomain);
-    await createOrderMetafieldDefinition(admin)
+
+    await createMetafieldDefinition(
+      admin,
+      "FastEditor Order Images",
+      "order_images",
+      "List of image URLs for order items customized via FastEditor",
+      "list.url",
+      "ORDER"
+    )
+    await createMetafieldDefinition(
+      admin,
+      "FastEditor Processing Results",
+      "processing_results",
+      "Processing summary for the order with FastEditor-customized items, in format 'fasteditor-processing:X/Y' where X is successfully processed items and Y is total customized items",
+      "list.single_line_text_field",
+      "ORDER"
+    )
 
     return new Response(JSON.stringify({
         statusCode: 200,

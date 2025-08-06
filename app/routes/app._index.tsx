@@ -39,7 +39,7 @@ export const loader = async (
 
   return {
     shopName: session.shop.replace(".myshopify.com", ""),
-    appAvailability: appAvailability?.value || "false"
+    appAvailability: appAvailability?.value
   }
 };
 

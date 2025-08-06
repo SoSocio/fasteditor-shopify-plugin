@@ -35,7 +35,7 @@ export async function processMonthlyUsageBilling(): Promise<void> {
 /**
  * Handles usage billing for a specific shop.
  *
- * @param admin - Authenticated Shopify Admin GraphQL client
+ * @param admin - Shopify Admin API client
  * @param shop - The shop domain
  * @returns void
  */
@@ -78,7 +78,7 @@ export async function handleShopBilling(
 /**
  * Applies usage charge.
  *
- * @param admin - Authenticated Shopify Admin client
+ * @param admin - Shopify Admin API client
  * @param cappedAmount - Subscription capped amount in USD
  * @param balanceUsedAmount - Current balance used in USD
  * @param totalAmount - Total usage amount calculated
