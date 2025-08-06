@@ -6,9 +6,9 @@ import type {
 } from "../types/app.types";
 import {GET_APP_BY_KEY} from "../graphql/app/getAppByKey";
 import {APP_CLIENT_ID} from "../constants";
-import {METAFIELD_SET} from "../graphql/metafields/metafieldsSet";
 import {APP_INSTALLATION_ID_FRAGMENT} from "../graphql/app/fragments/appInstallationIdFragment";
 import {GET_APP_METAFIELD} from "../graphql/app/getAppMetafield";
+import {setMetafield} from "./metafield.server";
 
 /**
  * Executes a Shopify Admin API GraphQL query with error handling.
@@ -143,7 +143,7 @@ export async function getAppByKey(
 /**
  * Fetches the current app installation ID via Shopify Admin GraphQL.
  *
- * @param admin - Authenticated Shopify Admin API client
+ * @param admin - Shopify Admin API client
  * @returns App installation ID string
  * @throws Response if ID is not found
  */
@@ -171,7 +171,7 @@ async function fetchAppInstallationId(admin: authenticateAdmin): Promise<string>
 /**
  * Retrieves a specific metafield from the current app installation.
  *
- * @param admin - Authenticated Shopify Admin API client
+ * @param admin - Shopify Admin API client
  * @param namespace - Metafield namespace
  * @param key - Metafield key
  * @returns The metafield object retrieved from the Shopify Admin API
@@ -190,7 +190,7 @@ export async function getAppMetafield(admin: authenticateAdmin, namespace: strin
 /**
  * Sends a metafield mutation to Shopify to update the "paid" status.
  *
- * @param admin - Authenticated Shopify Admin API client
+ * @param admin - Shopify Admin API client
  * @param value - Boolean string value ("true" or "false")
  * @returns Shopify metafieldsSet response
  */
@@ -205,7 +205,7 @@ export async function setPaidMetafield(
 /**
  * Sets the "availability" metafield for the current app installation.
  *
- * @param admin - Authenticated Shopify Admin API client
+ * @param admin - Shopify Admin API client
  * @param value - Stringified boolean value ("true" | "false")
  * @returns The response from the `metafieldsSet` mutation
  */
@@ -215,37 +215,4 @@ export async function setAppAvailabilityMetafield(
 ): Promise<any> {
   const appInstallationId = await fetchAppInstallationId(admin);
   return await setMetafield(admin, "availability", "boolean", value, appInstallationId)
-}
-
-/**
- * Sends a metafield mutation to the Shopify Admin API for the specified resource.
- *
- * @param admin - Authenticated Shopify Admin API client
- * @param key - Metafield key
- * @param type - Metafield type
- * @param value - Metafield value as a string
- * @param ownerId - Shopify GID of the resource that owns the metafield
- * @returns A promise resolving to the `metafieldsSet` mutation response
- * @throws Error if the GraphQL request fails or returns an error response
- */
-export async function setMetafield(
-  admin: authenticateAdmin,
-  key: string,
-  type: string,
-  value: string,
-  ownerId: string,
-): Promise<any> {
-  return await adminGraphqlRequest(admin, METAFIELD_SET, {
-    variables: {
-      metafields: [
-        {
-          namespace: "fasteditor_app",
-          key,
-          type,
-          value,
-          ownerId,
-        },
-      ],
-    },
-  });
 }

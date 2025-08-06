@@ -7,7 +7,7 @@ import {GET_PRODUCTS_BY_QUERY} from "../graphql/product/getProductsByQuery";
 /**
  * Fetches products with a specific tag using Shopify Admin GraphQL API.
  *
- * @param admin - Authenticated Shopify Admin API client.
+ * @param admin - Shopify Admin API client
  * @param variables - Products variables.
  * @returns Paginated list of products.
  */
@@ -28,7 +28,7 @@ export async function getProductsByQuery(
 /**
  * Fetches SKU for a specific product variant ID.
  *
- * @param admin - Unauthenticated Shopify Admin client
+ * @param admin - Shopify Admin API client
  * @param variantId - Shopify ProductVariant ID (plain, not GID)
  * @returns Variant SKU string
  */

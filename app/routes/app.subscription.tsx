@@ -42,7 +42,7 @@ export const loader = async (
     return {
       subscription,
       shopName,
-      appAvailability: appAvailability?.value || "false",
+      appAvailability: appAvailability?.value,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
