@@ -44,24 +44,23 @@ export async function getProductVariantSku(admin: unauthenticatedAdmin, variantI
  * Builds Shopify GraphQL pagination and filtering variables from the request URL.
  *
  * @param request - Incoming HTTP request object from Remix.
- * @param defaultLimit - Default number of products to return if no limit is provided in the query.
+ * @param limit - Default number of products to return if no limit is provided in the query.
  * @returns GraphQL-compatible pagination and sorting variables.
  * @throws Error if the limit parameter is invalid (non-numeric or <= 0).
  */
 export function buildProductsVariables(
   request: Request,
-  defaultLimit: number,
+  limit: number,
 ): ProductsVariables {
   const url = new URL(request.url);
   const searchParams = url.searchParams;
 
   const cursor = searchParams.get("cursor")?.trim() || null;
   const rel = searchParams.get("rel");
-  const limitParam = searchParams.get("limit");
   const rawQuery = searchParams.get("query")?.trim() || "";
   const sortParam = searchParams.get("order") || "title asc";
+  const selectedView = searchParams.get("selectedView") || "all";
 
-  const limit = Number(limitParam ?? defaultLimit);
   if (isNaN(limit) || limit <= 0) {
     throw new Error("Invalid pagination limit");
   }
@@ -73,17 +72,10 @@ export function buildProductsVariables(
   const gqlSortKey = sortKeyMap[sortKey] || "TITLE";
   const reverse = sortDirection !== "asc";
 
-  // Ensure query includes "tag:fasteditor"
-  const formattedQuery = rawQuery.includes("tag:fasteditor")
-    ? rawQuery
-    : rawQuery
-      ? `(${rawQuery}) tag:fasteditor`
-      : "tag:fasteditor";
-
   const variables: ProductsVariables = {
     sortKey: gqlSortKey,
     reverse,
-    query: formattedQuery,
+    query: `tag:fasteditor ${selectedView !== "all" ? "status:" + selectedView : ""} ${rawQuery}`,
   };
 
   switch (rel) {
