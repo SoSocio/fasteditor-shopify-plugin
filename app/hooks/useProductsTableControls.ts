@@ -7,7 +7,6 @@ import {
   useSetIndexFiltersMode
 } from "@shopify/polaris";
 import {useLocation, useNavigation} from "@remix-run/react";
-import type {Product} from "../types/products.types";
 
 interface PageInfo {
   hasPreviousPage: boolean;
@@ -17,23 +16,18 @@ interface PageInfo {
 }
 
 interface ProductsTableControls {
-  products: { node: Product; }[];
   pageInfo: PageInfo;
-  productsLimit: number;
 }
 
 /**
  * Custom hook for handling pagination, sorting, and search filtering of products.
  * @param productList - Array of product nodes.
  * @param pageInfo - Shopify GraphQL page info.
- * @param productsLimit - Default limit of products per page.
  * @returns Pagination, sorting, and search state handlers.
  */
 export const useProductsTableControls = (
   {
-    products,
-    pageInfo,
-    productsLimit
+    pageInfo
   }: ProductsTableControls) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,7 +39,6 @@ export const useProductsTableControls = (
   const initialSort = searchParams.get("order") || "title asc";
   const initialQuery = searchParams.get("query") || "";
   const initialSelectedView = searchParams.get("selectedView") || "all";
-  const limit = searchParams.get("limit") || productsLimit;
 
   const {mode, setMode} = useSetIndexFiltersMode(IndexFiltersMode.Default);
 
@@ -114,13 +107,11 @@ export const useProductsTableControls = (
       skipQueryEffectRef.current = false;
       return;
     }
-
+    skipQueryEffectRef.current = true;
     const timeout = setTimeout(() => {
-      skipQueryEffectRef.current = true;
       const params = new URLSearchParams(location.search);
       if (queryValue) params.set("query", queryValue);
       else params.delete("query");
-
       params.delete("rel");
       params.delete("cursor");
 
@@ -150,7 +141,6 @@ export const useProductsTableControls = (
       const params = new URLSearchParams({
         rel,
         cursor,
-        limit: String(limit),
         order: sortSelected[0],
       });
       const selectedView = tabItems[selectedTab].toLowerCase();
@@ -162,7 +152,7 @@ export const useProductsTableControls = (
 
       return `${location.pathname}?${params.toString()}`;
     },
-    [limit, sortSelected, queryValue, tabItems, selectedTab, location.pathname]
+    [sortSelected, queryValue, tabItems, selectedTab, location.pathname]
   );
 
   /**
@@ -172,7 +162,7 @@ export const useProductsTableControls = (
   const pagination = useMemo(() => {
 
     const hasPrevious = Boolean(hasPreviousPage && startCursor);
-    const hasNext = Boolean(hasNextPage && endCursor) && products.length === productsLimit;
+    const hasNext = Boolean(hasNextPage && endCursor);
 
     return {
       hasPrevious,
@@ -188,7 +178,7 @@ export const useProductsTableControls = (
         navigate(buildPaginationLink("next", endCursor));
       },
     };
-  }, [hasPreviousPage, startCursor, hasNextPage, endCursor, products.length, productsLimit, navigate, buildPaginationLink]);
+  }, [hasPreviousPage, startCursor, hasNextPage, endCursor, navigate, buildPaginationLink]);
 
   return {
     mode,

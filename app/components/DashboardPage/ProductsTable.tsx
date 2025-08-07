@@ -20,7 +20,6 @@ export const ProductsTable = (
     pageInfo,
     shopName,
     shopSettings,
-    productsLimit
   }: DashboardCoreLoader) => {
 
   const {
@@ -37,7 +36,7 @@ export const ProductsTable = (
     selectedTab,
     setSelectedTab,
     loading
-  } = useProductsTableControls({products, pageInfo, productsLimit});
+  } = useProductsTableControls({pageInfo});
 
   const resourceName = {
     singular: "product",
@@ -120,7 +119,6 @@ export const ProductsTable = (
       )
     },
   );
-  const onHandleCancel = () => {};
 
   return (
     <Box
@@ -138,7 +136,7 @@ export const ProductsTable = (
         sortSelected={sortSelected}
         onSort={onSortChange}
         queryValue={queryValue}
-        queryPlaceholder="Searching in all"
+        queryPlaceholder="Search by product title or SKU"
         onQueryChange={onQueryChange}
         onQueryClear={onQueryClear}
         filters={[]}
@@ -147,7 +145,7 @@ export const ProductsTable = (
         setMode={setMode}
         canCreateNewView={false}
         cancelAction={{
-          onAction: onHandleCancel,
+          onAction: (() => {}),
           disabled: false,
           loading: false,
         }}
