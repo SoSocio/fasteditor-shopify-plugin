@@ -10,8 +10,6 @@ import {FEE_RATE, MIN_FEE_EUR} from "../constants";
 import {convertToEUR} from "./currency.server";
 import type {authenticateAdmin} from "../types/app.types";
 import {setMetafield} from "./metafield.server";
-import {adminGraphqlRequest} from "./app.server";
-import {UPDATE_ORDER} from "../graphql/order/updateOrder";
 
 /**
  * Service responsible for processing Shopify orders with items customized via FastEditor.
@@ -62,9 +60,6 @@ export class OrderProcessor {
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }
-
-    // Update order tags and metafields to reflect processing status
-    await this.updateOrderProcessingStatus(admin, order.admin_graphql_api_id, results);
 
     // Persist customized items to the database
     const savedItems = await this.addCustomItemsToDatabase(shop, order, customItems);
@@ -219,34 +214,6 @@ export class OrderProcessor {
   }
 
   /**
-   * Updates tags and metafields in Shopify to reflect FastEditor processing result.
-   *
-   * @param admin - Shopify Admin API client
-   * @param orderId - Shopify order ID.
-   * @param results - Processing results.
-   */
-  private async updateOrderProcessingStatus(
-    admin: authenticateAdmin,
-    orderId: string,
-    results: any[]
-  ): Promise<void> {
-    try {
-      const successResult = results.find(r => r.success);
-      const successCount = successResult ? successResult.items.length : 0;
-      const totalCount = results.reduce((sum, item) => sum + item.items.length, 0);
-
-      // Update order tags
-      const tags = [`fasteditor-processing:${successCount}/${totalCount}`];
-      await this.updateOrder(admin, tags, orderId)
-
-      await setMetafield(admin, "processing_results", "json", JSON.stringify(results), orderId)
-
-    } catch (error) {
-      console.error(`Failed to update order ${orderId} processing metadata:`, error);
-    }
-  }
-
-  /**
    * Processes setting the order_images metafield for a given order.
    *
    * @param admin - Shopify Admin API client
@@ -307,30 +274,5 @@ export class OrderProcessor {
       console.error(`[orderImagesMetafieldSet] Failed to set metafield for order ${orderId}:`, error);
       throw error;
     }
-  }
-
-  /**
-   * Updates Shopify order with FastEditor-related tags and metafields.
-   *
-   * @param admin - Shopify Admin API client
-   * @param tags - Array of processing result tags
-   * @param orderId - Shopify GraphQL GID of the order
-   * @returns Response from Shopify GraphQL API
-   */
-  private async updateOrder(admin: authenticateAdmin, tags: string[], orderId: string): Promise<any> {
-    return await adminGraphqlRequest(admin, UPDATE_ORDER, {
-      variables: {
-        input: {
-          id: orderId,
-          tags: tags.join(', '),
-          metafields: {
-            key: "processing_results",
-            namespace: "fasteditor_app",
-            type: "list.single_line_text_field",
-            value: JSON.stringify(tags),
-          }
-        }
-      }
-    })
   }
 }
