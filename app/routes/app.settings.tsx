@@ -88,14 +88,6 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
       "list.url",
       "ORDER"
     )
-    await createMetafieldDefinition(
-      admin,
-      "FastEditor Processing Results",
-      "processing_results",
-      "Processing summary for the order with FastEditor-customized items, in format 'fasteditor-processing:X/Y' where X is successfully processed items and Y is total customized items",
-      "list.single_line_text_field",
-      "ORDER"
-    )
 
     return new Response(JSON.stringify({
         statusCode: 200,
