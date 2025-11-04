@@ -1,7 +1,6 @@
 import type {ShopifyLineItem, ShopifyOrder} from "../types/order.types";
 import type {FastEditorOrderItem} from "../types/fastEditor.types";
 import {getFastEditorAPIForShop} from "./fastEditorFactory.server";
-import {ShopifyAPI} from "./shopifyAPI.server";
 import {
   createFastEditorOrderItem,
   fastEditorOrderItemExists
@@ -15,11 +14,9 @@ import {setMetafield} from "./metafield.server";
  * Service responsible for processing Shopify orders with items customized via FastEditor.
  */
 export class OrderProcessor {
-  private shopifyAPI: ShopifyAPI;
   private fastEditorAPI: any;
 
-  constructor(shopifyAPI: ShopifyAPI, fastEditorAPI: any) {
-    this.shopifyAPI = shopifyAPI;
+  constructor(fastEditorAPI: any) {
     this.fastEditorAPI = fastEditorAPI;
   }
 
@@ -29,9 +26,8 @@ export class OrderProcessor {
    * @returns A configured OrderProcessor instance.
    */
   static async forShop(shop: string): Promise<OrderProcessor> {
-    const shopifyAPI = await ShopifyAPI.forShop(shop);
     const fastEditorAPI = await getFastEditorAPIForShop(shop);
-    return new OrderProcessor(shopifyAPI, fastEditorAPI);
+    return new OrderProcessor(fastEditorAPI);
   }
 
   /**

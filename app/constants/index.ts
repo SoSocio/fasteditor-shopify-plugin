@@ -3,3 +3,4 @@ export const MIN_FEE_EUR = 4;
 export const FEE_RATE = 0.02;
 export const IS_TEST_BILLING = Boolean(process.env.TEST_BILLING);
 export const SUPPORT_EMAIL = String(process.env.SUPPORT_EMAIL ?? "support@test.com");
+export const MS_IN_DAY = 24 * 60 * 60 * 1000;

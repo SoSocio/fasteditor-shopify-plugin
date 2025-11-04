@@ -44,6 +44,8 @@ model ShopSettings {
   shopifySubscriptionId        String?
   subscriptionStatus           String?
   subscriptionCurrentPeriodEnd DateTime?
+  trialStartDate               DateTime? // Start date of the trial period
+  trialEndDate                 DateTime? // End date of the trial period
   fastEditorApiKey             String?
   fastEditorDomain             String? // Should be in format {{your_brand}}.staging.fasteditor.com
   language                     String?
