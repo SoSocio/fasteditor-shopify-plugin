@@ -2,9 +2,9 @@ import type {authenticateAdmin, unauthenticatedAdmin} from "../types/app.types";
 import type {
   AppSubscription,
   BillingCheckResponseObject,
-  UsageRecord,
   RecurringAppPlan,
   UsageAppPlan,
+  UsageRecord,
 } from "@shopify/shopify-api";
 import type {
   ActiveSubscription,
@@ -13,8 +13,8 @@ import type {
   CreateAppUsageRecordResponse,
   UsagePrice
 } from "../types/billing.types";
-import {IS_TEST_BILLING} from "../constants";
-import {adminGraphqlRequest, getAppByKey} from "./app.server";
+import {IS_TEST_BILLING, MS_IN_DAY} from "../constants";
+import {adminGraphqlRequest} from "./app.server";
 import {CREATE_APP_USAGE_RECORD} from "../graphql/billing/createAppUsageRecord";
 import type {authenticate} from "../shopify.server";
 import {MONTHLY_PLAN} from "../shopify.server";
@@ -24,26 +24,24 @@ import {ACTIVE_SUBSCRIPTIONS_FRAGMENT} from "../graphql/app/fragments/activeSubs
  * Ensures the shop has an active subscription.
  * If not, it triggers a billing request with a redirect to the success URL.
  *
- * @param admin - Shopify Admin API client
  * @param billing - Billing object from `authenticate.admin`
  * @param shop - The shop domain.
+ * @param trialDays - Trial days value.
  * @returns Billing check response object
  */
 export async function billingRequire(
-  admin: authenticateAdmin,
   billing: Awaited<ReturnType<typeof authenticate.admin>>["billing"],
-  shop: string
+  shop: string,
+  trialDays: number
 ): Promise<BillingCheckResponseObject> {
-  const shopName = shop.replace(".myshopify.com", "");
-  const appInfo = await getAppByKey(admin);
-
   return await billing.require({
     plans: [MONTHLY_PLAN],
     onFailure: async () =>
       billing.request({
         plan: MONTHLY_PLAN,
+        trialDays,
         isTest: IS_TEST_BILLING,
-        returnUrl: `https://admin.shopify.com/store/${shopName}/apps/${appInfo.handle}/app/subscription/success`,
+        returnUrl: `https://${shop}/admin/apps/${process.env.SHOPIFY_API_KEY}/app/subscription/success`,
       }),
   });
 }
@@ -129,7 +127,7 @@ export async function createAppUsageRecord(
       }
     })
 
-  const { userErrors } = response.appUsageRecordCreate;
+  const {userErrors} = response.appUsageRecordCreate;
 
   if (userErrors.length > 0) {
     console.error("[createAppUsageRecord] User errors:", userErrors);
@@ -229,7 +227,7 @@ export function getAppUsagePricing(subscription: AppSubscription): AppUsagePrici
  * @param subscription - Raw subscription object
  * @returns Transformed ActiveSubscription
  */
-function transformSubscription(subscription: AppSubscription): ActiveSubscription {
+export function transformSubscription(subscription: AppSubscription): ActiveSubscription {
   return {
     id: subscription.id,
     name: subscription.name,
@@ -243,3 +241,46 @@ function transformSubscription(subscription: AppSubscription): ActiveSubscriptio
   };
 }
 
+/**
+ * Calculates remaining trial days from a given end date.
+ * Returns 0 if the date is invalid or in the past.
+ *
+ * @param trialEndDate - Trial end date to calculate remaining days from
+ * @returns Number of remaining trial days (0 or positive)
+ */
+export function calculateRemainingTrialDays(trialEndDate: Date | null): number {
+  if (!trialEndDate || isNaN(trialEndDate.getTime())) {
+    return 0;
+  }
+
+  const diffMs = trialEndDate.getTime() - Date.now();
+  const remainingDays = Math.ceil(diffMs / MS_IN_DAY);
+
+  // Clamp negative values to 0
+  return Math.max(remainingDays, 0);
+}
+
+/**
+ * Calculates trial end date from start date and trial days duration.
+ * Returns null if trial period is zero or undefined.
+ *
+ * @param startDate - Trial start date
+ * @param trialDays - Number of trial days
+ * @returns Trial end date or null
+ */
+export function calculateTrialEndDate(startDate: Date, trialDays: number | undefined): Date | null {
+  if (!trialDays || trialDays <= 0) {
+    return null;
+  }
+  return new Date(startDate.getTime() + trialDays * MS_IN_DAY);
+}
+
+/**
+ * Converts charge_id from URL parameter to Shopify AppSubscription GID.
+ *
+ * @param chargeId - Charge ID from URL parameter
+ * @returns Formatted GID string
+ */
+export function formatSubscriptionId(chargeId: string): string {
+  return `gid://shopify/AppSubscription/${chargeId}`;
+}

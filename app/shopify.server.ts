@@ -7,8 +7,15 @@ import {
 } from "@shopify/shopify-app-remix/server";
 import {PrismaSessionStorage} from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
+import * as process from "node:process";
 
 export const MONTHLY_PLAN = "Monthly subscription";
+
+/**
+ * Duration of the trial period in days (default: 90 days = 3 months)
+ */
+export const TRIAL_PERIOD_DAYS = Number(process.env.TRIAL_PERIOD_DAYS) || 90;
+export const MONTHLY_PLAN_PRICE = Number(process.env.MONTHLY_PLAN_PRICE) || 95;
 
 /**
  * Shopify app instance configured for this project.
@@ -25,9 +32,10 @@ const shopify = shopifyApp({
   distribution: AppDistribution.AppStore,
   billing: {
     [MONTHLY_PLAN]: {
+      trialDays: TRIAL_PERIOD_DAYS,
       lineItems: [
         {
-          amount: 95,
+          amount: MONTHLY_PLAN_PRICE,
           currencyCode: 'USD',
           interval: BillingInterval.Every30Days,
         },
