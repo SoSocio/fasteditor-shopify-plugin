@@ -9,6 +9,7 @@ import {APP_CLIENT_ID} from "../constants";
 import {APP_INSTALLATION_ID_FRAGMENT} from "../graphql/app/fragments/appInstallationIdFragment";
 import {GET_APP_METAFIELD} from "../graphql/app/getAppMetafield";
 import {setMetafield} from "./metafield.server";
+import type {AppSubscription} from "@shopify/shopify-api";
 
 /**
  * Executes a Shopify Admin API GraphQL query with error handling.
@@ -215,4 +216,53 @@ export async function setAppAvailabilityMetafield(
 ): Promise<any> {
   const appInstallationId = await fetchAppInstallationId(admin);
   return await setMetafield(admin, "availability", "boolean", value, appInstallationId)
+}
+
+export async function getAllAppSubscriptions(admin: authenticateAdmin): Promise<AppSubscription[]> {
+  const response = await adminGraphqlRequest(admin, `
+    #graphql
+    query ActiveSubscriptions {
+      currentAppInstallation {
+        allSubscriptions(first: 50) {
+          nodes {
+            createdAt
+            currentPeriodEnd
+            id
+            lineItems {
+              id
+              plan {
+                pricingDetails {
+                  __typename
+                  ... on AppRecurringPricing {
+                    price {
+                      amount
+                      currencyCode
+                    }
+                  }
+                  ... on AppUsagePricing {
+                    balanceUsed {
+                      amount
+                      currencyCode
+                    }
+                    cappedAmount {
+                      amount
+                      currencyCode
+                    }
+                    terms
+                  }
+                }
+              }
+            }
+            name
+            returnUrl
+            status
+            test
+            trialDays
+          }
+        }
+      }
+    }
+  `)
+
+  return response.currentAppInstallation.allSubscriptions.nodes
 }

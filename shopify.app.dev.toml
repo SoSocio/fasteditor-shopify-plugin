@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "32689d07bc91c9f737bcc2dfdf2df9a9"
-name = "DEV FastEditor"
+name = "FastEditor DEV"
 handle = "dev-fasteditor"
 application_url = "https://refined-dassie-concrete.ngrok-free.app"
 embedded = true

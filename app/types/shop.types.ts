@@ -10,6 +10,8 @@ export interface Shop {
 export interface ShopSettingsCore {
   country: string | null;
   currency: string | null;
+  trialStartDate: Date | null;
+  trialEndDate: Date | null;
 }
 
 export interface IntegrationShopSettings {
