@@ -10,7 +10,11 @@
         "border_width": "Border width",
         "border_color": "Border color",
         "border_radius": "Border radius",
-        "enable_cart_redirect": "Redirect to cart page after adding to cart"
+        "enable_cart_redirect": "Redirect to cart page after adding to cart",
+        "loading_text": "Loading text",
+        "adding_to_cart_text": "Adding to cart text",
+        "added_to_cart_text": "Added to cart text",
+        "error_text": "Error text"
       }
     }
   }

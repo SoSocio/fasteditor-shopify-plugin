@@ -1,3 +1,10 @@
+function setButtonState(button, text, disabled = true) {
+  if (!button) return;
+  button.textContent = text;
+  if (disabled) button.setAttribute("disabled", "true");
+  else button.removeAttribute("disabled");
+}
+
 async function addItemToCart(variantId, quantity, projectKey, imageUrl) {
   const formData = {
     items: [{
@@ -28,13 +35,16 @@ async function handleFastEditorAutoAddToCart(button) {
   const fasteditorCartUrl = urlParams.get("fe_cart_url");
   const originalText = button.innerText;
   const enableCartRedirect = button.dataset.redirect === "true";
+  const addingToCartText = button.dataset.addingToCartText || "Adding to cart...";
+  const addedToCartText = button.dataset.addedToCartText || "Added to cart";
+  const errorText = button.dataset.errorText || "Error";
 
   if (!fasteditorCartUrl) return;
 
   console.log("enableCartRedirect", enableCartRedirect);
 
   try {
-    setButtonState(button, "Adding to cart...");
+    setButtonState(button, addingToCartText);
 
     const url = new URL("/apps/embedded/app/fasteditor/product", window.location.origin);
     url.searchParams.set("url", fasteditorCartUrl);
@@ -55,7 +65,7 @@ async function handleFastEditorAutoAddToCart(button) {
 
     await addItemToCart(data.variantId, data.quantity, data.projectKey, data.imageUrl);
 
-    setButtonState(button, "Added to cart");
+    setButtonState(button, addedToCartText);
 
     urlParams.delete("fe_cart_url");
     const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
@@ -75,6 +85,6 @@ async function handleFastEditorAutoAddToCart(button) {
 
   } catch (error) {
     console.error("[FastEditor cart init error]", error);
-    setButtonState(button, "Error");
+    setButtonState(button, errorText);
   }
 }
