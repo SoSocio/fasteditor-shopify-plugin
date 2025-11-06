@@ -13,6 +13,7 @@
     border-width: {{ block.settings.border_width }}px;
     border-color: {{ block.settings.border_color }};
     border-radius: {{ block.settings.border_radius }}px;
+    --icon-gap: {{ block.settings.icon_gap | default: 8 }}px;
   }
 </style>
 
@@ -20,7 +21,7 @@
   <div class="fasteditor">
     <button
       id="fasteditor-{{ block.id }}"
-      class="fasteditor__button block-{{ block.id }}"
+      class="fasteditor__button block-{{ block.id }} {% if block.settings.icon_position == 'right' %}fasteditor__button--icon-right{% endif %}"
       data-shop="{{ shop.permanent_domain }}"
       data-handle="{{ product.handle }}"
       data-availability="{{ app.metafields.fasteditor_app.availability }}"
@@ -28,7 +29,22 @@
       aria-label="{{ block.settings.text | escape }}"
       type="button"
     >
-      {{ block.settings.text }}
+      {% if block.settings.icon_type != 'none' %}
+        <span class="fasteditor__button-icon">
+          <span class="fasteditor__button-icon-main">
+            {% render 'icon-button', 
+              icon: block.settings.icon_type, 
+              icon_color: block.settings.icon_color,
+              icon_size: block.settings.icon_size,
+              icon_custom_image: block.settings.icon_custom_image
+            %}
+          </span>
+          <span class="fasteditor__button-icon-loading" style="display: none;">
+            {% render 'icon-loading', color: block.settings.icon_color, size: block.settings.icon_size %}
+          </span>
+        </span>
+      {% endif %}
+      <span class="fasteditor__button-text">{{ block.settings.text }}</span>
     </button>
   </div>
 {% endif %}
@@ -44,7 +60,8 @@
        return;
     }
 
-    const originalText = button.textContent;
+    const textElement = button.querySelector('.fasteditor__button-text');
+    const originalText = textElement ? textElement.textContent : button.textContent;
 
     button.addEventListener("click", () => {
       handleFastEditorRedirect(button, originalText);
@@ -133,6 +150,98 @@
       "default": true,
       "label": "Redirect to cart page after adding to cart"
     },
+    {
+      "type": "select",
+      "id": "icon_type",
+      "label": "Icon type",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "pen",
+          "label": "Pen"
+        },
+        {
+          "value": "brush",
+          "label": "Brush"
+        },
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "images",
+          "label": "Images"
+        },
+        {
+          "value": "link",
+          "label": "Link"
+        },
+        {
+          "value": "settings",
+          "label": "Settings"
+        },
+        {
+          "value": "custom",
+          "label": "Custom"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_custom_image",
+      "label": "Custom icon image",
+      "info": "Only applies when 'Custom' icon type is selected"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#ffffff",
+      "info": "Only applies to built-in icons"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 8,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 20,
+      "info": "Only applies when icon is selected"
+    },
+    {
+      "type": "range",
+      "id": "icon_gap",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Icon gap",
+      "default": 8,
+      "info": "Distance between icon and text"
+    },
+    {
+      "type": "select",
+      "id": "icon_position",
+      "label": "Icon position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left",
+      "info": "Only applies when icon is selected"
+    }
   ]
 }
 {% endschema %}

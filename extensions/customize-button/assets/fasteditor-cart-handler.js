@@ -26,7 +26,8 @@ async function addItemToCart(variantId, quantity, projectKey, imageUrl) {
 async function handleFastEditorAutoAddToCart(button) {
   const urlParams = new URLSearchParams(window.location.search);
   const fasteditorCartUrl = urlParams.get("fe_cart_url");
-  const originalText = button.innerText;
+  const textElement = button.querySelector('.fasteditor__button-text');
+  const originalText = textElement ? textElement.textContent : button.innerText;
   const enableCartRedirect = button.dataset.redirect === "true";
 
   if (!fasteditorCartUrl) return;
@@ -35,6 +36,7 @@ async function handleFastEditorAutoAddToCart(button) {
 
   try {
     setButtonState(button, "Adding to cart...");
+    setButtonLoadingIcon(button, true);
 
     const url = new URL("/apps/embedded/app/fasteditor/product", window.location.origin);
     url.searchParams.set("url", fasteditorCartUrl);
@@ -55,6 +57,7 @@ async function handleFastEditorAutoAddToCart(button) {
 
     await addItemToCart(data.variantId, data.quantity, data.projectKey, data.imageUrl);
 
+    setButtonLoadingIcon(button, false);
     setButtonState(button, "Added to cart");
 
     urlParams.delete("fe_cart_url");
@@ -75,6 +78,7 @@ async function handleFastEditorAutoAddToCart(button) {
 
   } catch (error) {
     console.error("[FastEditor cart init error]", error);
+    setButtonLoadingIcon(button, false);
     setButtonState(button, "Error");
   }
 }
