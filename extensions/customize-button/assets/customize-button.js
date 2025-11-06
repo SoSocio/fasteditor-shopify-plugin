@@ -37,9 +37,10 @@ async function handleFastEditorRedirect(button, originalText) {
   const variantId = document.querySelector('input[name="id"]')?.value;
   const quantityInput = document.querySelector('input[name="quantity"]');
   const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
+  const loadingText = button.dataset.loadingText || "Loading...";
 
   try {
-    setButtonState(button, "Loading...");
+    setButtonState(button, loadingText);
     setButtonLoadingIcon(button, true);
     const response = await fetch("/apps/embedded/app/smartlink", {
       method: "POST",
