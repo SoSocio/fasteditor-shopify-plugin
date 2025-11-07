@@ -5,7 +5,7 @@ import {
   createFastEditorOrderItem,
   fastEditorOrderItemExists
 } from "../models/fastEditorOrderItems.server";
-import {FEE_RATE, MIN_FEE_EUR} from "../constants";
+import {FEE_RATE, MAX_FEE_EUR} from "../constants";
 import {convertToEUR} from "./currency.server";
 import type {authenticateAdmin} from "../types/app.types";
 import {setMetafield} from "./metafield.server";
@@ -100,6 +100,7 @@ export class OrderProcessor {
 
   /**
    * Calculates usage fee for a customized line item, converted to EUR.
+   * Caps the per-item fee at 4 EUR to align with billing rules.
    * @param currency - The original currency code of the item price.
    * @param unitPrice - The price of a single item (in original currency).
    * @param quantity - Number of items ordered.
@@ -111,7 +112,7 @@ export class OrderProcessor {
     quantity: number
   ): Promise<number> {
     const priceInEUR = await convertToEUR(currency, unitPrice);
-    const feePerItem = Math.max(priceInEUR * FEE_RATE, MIN_FEE_EUR);
+    const feePerItem = Math.min(priceInEUR * FEE_RATE, MAX_FEE_EUR);
     const totalFee = feePerItem * quantity;
 
     return parseFloat(totalFee.toFixed(2));
