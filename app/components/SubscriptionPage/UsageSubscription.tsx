@@ -29,7 +29,7 @@ export const UsageSubscription = ({subscription, shopName}: {
       </BlockStack>
       <Box>
         <Button
-          url={`https://admin.shopify.com/store/${shopName}/settings/billing/subscriptions`}
+          url={`https://admin.shopify.com/store/${shopName}/settings/plan/subscriptions`}
           target="_top"
         >
           Change Limit

@@ -114,6 +114,9 @@ export async function applyUsageCharge(
   };
 
   await createAppUsageRecord(admin, description, price, usageLineItemId);
+  
+  // Ensure availability is set to true when limit is not reached
+  await setAppAvailabilityMetafield(admin, "true");
 
   return totalAmount
 }
