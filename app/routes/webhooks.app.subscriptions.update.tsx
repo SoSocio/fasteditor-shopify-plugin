@@ -2,7 +2,7 @@ import type {ActionFunctionArgs} from "@remix-run/node";
 import {authenticate} from "../shopify.server";
 import {
   getAllAppSubscriptions,
-  setAppAvailabilityMetafield,
+  initializeAppAvailability,
   setPaidMetafield
 } from "../services/app.server";
 import {
@@ -32,7 +32,12 @@ export const action = async ({request}: ActionFunctionArgs): Promise<null> => {
 
   try {
     await setPaidMetafield(admin, isActive);
-    await setAppAvailabilityMetafield(admin, "true")
+    
+    // Initialize app availability based on usage billing limit
+    // Only check if subscription is active
+    if (normalizedStatus === "ACTIVE") {
+      await initializeAppAvailability(admin);
+    }
 
     // If canceled, update only the status and leave other fields intact
     if (normalizedStatus === "CANCELLED") {

@@ -1,61 +1,123 @@
-<script src="{{ 'fasteditor-cart-handler.js' | asset_url }}" defer></script>
-{% assign font = block.settings.text_font %}
+{%- comment -%}
+  FastEditor Customize Button Block
+  Renders a customizable button for FastEditor product customization
+{%- endcomment -%}
 
+{%- liquid
+  assign font = block.settings.text_font
+  assign icon_type = block.settings.icon_type | default: 'none'
+  assign icon_position = block.settings.icon_position | default: 'left'
+  assign is_available = app.metafields.fasteditor_app.availability
+-%}
+
+{%- if icon_type != 'none' -%}
+  {%- assign has_icon = true -%}
+{%- else -%}
+  {%- assign has_icon = false -%}
+{%- endif -%}
+
+{%- comment -%} Load scripts in correct order {%- endcomment -%}
+<script src="{{ 'fasteditor-customize-button-utils.js' | asset_url }}" defer></script>
+<script src="{{ 'fasteditor-customize-button-redirect.js' | asset_url }}" defer></script>
+<script src="{{ 'fasteditor-customize-button-cart.js' | asset_url }}" defer></script>
+
+{%- comment -%} Scoped styles for this block instance {%- endcomment -%}
 <style>
   {{ font | font_face }}
 
-  /* Styles scoped by unique block class to avoid conflicts */
   .block-{{ block.id }} {
-    background-color: {{ block.settings.bg_color }};
-    color: {{ block.settings.text_color }};
-    font-size: {{ block.settings.text_size }}px;
-    font-family: {{ font.family }},{{ font.fallback_families }};
-    border-width: {{ block.settings.border_width }}px;
-    border-color: {{ block.settings.border_color }};
-    border-radius: {{ block.settings.border_radius }}px;
+    --button-bg-color: {{ block.settings.bg_color }};
+    --button-text-color: {{ block.settings.text_color }};
+    --button-font-size: {{ block.settings.text_size }}px;
+    --button-font-family: {{ font.family }}, {{ font.fallback_families }};
+    --button-border-width: {{ block.settings.border_width }}px;
+    --button-border-color: {{ block.settings.border_color }};
+    --button-border-radius: {{ block.settings.border_radius }}px;
+    --icon-gap: {{ block.settings.icon_gap | default: 8 }}px;
   }
 </style>
 
-{% if request.design_mode or product.tags contains "fasteditor" %}
-  <div class="fasteditor">
+{%- if request.design_mode or product.tags contains 'fasteditor' -%}
+  <div class="fasteditor-customize-button-wrapper" data-block-id="{{ block.id }}">
     <button
-      id="fasteditor-{{ block.id }}"
-      class="fasteditor__button block-{{ block.id }}"
-      data-shop="{{ shop.permanent_domain }}"
-      data-handle="{{ product.handle }}"
-      data-availability="{{ app.metafields.fasteditor_app.availability }}"
+      id="fasteditor-customize-button-{{ block.id }}"
+      class="fasteditor-customize-button block-{{ block.id }}{% if icon_position == 'right' %} fasteditor-customize-button--icon-right{% endif %}"
+      type="button"
+      data-shop="{{ shop.permanent_domain | escape }}"
+      data-handle="{{ product.handle | escape }}"
+      data-availability="{{ is_available }}"
       data-redirect="{{ block.settings.enable_cart_redirect }}"
       data-loading-text="{{ block.settings.loading_text | escape }}"
       data-adding-to-cart-text="{{ block.settings.adding_to_cart_text | escape }}"
       data-added-to-cart-text="{{ block.settings.added_to_cart_text | escape }}"
       data-error-text="{{ block.settings.error_text | escape }}"
       aria-label="{{ block.settings.text | escape }}"
-      type="button"
+      {% unless is_available %}disabled aria-disabled="true"{% endunless %}
     >
-      {{ block.settings.text }}
+      {%- comment -%} Icon container - always present for loading icon support {%- endcomment -%}
+      <span 
+        class="fasteditor-customize-button__icon" 
+        {% unless has_icon %}style="display: none;"{% endunless %}
+        aria-hidden="true"
+      >
+        {%- if has_icon -%}
+          <span class="fasteditor-customize-button__icon-main" aria-hidden="true">
+            {%- render 'icon-button',
+              icon: icon_type,
+              icon_color: block.settings.icon_color,
+              icon_size: block.settings.icon_size,
+              icon_custom_image: block.settings.icon_custom_image
+            -%}
+          </span>
+        {%- endif -%}
+        <span class="fasteditor-customize-button__icon-loading" style="display: none;" aria-hidden="true">
+          {%- render 'icon-loading', 
+            color: block.settings.icon_color, 
+            size: block.settings.icon_size 
+          -%}
+        </span>
+      </span>
+      
+      {%- comment -%} Button text {%- endcomment -%}
+      <span class="fasteditor-customize-button__text">{{ block.settings.text | escape }}</span>
     </button>
   </div>
-{% endif %}
+{%- endif -%}
 
+{%- comment -%} Initialize button functionality {%- endcomment -%}
 <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const button = document.querySelector("#fasteditor-{{ block.id }}");
-    if (!button) return;
+  (function() {
+    'use strict';
+    
+    document.addEventListener('DOMContentLoaded', async function() {
+      const button = document.getElementById('fasteditor-customize-button-{{ block.id }}');
+      if (!button) return;
 
-    const button_availability = button.dataset.availability;
-    if (button_availability === "false") {
-       button.setAttribute("disabled", "true")
-       return;
-    }
+      // Check availability
+      const availability = button.dataset.availability;
+      if (availability === 'false') {
+        button.setAttribute('disabled', 'true');
+        button.setAttribute('aria-disabled', 'true');
+        return;
+      }
 
-    const originalText = button.textContent;
+      // Get original text
+      const textElement = button.querySelector('.fasteditor-customize-button__text');
+      const originalText = textElement ? textElement.textContent : button.textContent;
 
-    button.addEventListener("click", () => {
-      handleFastEditorRedirect(button, originalText);
+      // Add click handler
+      button.addEventListener('click', function() {
+        if (typeof handleFastEditorRedirect === 'function') {
+          handleFastEditorRedirect(button, originalText);
+        }
+      });
+
+      // Handle auto add to cart
+      if (typeof handleFastEditorAutoAddToCart === 'function') {
+        await handleFastEditorAutoAddToCart(button);
+      }
     });
-
-    await handleFastEditorAutoAddToCart(button);
-  });
+  })();
 </script>
 
 {% schema %}
@@ -68,14 +130,12 @@
       "product"
     ]
   },
-  "stylesheet": "customize-button.css",
-  "javascript": "customize-button.js",
+  "stylesheet": "fasteditor-customize-button.css",
+  "javascript": "fasteditor-customize-button-utils.js",
   "settings": [
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Button background color",
-      "default": "#000000"
+      "type": "header",
+      "content": "Button Text"
     },
     {
       "type": "text",
@@ -84,10 +144,10 @@
       "default": "Customize"
     },
     {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text color",
-      "default": "#ffffff"
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "Text font",
+      "default": "helvetica_n4"
     },
     {
       "type": "range",
@@ -100,10 +160,20 @@
       "default": 16
     },
     {
-      "type": "font_picker",
-      "id": "text_font",
-      "label": "Text font",
-      "default": "helvetica_n4"
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Button Appearance"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#000000"
     },
     {
       "type": "range",
@@ -132,10 +202,100 @@
       "default": 0
     },
     {
-      "type": "checkbox",
-      "id": "enable_cart_redirect",
-      "default": true,
-      "label": "Redirect to cart page after adding to cart"
+      "type": "header",
+      "content": "Icon Settings"
+    },
+    {
+      "type": "select",
+      "id": "icon_type",
+      "label": "Icon type",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "pen",
+          "label": "Pen"
+        },
+        {
+          "value": "brush",
+          "label": "Brush"
+        },
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "images",
+          "label": "Images"
+        },
+        {
+          "value": "link",
+          "label": "Link"
+        },
+        {
+          "value": "settings",
+          "label": "Settings"
+        },
+        {
+          "value": "custom",
+          "label": "Custom"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_custom_image",
+      "label": "Custom icon image",
+      "info": "Only applies when 'Custom' icon type is selected"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#ffffff",
+      "info": "Only applies to built-in icons"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 8,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 20,
+      "info": "Only applies when icon is selected"
+    },
+    {
+      "type": "range",
+      "id": "icon_gap",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Icon gap",
+      "default": 8,
+      "info": "Distance between icon and text"
+    },
+    {
+      "type": "select",
+      "id": "icon_position",
+      "label": "Icon position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left",
+      "info": "Only applies when icon is selected"
     },
     {
       "type": "header",
@@ -168,6 +328,16 @@
       "label": "Error text",
       "default": "Error",
       "info": "Text shown when an error occurs"
+    },
+    {
+      "type": "header",
+      "content": "Button Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_cart_redirect",
+      "default": true,
+      "label": "Redirect to cart page after adding to cart"
     }
   ]
 }

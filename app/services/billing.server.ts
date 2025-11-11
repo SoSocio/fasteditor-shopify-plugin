@@ -284,3 +284,45 @@ export function calculateTrialEndDate(startDate: Date, trialDays: number | undef
 export function formatSubscriptionId(chargeId: string): string {
   return `gid://shopify/AppSubscription/${chargeId}`;
 }
+
+/**
+ * Checks if the usage billing limit has been reached for the current subscription.
+ *
+ * @param admin - Shopify Admin API client
+ * @returns true if the limit is reached (balanceUsed >= cappedAmount), false otherwise
+ */
+export async function checkUsageBillingLimitReached(
+  admin: authenticateAdmin
+): Promise<boolean> {
+  try {
+    const subscriptions = await fetchActiveSubscriptions(admin);
+    
+    if (!subscriptions || subscriptions.length === 0) {
+      console.warn("[checkUsageBillingLimitReached] No active subscriptions found");
+      return false;
+    }
+
+    const subscription = getActiveSubscription(subscriptions);
+    const cappedAmount = Number(subscription.appUsagePricing.cappedAmount.amount);
+    const balanceUsedAmount = Number(subscription.appUsagePricing.balanceUsed.amount);
+
+    // If cappedAmount is 0, there's no limit, so it's never reached
+    if (cappedAmount === 0) {
+      return false;
+    }
+
+    // Limit is reached when balanceUsed >= cappedAmount
+    const isLimitReached = balanceUsedAmount >= cappedAmount;
+
+    console.info(
+      `[checkUsageBillingLimitReached] Usage limit check: ${balanceUsedAmount}/${cappedAmount}, reached: ${isLimitReached}`
+    );
+
+    return isLimitReached;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("[checkUsageBillingLimitReached] Error checking usage limit:", errorMessage);
+    // On error, default to false (not reached) to avoid blocking the app
+    return false;
+  }
+}
