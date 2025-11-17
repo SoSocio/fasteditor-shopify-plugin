@@ -1,0 +1,53 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "FastEditor Button",
+      "settings": {
+        "bg_color": "Button background color",
+        "text": "Button text",
+        "text_color": "Text color",
+        "text_size": "Font size",
+        "text_font": "Text font",
+        "border_width": "Border width",
+        "border_color": "Border color",
+        "border_radius": "Border radius",
+        "enable_cart_redirect": "Redirect to cart page after adding to cart",
+        "loading_text": "Loading text",
+        "adding_to_cart_text": "Adding to cart text",
+        "added_to_cart_text": "Added to cart text",
+        "error_text": "Error text",
+        "button_text_header": "Button Text",
+        "button_appearance_header": "Button Appearance",
+        "icon_settings_header": "Icon Settings",
+        "icon_type": "Icon type",
+        "icon_type_none": "None",
+        "icon_type_pen": "Pen",
+        "icon_type_brush": "Brush",
+        "icon_type_image": "Image",
+        "icon_type_images": "Images",
+        "icon_type_link": "Link",
+        "icon_type_settings": "Settings",
+        "icon_type_custom": "Custom",
+        "custom_icon_image": "Custom icon image",
+        "custom_icon_image_info": "Only applies when 'Custom' icon type is selected",
+        "icon_color": "Icon color",
+        "icon_color_info": "Only applies to built-in icons",
+        "icon_size": "Icon size",
+        "icon_size_info": "Only applies when icon is selected",
+        "icon_gap": "Icon gap",
+        "icon_gap_info": "Distance between icon and text",
+        "icon_position": "Icon position",
+        "icon_position_left": "Left",
+        "icon_position_right": "Right",
+        "icon_position_info": "Only applies when icon is selected",
+        "button_state_texts_header": "Button State Texts",
+        "loading_text_info": "Text shown when button is loading",
+        "adding_to_cart_text_info": "Text shown when adding item to cart",
+        "added_to_cart_text_info": "Text shown after item is added to cart",
+        "error_text_info": "Text shown when an error occurs",
+        "button_behavior_header": "Button Behavior",
+        "sold_out": "Sold out"
+      }
+    }
+  }
+}
