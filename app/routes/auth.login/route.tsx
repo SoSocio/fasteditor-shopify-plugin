@@ -12,6 +12,7 @@ import {
 } from "@shopify/polaris";
 import polarisTranslations from "@shopify/polaris/locales/en.json";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
+import { useTranslation } from "react-i18next";
 
 import { login } from "../../shopify.server";
 
@@ -34,10 +35,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Auth() {
+  const { t } = useTranslation();
   const loaderData = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
   const [shop, setShop] = useState("");
-  const { errors } = actionData || loaderData;
+  const rawErrors = actionData || loaderData;
+  const errors = rawErrors?.errors ? {
+    shop: rawErrors.errors.shop && t(rawErrors.errors.shop, { defaultValue: rawErrors.errors.shop })
+  } : {};
 
   return (
     <PolarisAppProvider i18n={loaderData.polarisTranslations}>
@@ -46,19 +51,19 @@ export default function Auth() {
           <Form method="post">
             <FormLayout>
               <Text variant="headingMd" as="h2">
-                Log in
+                {t("auth-page.title")}
               </Text>
               <TextField
                 type="text"
                 name="shop"
-                label="Shop domain"
-                helpText="example.myshopify.com"
+                label={t("auth-page.shop-domain-label")}
+                helpText={t("auth-page.shop-domain-help")}
                 value={shop}
                 onChange={setShop}
                 autoComplete="on"
                 error={errors.shop}
               />
-              <Button submit>Log in</Button>
+              <Button submit>{t("auth-page.login-button")}</Button>
             </FormLayout>
           </Form>
         </Card>

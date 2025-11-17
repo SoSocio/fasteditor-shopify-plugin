@@ -13,6 +13,7 @@ import {
 import {ImageIcon} from "@shopify/polaris-icons";
 import {useProductsTableControls} from "../../hooks/useProductsTableControls";
 import {formatCurrency} from "../../utils/formatCurrency";
+import { useTranslation } from "react-i18next";
 
 export const ProductsTable = (
   {
@@ -21,6 +22,8 @@ export const ProductsTable = (
     shopName,
     shopSettings,
   }: DashboardCoreLoader) => {
+
+  const { t } = useTranslation();
 
   const {
     mode,
@@ -39,14 +42,14 @@ export const ProductsTable = (
   } = useProductsTableControls({pageInfo});
 
   const resourceName = {
-    singular: "product",
-    plural: "products",
+    singular: t("dashboard-page.products-table.resource-name.singular"),
+    plural: t("dashboard-page.products-table.resource-name.plural"),
   };
 
   const emptyStateMarkup = (
     <EmptySearchResult
-      title={"No products yet"}
-      description={"Make sure your products have the fasteditor tag."}
+      title={t("dashboard-page.products-table.empty-state.title")}
+      description={t("dashboard-page.products-table.empty-state.description")}
       withIllustration
     />
   );
@@ -93,7 +96,7 @@ export const ProductsTable = (
                       size="small"
                     />
                     <Link removeUnderline url={variantUrl} target="_top">
-                      {variant.title !== "Default Title" ? variant.title : product.title}
+                      {variant.title !== t("dashboard-page.products-table.default-variant-title") ? variant.title : product.title}
                     </Link>
                   </InlineStack>
                 </IndexTable.Cell>
@@ -136,7 +139,7 @@ export const ProductsTable = (
         sortSelected={sortSelected}
         onSort={onSortChange}
         queryValue={queryValue}
-        queryPlaceholder="Search by product title or SKU"
+        queryPlaceholder={t("dashboard-page.products-table.search-placeholder")}
         onQueryChange={onQueryChange}
         onQueryClear={onQueryClear}
         filters={[]}
@@ -156,10 +159,10 @@ export const ProductsTable = (
         itemCount={products.length}
         emptyState={emptyStateMarkup}
         headings={[
-          {title: "Product"},
-          {title: "SKU"},
-          {title: "Price",},
-          {title: "Quantity", alignment: "end"},
+          {title: t("dashboard-page.products-table.headings.product")},
+          {title: t("dashboard-page.products-table.headings.sku")},
+          {title: t("dashboard-page.products-table.headings.price")},
+          {title: t("dashboard-page.products-table.headings.quantity"), alignment: "end"},
         ]}
         selectable={false}
         pagination={{

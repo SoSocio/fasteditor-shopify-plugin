@@ -1,10 +1,8 @@
-import type {authenticateAdmin} from "../types/app.types";
 import type {IntegrationShopSettings} from "../types/shop.types";
 import type {IntegrationErrorsData} from "../types/integration.types";
 import type {FastEditorIntegrationData} from "../types/fastEditor.types";
 import {FastEditorAPI} from './fastEditorAPI.server';
 import {getShopSettings, upsertFastEditorShopSettings} from '../models/shopSettings.server';
-import {getShopInfo, getShopLocale} from "./shop.server";
 
 export async function getFastEditorShopSettings(shop: string): Promise<IntegrationShopSettings> {
   const shopSettings = await getShopSettings(shop);
@@ -35,25 +33,20 @@ export async function getFastEditorAPIForShop(shop: string): Promise<FastEditorA
 
 /**
  * Sets up FastEditor integration for a shop.
- * @param admin - Shopify Admin API client
  * @param shop - The shop domain
  * @param apiKey - FastEditor API key
  * @param apiDomain - FastEditor domain
  * @returns FastEditor integration result
  */
 export async function setupFastEditorIntegration(
-  admin: authenticateAdmin,
   shop: string,
   apiKey: string,
   apiDomain: string
 ): Promise<FastEditorIntegrationData> {
-  const shopInfo = await getShopInfo(admin);
-  const shopLocale = await getShopLocale(admin);
-
   const fastEditor = new FastEditorAPI(apiKey, apiDomain);
   const integrationData = await fastEditor.checkShopIntegration();
 
-  await upsertFastEditorShopSettings(shop, apiKey, apiDomain, shopLocale, shopInfo);
+  await upsertFastEditorShopSettings(shop, apiKey, apiDomain);
 
   return integrationData;
 }
@@ -73,13 +66,14 @@ export async function parseFormData(request: Request): Promise<{ apiKey: string;
 
 /**
  * Validates form data
+ * Note: Error messages are returned as translation keys and should be translated on the client side
  * @param apiKey - FastEditor API Key
  * @param apiDomain - FastEditor Domain
- * @returns Errors object
+ * @returns Errors object with keys that match translation keys
  */
 export function validateFormData(apiKey: string, apiDomain: string): IntegrationErrorsData {
   const errors: IntegrationErrorsData = {};
-  if (!apiKey) errors.apiKey = "API Key is required";
-  if (!apiDomain) errors.apiDomain = "API Domain is required";
+  if (!apiKey) errors.apiKey = "api-key-required";
+  if (!apiDomain) errors.apiDomain = "api-domain-required";
   return errors;
 }

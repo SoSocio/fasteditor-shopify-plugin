@@ -1,20 +1,22 @@
 import {Banner, BlockStack, List} from "@shopify/polaris";
-import React from "react";
+import { useTranslation } from "react-i18next";
 
 export const ErrorBanner = () => {
+  const { t } = useTranslation();
+
   return (
     <Banner
-      title="We couldn't load your dashboard data"
-      action={{ content: "Return", url: "/app/dashboard" }}
+      title={t("dashboard-page.error-banner.title")}
+      action={{ content: t("dashboard-page.error-banner.return-button"), url: "/app/dashboard" }}
       tone="warning"
     >
       <BlockStack gap="200">
         <List>
           <List.Item>
-            The data couldn't be found based on your current filters.
+            {t("dashboard-page.error-banner.messages.item-1")}
           </List.Item>
           <List.Item>
-            If the issue persists, try refreshing the page or contact support.
+            {t("dashboard-page.error-banner.messages.item-2")}
           </List.Item>
         </List>
       </BlockStack>

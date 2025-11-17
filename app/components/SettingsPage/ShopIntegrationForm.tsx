@@ -1,6 +1,7 @@
 import React from "react";
 import {BlockStack, Button, Form, FormLayout, InlineError, TextField} from "@shopify/polaris";
 import type {IntegrationFormProps} from "../../types/integration.types";
+import { useTranslation } from "react-i18next";
 
 const ShopIntegrationForm: React.FC<IntegrationFormProps> = (
   {
@@ -13,6 +14,7 @@ const ShopIntegrationForm: React.FC<IntegrationFormProps> = (
     fastEditorError
   }
 ) => {
+  const { t } = useTranslation();
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -22,7 +24,7 @@ const ShopIntegrationForm: React.FC<IntegrationFormProps> = (
             <TextField
               id="apiKey"
               type="text"
-              label="API Key"
+              label={t("settings-page.integration-form.api-key-label")}
               value={formValues.apiKey}
               onChange={handleChange("apiKey")}
               autoComplete="off"
@@ -30,14 +32,14 @@ const ShopIntegrationForm: React.FC<IntegrationFormProps> = (
             />
             <InlineError
               fieldID="apiKey"
-              message={isApiKeyError ? errors?.apiKey : ""}
+              message={isApiKeyError && errors?.apiKey ? t(`settings-page.integration-form.validation-errors.${errors.apiKey}`) : ""}
             />
           </BlockStack>
           <BlockStack gap="200">
             <TextField
               id="apiDomain"
               type="text"
-              label="API Domain"
+              label={t("settings-page.integration-form.api-domain-label")}
               value={formValues.apiDomain}
               onChange={handleChange("apiDomain")}
               autoComplete="off"
@@ -45,15 +47,15 @@ const ShopIntegrationForm: React.FC<IntegrationFormProps> = (
             />
             <InlineError
               fieldID="apiDomain"
-              message={isApiDomainError ? errors?.apiDomain : ""}
+              message={isApiDomainError && errors?.apiDomain ? t(`settings-page.integration-form.validation-errors.${errors.apiDomain}`) : ""}
             />
           </BlockStack>
           <InlineError
             fieldID=""
-            message={fastEditorError ? "Connection to FastEditor failed. Please check your API Key and Domain and try again." : ""}
+            message={fastEditorError ? t("settings-page.integration-form.connection-failed-error") : ""}
           />
         </BlockStack>
-        <Button submit>Connect</Button>
+        <Button submit>{t("settings-page.integration-form.connect-button")}</Button>
       </FormLayout>
     </Form>
   );

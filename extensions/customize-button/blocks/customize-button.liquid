@@ -19,7 +19,8 @@
   endif
   assign button_text = block.settings.text
   if is_variant_available == false
-    assign button_text = 'Sold out'
+    assign sold_out_key = 'blocks.customize-button.settings.sold_out'
+    assign button_text = sold_out_key | t
     assign has_icon = false
   endif
 -%}
@@ -60,7 +61,7 @@
       data-adding-to-cart-text="{{ block.settings.adding_to_cart_text | escape }}"
       data-added-to-cart-text="{{ block.settings.added_to_cart_text | escape }}"
       data-error-text="{{ block.settings.error_text | escape }}"
-      data-sold-out-text="Sold out"
+      data-sold-out-text="{{ 'blocks.customize-button.settings.sold_out' | t }}"
       aria-label="{{ block.settings.text | escape }}"
       {% unless is_available and is_variant_available %}disabled aria-disabled="true"{% endunless %}
     >
@@ -106,7 +107,7 @@
       // Check availability
       const availability = button.dataset.availability;
       const isVariantAvailable = button.dataset.variantAvailable === 'true';
-      const soldOutText = button.dataset.soldOutText || 'Sold out';
+      const soldOutText = button.dataset.soldOutText || '{{ 'blocks.customize-button.settings.sold_out' | t }}';
       if (availability === 'false') {
         button.setAttribute('disabled', 'true');
         button.setAttribute('aria-disabled', 'true');
@@ -146,7 +147,7 @@
 
 {% schema %}
 {
-  "name": "FastEditor Button",
+  "name": "t:blocks.customize-button.name",
   "target": "section",
   "available_if": "{{ app.metafields.fasteditor_app.paid }}",
   "enabled_on": {
@@ -159,18 +160,18 @@
   "settings": [
     {
       "type": "header",
-      "content": "Button Text"
+      "content": "t:blocks.customize-button.settings.button_text_header"
     },
     {
       "type": "text",
       "id": "text",
-      "label": "Button text",
+      "label": "t:blocks.customize-button.settings.text",
       "default": "Customize"
     },
     {
       "type": "font_picker",
       "id": "text_font",
-      "label": "Text font",
+      "label": "t:blocks.customize-button.settings.text_font",
       "default": "helvetica_n4"
     },
     {
@@ -180,23 +181,23 @@
       "max": 64,
       "step": 1,
       "unit": "px",
-      "label": "Font size",
+      "label": "t:blocks.customize-button.settings.text_size",
       "default": 16
     },
     {
       "type": "color",
       "id": "text_color",
-      "label": "Text color",
+      "label": "t:blocks.customize-button.settings.text_color",
       "default": "#ffffff"
     },
     {
       "type": "header",
-      "content": "Button Appearance"
+      "content": "t:blocks.customize-button.settings.button_appearance_header"
     },
     {
       "type": "color",
       "id": "bg_color",
-      "label": "Background color",
+      "label": "t:blocks.customize-button.settings.bg_color",
       "default": "#000000"
     },
     {
@@ -206,13 +207,13 @@
       "max": 99,
       "step": 1,
       "unit": "px",
-      "label": "Border width",
+      "label": "t:blocks.customize-button.settings.border_width",
       "default": 0
     },
     {
       "type": "color",
       "id": "border_color",
-      "label": "Border color",
+      "label": "t:blocks.customize-button.settings.border_color",
       "default": "#000000"
     },
     {
@@ -222,49 +223,49 @@
       "max": 99,
       "step": 1,
       "unit": "px",
-      "label": "Border radius",
+      "label": "t:blocks.customize-button.settings.border_radius",
       "default": 0
     },
     {
       "type": "header",
-      "content": "Icon Settings"
+      "content": "t:blocks.customize-button.settings.icon_settings_header"
     },
     {
       "type": "select",
       "id": "icon_type",
-      "label": "Icon type",
+      "label": "t:blocks.customize-button.settings.icon_type",
       "options": [
         {
           "value": "none",
-          "label": "None"
+          "label": "t:blocks.customize-button.settings.icon_type_none"
         },
         {
           "value": "pen",
-          "label": "Pen"
+          "label": "t:blocks.customize-button.settings.icon_type_pen"
         },
         {
           "value": "brush",
-          "label": "Brush"
+          "label": "t:blocks.customize-button.settings.icon_type_brush"
         },
         {
           "value": "image",
-          "label": "Image"
+          "label": "t:blocks.customize-button.settings.icon_type_image"
         },
         {
           "value": "images",
-          "label": "Images"
+          "label": "t:blocks.customize-button.settings.icon_type_images"
         },
         {
           "value": "link",
-          "label": "Link"
+          "label": "t:blocks.customize-button.settings.icon_type_link"
         },
         {
           "value": "settings",
-          "label": "Settings"
+          "label": "t:blocks.customize-button.settings.icon_type_settings"
         },
         {
           "value": "custom",
-          "label": "Custom"
+          "label": "t:blocks.customize-button.settings.icon_type_custom"
         }
       ],
       "default": "none"
@@ -272,15 +273,15 @@
     {
       "type": "image_picker",
       "id": "icon_custom_image",
-      "label": "Custom icon image",
-      "info": "Only applies when 'Custom' icon type is selected"
+      "label": "t:blocks.customize-button.settings.custom_icon_image",
+      "info": "t:blocks.customize-button.settings.custom_icon_image_info"
     },
     {
       "type": "color",
       "id": "icon_color",
-      "label": "Icon color",
+      "label": "t:blocks.customize-button.settings.icon_color",
       "default": "#ffffff",
-      "info": "Only applies to built-in icons"
+      "info": "t:blocks.customize-button.settings.icon_color_info"
     },
     {
       "type": "range",
@@ -289,9 +290,9 @@
       "max": 64,
       "step": 1,
       "unit": "px",
-      "label": "Icon size",
+      "label": "t:blocks.customize-button.settings.icon_size",
       "default": 20,
-      "info": "Only applies when icon is selected"
+      "info": "t:blocks.customize-button.settings.icon_size_info"
     },
     {
       "type": "range",
@@ -300,68 +301,68 @@
       "max": 32,
       "step": 1,
       "unit": "px",
-      "label": "Icon gap",
+      "label": "t:blocks.customize-button.settings.icon_gap",
       "default": 8,
-      "info": "Distance between icon and text"
+      "info": "t:blocks.customize-button.settings.icon_gap_info"
     },
     {
       "type": "select",
       "id": "icon_position",
-      "label": "Icon position",
+      "label": "t:blocks.customize-button.settings.icon_position",
       "options": [
         {
           "value": "left",
-          "label": "Left"
+          "label": "t:blocks.customize-button.settings.icon_position_left"
         },
         {
           "value": "right",
-          "label": "Right"
+          "label": "t:blocks.customize-button.settings.icon_position_right"
         }
       ],
       "default": "left",
-      "info": "Only applies when icon is selected"
+      "info": "t:blocks.customize-button.settings.icon_position_info"
     },
     {
       "type": "header",
-      "content": "Button State Texts"
+      "content": "t:blocks.customize-button.settings.button_state_texts_header"
     },
     {
       "type": "text",
       "id": "loading_text",
-      "label": "Loading text",
+      "label": "t:blocks.customize-button.settings.loading_text",
       "default": "Loading...",
-      "info": "Text shown when button is loading"
+      "info": "t:blocks.customize-button.settings.loading_text_info"
     },
     {
       "type": "text",
       "id": "adding_to_cart_text",
-      "label": "Adding to cart text",
+      "label": "t:blocks.customize-button.settings.adding_to_cart_text",
       "default": "Adding to cart...",
-      "info": "Text shown when adding item to cart"
+      "info": "t:blocks.customize-button.settings.adding_to_cart_text_info"
     },
     {
       "type": "text",
       "id": "added_to_cart_text",
-      "label": "Added to cart text",
+      "label": "t:blocks.customize-button.settings.added_to_cart_text",
       "default": "Added to cart",
-      "info": "Text shown after item is added to cart"
+      "info": "t:blocks.customize-button.settings.added_to_cart_text_info"
     },
     {
       "type": "text",
       "id": "error_text",
-      "label": "Error text",
+      "label": "t:blocks.customize-button.settings.error_text",
       "default": "Error",
-      "info": "Text shown when an error occurs"
+      "info": "t:blocks.customize-button.settings.error_text_info"
     },
     {
       "type": "header",
-      "content": "Button Behavior"
+      "content": "t:blocks.customize-button.settings.button_behavior_header"
     },
     {
       "type": "checkbox",
       "id": "enable_cart_redirect",
       "default": true,
-      "label": "Redirect to cart page after adding to cart"
+      "label": "t:blocks.customize-button.settings.enable_cart_redirect"
     }
   ]
 }
