@@ -50,6 +50,9 @@ export default defineConfig({
       allow: ["app", "node_modules"],
     },
   },
+  define: {
+    '__APP_VERSION__': JSON.stringify(process.env.npm_package_version),
+  },
   plugins: [
     remix({
       ignoredRouteFiles: ["**/.*"],
