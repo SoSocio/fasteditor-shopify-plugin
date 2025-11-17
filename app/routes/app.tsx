@@ -124,23 +124,24 @@ export const action = async ({request}: ActionFunctionArgs): Promise<null> => {
  * @returns The app layout UI
  */
 export default function App() {
+  const { t } = useTranslation();
   const {apiKey, supportEmail, appSubscription} = useLoaderData<typeof loader>();
 
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
       <NavMenu>
         <Link to="/app" rel="home">
-          Home
+          {t("navigation.home")}
         </Link>
-        <Link to="/app/dashboard">Dashboard</Link>
-        <Link to="/app/settings">Settings</Link>
-        <Link to="/app/subscription">Subscription</Link>
+        <Link to="/app/dashboard">{t("navigation.dashboard")}</Link>
+        <Link to="/app/settings">{t("navigation.settings")}</Link>
+        <Link to="/app/subscription">{t("navigation.subscription")}</Link>
       </NavMenu>
       {!appSubscription ? <NoSubscriptionPage /> : <Outlet />}
       <Box padding="500">
         <BlockStack inlineAlign="center">
           <Text as="p" variant="bodySm">
-            Need help? Contact our support team at{" "}
+            {t("footer.support-text")}{" "}
             <PolarisLink url={`mailto:${supportEmail}`} target="_blank">
               {supportEmail}
             </PolarisLink>
