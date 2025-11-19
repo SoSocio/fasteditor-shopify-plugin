@@ -1,0 +1,50 @@
+client_id = "5fe5f99c248ef35f62806086e4a86c27"
+name = "FastEditor STAGING"
+handle = "fasteditor-staging"
+application_url = "https://fasteditor-staging.vercel.app"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-04"
+
+[[webhooks.subscriptions]]
+topics = [ "app_subscriptions/update" ]
+uri = "/webhooks/app/subscriptions/update"
+
+[[webhooks.subscriptions]]
+topics = [ "orders/paid" ]
+uri = "/webhooks/app/orders_paid"
+
+[[webhooks.subscriptions]]
+topics = [ "app/scopes_update" ]
+uri = "/webhooks/app/scopes_update"
+
+[[webhooks.subscriptions]]
+topics = [ "app/uninstalled" ]
+uri = "/webhooks/app/uninstalled"
+
+[[webhooks.subscriptions]]
+compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+uri = "/webhooks/app/gdpr"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_locales,read_orders,read_products,write_orders"
+
+[auth]
+redirect_urls = [
+  "https://fasteditor-staging.vercel.app/auth/callback",
+  "https://fasteditor-staging.vercel.app/auth/shopify/callback",
+  "https://fasteditor-staging.vercel.app/api/auth/callback"
+]
+
+[app_proxy]
+url = "https://fasteditor-staging.vercel.app"
+subpath = "embedded"
+prefix = "apps"
+
+[pos]
+embedded = false
