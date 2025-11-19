@@ -96,3 +96,16 @@ model CurrencyRates {
   @@unique([code])
   @@index([code])
 }
+
+model Merchant {
+  id        String   @id @default(cuid())
+  userId    String // Shopify user ID
+  shop      String // Shopify shop domain
+  language  String? // Merchant's preferred language
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, shop])
+  @@index([shop])
+  @@index([userId])
+}

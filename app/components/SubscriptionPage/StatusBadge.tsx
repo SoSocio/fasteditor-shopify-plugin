@@ -1,10 +1,9 @@
 import {Badge} from '@shopify/polaris';
 import React from 'react';
+import { useTranslation } from "react-i18next";
 
 export const StatusBadge = ({status}: { status: string }) => {
-  function capitalize(word: string): string {
-    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-  }
+  const { t } = useTranslation();
 
   const tone: 'info' | 'success' | 'warning' | 'critical' = (() => {
     switch (status) {
@@ -23,5 +22,8 @@ export const StatusBadge = ({status}: { status: string }) => {
     }
   })();
 
-  return <Badge tone={tone}>{capitalize(status)}</Badge>;
+  const statusKey = `subscription-page.status.${status.toLowerCase()}`;
+  const statusLabel = t(statusKey, { defaultValue: status });
+
+  return <Badge tone={tone}>{statusLabel}</Badge>;
 }

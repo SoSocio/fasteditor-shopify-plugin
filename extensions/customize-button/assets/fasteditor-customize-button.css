@@ -1,0 +1,119 @@
+/**
+ * FastEditor Customize Button Styles
+ * Scoped styles for the FastEditor customization button
+ */
+
+/* CSS Custom Properties */
+:root {
+  --fasteditor-customize-button-gap-default: 8px;
+  --fasteditor-customize-button-transition: opacity 0.1s ease-in-out;
+  --fasteditor-customize-button-opacity-hover: 0.8;
+  --fasteditor-customize-button-opacity-disabled: 0.6;
+}
+
+/* Base button styles */
+.fasteditor-customize-button {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--icon-gap, var(--fasteditor-customize-button-gap-default));
+  
+  /* Spacing */
+  padding: 10px 20px;
+  
+  /* Border */
+  border-style: solid;
+  border-width: var(--button-border-width, 0);
+  border-color: var(--button-border-color, transparent);
+  border-radius: var(--button-border-radius, 0);
+  
+  /* Colors */
+  background-color: var(--button-bg-color, #000);
+  color: var(--button-text-color, #fff);
+  
+  /* Typography */
+  font-size: var(--button-font-size, 16px);
+  font-family: var(--button-font-family, sans-serif);
+  font-weight: inherit;
+  line-height: 1.5;
+  text-align: center;
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: var(--fasteditor-customize-button-transition);
+  
+  /* Accessibility */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Icon position modifier */
+.fasteditor-customize-button--icon-right {
+  flex-direction: row-reverse;
+}
+
+/* Icon container */
+.fasteditor-customize-button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Icon variants */
+.fasteditor-customize-button__icon-main,
+.fasteditor-customize-button__icon-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* SVG icons */
+.fasteditor-customize-button__icon svg {
+  display: block;
+  width: auto;
+  height: auto;
+  color: inherit;
+  fill: currentColor;
+}
+
+/* Image icons */
+.fasteditor-customize-button__icon img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Button text */
+.fasteditor-customize-button__text {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Hover state */
+.fasteditor-customize-button:hover:not([disabled]) {
+  opacity: var(--fasteditor-customize-button-opacity-hover);
+}
+
+/* Focus state for accessibility */
+.fasteditor-customize-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Disabled state */
+.fasteditor-customize-button[disabled],
+.fasteditor-customize-button[aria-disabled="true"] {
+  opacity: var(--fasteditor-customize-button-opacity-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Loading state */
+.fasteditor-customize-button--loading {
+  pointer-events: none;
+}

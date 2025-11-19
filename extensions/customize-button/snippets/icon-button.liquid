@@ -1,0 +1,46 @@
+{% comment %}
+  Renders icon for button based on icon type
+  
+  Accepts:
+  - icon: {String} Icon type (none, pen, image, images, link, settings, brush, custom)
+  - icon_color: {String} Color for built-in icons (default: #ffffff)
+  - icon_size: {Number} Size of the icon in pixels (default: 20)
+  - icon_custom_image: {Image} Custom image for custom icon
+  
+  Usage:
+  {% render 'icon-button', icon: block.settings.icon_type, icon_color: block.settings.icon_color, icon_size: block.settings.icon_size, icon_custom_image: block.settings.icon_custom_image %}
+{% endcomment %}
+
+{% assign icon = icon | default: 'none' %}
+{% assign icon_color = icon_color | default: '#ffffff' %}
+{% assign icon_size = icon_size | default: 20 %}
+
+{%- if icon != 'none' -%}
+  {%- if icon == 'custom' -%}
+    {%- if icon_custom_image -%}
+      <img 
+        src="{{ icon_custom_image | image_url: width: icon_size }}" 
+        alt=""
+        width="{{ icon_size }}"
+        height="{{ icon_size }}"
+        loading="lazy"
+      >
+    {%- endif -%}
+  {%- else -%}
+    {%- case icon -%}
+      {%- when 'pen' -%}
+        {%- render 'icon-pen', color: icon_color, size: icon_size -%}
+      {%- when 'brush' -%}
+        {%- render 'icon-brush', color: icon_color, size: icon_size -%}
+      {%- when 'image' -%}
+        {%- render 'icon-image', color: icon_color, size: icon_size -%}
+      {%- when 'images' -%}
+        {%- render 'icon-images', color: icon_color, size: icon_size -%}
+      {%- when 'link' -%}
+        {%- render 'icon-link', color: icon_color, size: icon_size -%}
+      {%- when 'settings' -%}
+        {%- render 'icon-settings', color: icon_color, size: icon_size -%}
+    {%- endcase -%}
+  {%- endif -%}
+{%- endif -%}
+

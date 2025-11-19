@@ -1,6 +1,6 @@
 import {type LoaderFunctionArgs} from "@remix-run/node";
 import {authenticate} from "../shopify.server";
-import {getAllAppSubscriptions} from "../services/app.server";
+import {getAllAppSubscriptions, initializeAppAvailability} from "../services/app.server";
 import {createShopSettings, getShopSettings} from "../models/shopSettings.server";
 import {getShopInfo, getShopLocale} from "../services/shop.server";
 import { calculateTrialEndDate, formatSubscriptionId } from "app/services/billing.server";
@@ -62,6 +62,9 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
 
       console.info(`[${ENDPOINT}] Created shop settings for ${session.shop}`);
     }
+
+    // Initialize app availability based on usage billing limit
+    await initializeAppAvailability(admin);
 
     return redirect("/app");
   } catch (error) {

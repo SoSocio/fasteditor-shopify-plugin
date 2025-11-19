@@ -1,0 +1,192 @@
+{
+  "getting-started-page": {
+    "title": "Getting Started",
+    "integration": {
+      "title": "FastEditor Integration",
+      "description": "Before using FastEditor, connect your store to the platform via the Settings page.",
+      "button": "Go to Settings"
+    },
+    "customization-button": {
+      "title": "Customization Button",
+      "description": "Add a customization button to your product page template and style it to match your theme.",
+      "button": "Customize Appearance"
+    },
+    "product-setup": {
+      "title": "Product Setup",
+      "description": "To link a Shopify product with FastEditor, follow these steps:",
+      "steps": {
+        "item-1": "Create or select a product in Shopify.",
+        "item-2": "Go to the FastEditor platform.",
+        "item-3": "Find the corresponding product.",
+        "item-4": "Click <b>Configurations</b>.",
+        "item-5": "You'll land on the product details page.",
+        "item-6": "Select the filters you want to use.",
+        "item-7": "Click <b>SmartLink payload</b>.",
+        "item-8": "Copy the <b>SKU</b>.",
+        "item-9": "Return to the product settings in Shopify.",
+        "item-10": "<b>If the product has no variants:</b> paste the SKU into the <i>SKU (Stock Keeping Unit)</i> field in the Inventory section and save your changes.",
+        "item-11": "<b>If the product has variants:</b> open the specific variant, paste the SKU into the <i>SKU (Stock Keeping Unit)</i> field in the Inventory section and save your changes."
+      },
+      "display-button-description": "To display the customization button on the product page:",
+      "display-steps": {
+        "item-1": "Open the product you want to customize.",
+        "item-2": "Scroll to the <b>Tags</b> section.",
+        "item-3": "Add the <code>fasteditor</code> tag."
+      },
+      "button": "Go to Products"
+    }
+  },
+  "dashboard-page": {
+    "products-table-info": {
+      "title": "Products with the FastEditor tag",
+      "description": "The table below shows products tagged with <code>fasteditor</code>.",
+      "tag-instructions-title": "To tag a product:",
+      "steps": {
+        "item-1": "Go to <strong>Products</strong>",
+        "item-2": "Select a product",
+        "item-3": "In the Tags section, enter <strong>fasteditor</strong> and press <strong>Enter</strong>",
+        "item-4": "Click <strong>Save</strong>"
+      }
+    },
+    "products-table": {
+      "resource-name": {
+        "singular": "product",
+        "plural": "products"
+      },
+      "empty-state": {
+        "title": "No products yet",
+        "description": "Make sure your products have the fasteditor tag."
+      },
+      "search-placeholder": "Search by product title or SKU",
+      "headings": {
+        "product": "Product",
+        "sku": "SKU",
+        "price": "Price",
+        "quantity": "Quantity"
+      },
+      "default-variant-title": "Default Title"
+    },
+    "error-banner": {
+      "title": "We couldn't load your dashboard data",
+      "return-button": "Return",
+      "messages": {
+        "item-1": "The data couldn't be found based on your current filters.",
+        "item-2": "If the issue persists, try refreshing the page or contact support."
+      }
+    },
+    "tabs": {
+      "all": "All",
+      "active": "Active",
+      "draft": "Draft",
+      "archived": "Archived"
+    },
+    "sort": {
+      "product-label": "Product",
+      "direction-az": "A-Z",
+      "direction-za": "Z-A"
+    }
+  },
+  "settings-page": {
+    "title": "Settings",
+    "integration-card": {
+      "connected-badge": "Connected",
+      "not-connected-badge": "Not connected",
+      "title": "Connect Your Store to FastEditor",
+      "description": "To connect your store, enter your FastEditor API Key and Domain below, then click <strong>Connect</strong>. If the connection is successful, you will see a confirmation message and the status will update to <strong>Connected</strong>. If you have any issues while connecting FastEditor, please contact our support. You'll find the email at the bottom of the page."
+    },
+    "integration-form": {
+      "api-key-label": "API Key",
+      "api-domain-label": "API Domain",
+      "connect-button": "Connect",
+      "connection-failed-error": "Connection to FastEditor failed. Please check your API Key and Domain and try again.",
+      "validation-errors": {
+        "api-key-required": "API Key is required",
+        "api-domain-required": "API Domain is required"
+      },
+      "success-message": "FastEditor integration is successful.",
+      "validation-errors-title": "Validation errors"
+    }
+  },
+  "subscription-page": {
+    "title": "Subscription",
+    "cancel-button": "Cancel",
+    "current-subscription": {
+      "per-month": "/ month",
+      "started-on": "Started on:",
+      "ends-on": "Ends on:"
+    },
+    "usage-subscription": {
+      "title": "Current app spending limit",
+      "remaining-amount": "Remaining amount:",
+      "spent": "spent",
+      "limit": "limit",
+      "change-limit-button": "Change Limit"
+    },
+    "cancel-modal": {
+      "title": "Cancel Subscription",
+      "confirm-question": "Are you sure you want to cancel your subscription?",
+      "confirm-description": "If you cancel your subscription, access to all paid features will be revoked, and you won't be able to use the remaining paid period.",
+      "cancel-button": "Cancel Subscription",
+      "keep-button": "Keep Subscription",
+      "success-message": "Subscription cancelled successfully",
+      "error-message": "Failed to cancel subscription"
+    },
+    "status": {
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "declined": "Declined",
+      "pending": "Pending",
+      "expired": "Expired",
+      "frozen": "Frozen"
+    }
+  },
+  "auth-page": {
+    "title": "Log in",
+    "shop-domain-label": "Shop domain",
+    "shop-domain-help": "example.myshopify.com",
+    "login-button": "Log in"
+  },
+  "home-page": {
+    "heading": "A short heading about FastEditor",
+    "tagline": "A tagline about FastEditor that describes your value proposition.",
+    "shop-domain-label": "Shop domain",
+    "shop-domain-example": "e.g: my-shop-domain.myshopify.com",
+    "login-button": "Log in",
+    "product-feature-title": "Product feature",
+    "product-feature-description": "Some detail about your feature and its benefit to your customer."
+  },
+  "no-subscription-page": {
+    "heading": "Activate your subscription to continue",
+    "activate-button": "Activate subscription",
+    "description": "To continue using FastEditor, please activate your monthly plan. You will be redirected to billing page to confirm your subscription.",
+    "error-message": "Cant create Subscription"
+  },
+  "usage-limit-banner": {
+    "title": "Usage limit exceeded",
+    "description": "Your current usage has exceeded the allowed limit for this billing cycle. As a result, the application is temporarily unavailable.",
+    "list-item-1": "Access to all app features is blocked until the usage limit is increased or the billing cycle resets.",
+    "list-item-2": "To restore access, please review your subscription plan or increase your usage limit in the settings.",
+    "go-to-subscription-button": "Go to Subscription",
+    "change-limit-button": "Change Limit"
+  },
+  "errors": {
+    "login": {
+      "missing-shop": "Please enter your shop domain to log in",
+      "invalid-shop": "Please enter a valid shop domain to log in"
+    },
+    "subscription": {
+      "unable-to-fetch-shop-settings": "Unable to fetch shop settings",
+      "unable-to-fetch-subscriptions": "Unable to fetch subscriptions",
+      "unable-to-fetch-current-subscription": "Unable to fetch current subscription"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "subscription": "Subscription"
+  },
+  "footer": {
+    "support-text": "Need help? Contact our support team at"
+  }
+}

@@ -2,6 +2,7 @@ import type {LoaderFunctionArgs} from "@remix-run/node";
 import {useLoaderData} from "@remix-run/react";
 import {BlockStack, Card, InlineGrid, Layout, Page} from "@shopify/polaris";
 import {TitleBar} from "@shopify/app-bridge-react";
+import { useTranslation } from "react-i18next";
 
 import type {ActiveSubscription} from "../types/billing.types";
 import {authenticate} from "../shopify.server";
@@ -98,6 +99,7 @@ export const loader = async (
  * @returns The subscription page UI
  */
 const Subscription = () => {
+  const { t } = useTranslation();
   const {subscription, shopName, appAvailability} = useLoaderData<typeof loader>();
 
   /**
@@ -108,10 +110,10 @@ const Subscription = () => {
   };
 
   return (
-    <Page fullWidth>
+    <Page fullWidth title={t("subscription-page.title")}>
       <TitleBar>
         <button variant="primary" onClick={handleOpenCancelModal}>
-          Cancel
+          {t("subscription-page.cancel-button")}
         </button>
       </TitleBar>
       <BlockStack gap="400">

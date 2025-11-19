@@ -7,13 +7,15 @@ import {NavMenu} from "@shopify/app-bridge-react";
 
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
 import {BlockStack, Box, Link as PolarisLink, Text} from "@shopify/polaris";
+import { useTranslation } from "react-i18next";
 
 import {authenticate} from "../shopify.server";
 import {SUPPORT_EMAIL} from "../constants";
 import {getShopSettings} from "../models/shopSettings.server";
 import {getAllAppSubscriptions} from "../services/app.server";
 import NoSubscriptionPage from "app/components/SubscriptionPage/NoSubscriptionPage";
-
+import { getMerchant, createMerchant, updateMerchantLanguage } from "../models/merchant.server";
+import i18n from "../i18n";
 
 export const links = () => [{rel: "stylesheet", href: polarisStyles}];
 
@@ -36,6 +38,32 @@ export const loader = async ({
 
   const {admin, session} = await authenticate.admin(request);
   let appAvailability = true;
+
+  // Create or update merchant record only if needed
+  const userId = session.onlineAccessInfo?.associated_user.id;
+  if (userId) {
+    const merchantLanguage = session.onlineAccessInfo?.associated_user.locale || i18n.fallbackLng;
+    const existingMerchant = await getMerchant(String(userId), session.shop);
+
+    if (!existingMerchant) {
+      // New user - create merchant record
+      await createMerchant(
+        String(userId),
+        session.shop,
+        merchantLanguage
+      );
+      console.info(`[app.tsx] Created new merchant for userId: ${userId}, shop: ${session.shop}, language: ${merchantLanguage}`);
+    } else if (existingMerchant.language !== merchantLanguage) {
+      // Existing user - update language if it changed
+      await updateMerchantLanguage(
+        String(userId),
+        session.shop,
+        merchantLanguage
+      );
+      console.info(`[app.tsx] Updated merchant language for userId: ${userId}, shop: ${session.shop}, new language: ${merchantLanguage}`);
+    }
+    // If merchant exists and language hasn't changed, do nothing
+  }
 
   const shopSettings = await getShopSettings(session.shop);
   if (!shopSettings) {
@@ -96,23 +124,24 @@ export const action = async ({request}: ActionFunctionArgs): Promise<null> => {
  * @returns The app layout UI
  */
 export default function App() {
+  const { t } = useTranslation();
   const {apiKey, supportEmail, appSubscription} = useLoaderData<typeof loader>();
 
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
       <NavMenu>
         <Link to="/app" rel="home">
-          Home
+          {t("navigation.home")}
         </Link>
-        <Link to="/app/dashboard">Dashboard</Link>
-        <Link to="/app/settings">Settings</Link>
-        <Link to="/app/subscription">Subscription</Link>
+        <Link to="/app/dashboard">{t("navigation.dashboard")}</Link>
+        <Link to="/app/settings">{t("navigation.settings")}</Link>
+        <Link to="/app/subscription">{t("navigation.subscription")}</Link>
       </NavMenu>
       {!appSubscription ? <NoSubscriptionPage /> : <Outlet />}
       <Box padding="500">
         <BlockStack inlineAlign="center">
           <Text as="p" variant="bodySm">
-            Need help? Contact our support team at{" "}
+            {t("footer.support-text")}{" "}
             <PolarisLink url={`mailto:${supportEmail}`} target="_blank">
               {supportEmail}
             </PolarisLink>

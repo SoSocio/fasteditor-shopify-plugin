@@ -4,6 +4,7 @@ import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import type {IntegrationActionData, IntegrationFormValues} from "../types/integration.types";
 
 import {BlockStack, Layout, Page} from "@shopify/polaris";
+import { useTranslation } from "react-i18next";
 
 import {authenticate} from "../shopify.server";
 import {
@@ -65,7 +66,7 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
     if (Object.keys(errors).length > 0) {
       return new Response(JSON.stringify({
           statusCode: 400,
-          statusText: "Validation errors",
+          statusText: "validation-errors",
           body: {errors},
           ok: false,
         }),
@@ -78,7 +79,7 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
       );
     }
 
-    await setupFastEditorIntegration(admin, session.shop, apiKey, apiDomain);
+    await setupFastEditorIntegration(session.shop, apiKey, apiDomain);
 
     await createMetafieldDefinition(
       admin,
@@ -91,7 +92,7 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
 
     return new Response(JSON.stringify({
         statusCode: 200,
-        statusText: "FastEditor integration is successful.",
+        statusText: "success",
         ok: true
       }),
       {
@@ -120,6 +121,7 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
 };
 
 const Index = () => {
+  const { t } = useTranslation();
   const {
     fastEditorApiKey,
     fastEditorDomain,
@@ -143,9 +145,12 @@ const Index = () => {
     if (fetcher.state !== "idle" || !fetcher.data) return;
 
     if (fetcher.data?.ok) {
-      shopify.toast.show(fetcher.data.statusText);
+      const message = fetcher.data.statusText === "success"
+        ? t("settings-page.integration-form.success-message")
+        : fetcher.data.statusText;
+      shopify.toast.show(message);
     } else {
-      shopify.toast.show("Connection to FastEditor failed. Please check your API Key and Domain and try again.");
+      shopify.toast.show(t("settings-page.integration-form.connection-failed-error"));
     }
 
     if (!fetcher.data?.ok) {
@@ -156,7 +161,7 @@ const Index = () => {
 
     setApiKeyError(!!formErrors?.apiKey);
     setApiDomainError(!!formErrors?.apiDomain);
-  }, [fetcher.state, fetcher.data]);
+  }, [fetcher.state, fetcher.data, t, formErrors?.apiKey, formErrors?.apiDomain]);
 
   const handleChange = useCallback(
     (field: keyof typeof formValues) => (value: string) => {
@@ -179,7 +184,7 @@ const Index = () => {
   }
 
   return (
-    <Page fullWidth>
+    <Page fullWidth title={t("settings-page.title")}>
       <BlockStack gap="500">
         <Layout>
           <Layout.Section>

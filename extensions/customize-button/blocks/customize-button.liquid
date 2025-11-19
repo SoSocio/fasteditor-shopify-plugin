@@ -1,62 +1,153 @@
-<script src="{{ 'fasteditor-cart-handler.js' | asset_url }}" defer></script>
-{% assign font = block.settings.text_font %}
+{%- comment -%}
+  FastEditor Customize Button Block
+  Renders a customizable button for FastEditor product customization
+{%- endcomment -%}
 
+{%- liquid
+  assign font = block.settings.text_font
+  assign icon_type = block.settings.icon_type | default: 'none'
+  assign icon_position = block.settings.icon_position | default: 'left'
+  assign is_available = app.metafields.fasteditor_app.availability
+  assign selected_variant = product.selected_or_first_available_variant
+  assign is_variant_available = false
+  if selected_variant
+    assign is_variant_available = selected_variant.available
+  endif
+  assign has_icon = false
+  if icon_type != 'none'
+    assign has_icon = true
+  endif
+  assign button_text = block.settings.text
+  if is_variant_available == false
+    assign sold_out_key = 'blocks.customize-button.settings.sold_out'
+    assign button_text = sold_out_key | t
+    assign has_icon = false
+  endif
+-%}
+
+{%- comment -%} Load scripts in correct order {%- endcomment -%}
+<script src="{{ 'fasteditor-customize-button-utils.js' | asset_url }}" defer></script>
+<script src="{{ 'fasteditor-customize-button-redirect.js' | asset_url }}" defer></script>
+<script src="{{ 'fasteditor-customize-button-cart.js' | asset_url }}" defer></script>
+
+{%- comment -%} Scoped styles for this block instance {%- endcomment -%}
 <style>
   {{ font | font_face }}
 
-  /* Styles scoped by unique block class to avoid conflicts */
   .block-{{ block.id }} {
-    background-color: {{ block.settings.bg_color }};
-    color: {{ block.settings.text_color }};
-    font-size: {{ block.settings.text_size }}px;
-    font-family: {{ font.family }},{{ font.fallback_families }};
-    border-width: {{ block.settings.border_width }}px;
-    border-color: {{ block.settings.border_color }};
-    border-radius: {{ block.settings.border_radius }}px;
+    --button-bg-color: {{ block.settings.bg_color }};
+    --button-text-color: {{ block.settings.text_color }};
+    --button-font-size: {{ block.settings.text_size }}px;
+    --button-font-family: {{ font.family }}, {{ font.fallback_families }};
+    --button-border-width: {{ block.settings.border_width }}px;
+    --button-border-color: {{ block.settings.border_color }};
+    --button-border-radius: {{ block.settings.border_radius }}px;
+    --icon-gap: {{ block.settings.icon_gap | default: 8 }}px;
   }
 </style>
 
-{% if request.design_mode or product.tags contains "fasteditor" %}
-  <div class="fasteditor">
+{%- if request.design_mode or product.tags contains 'fasteditor' -%}
+  <div class="fasteditor-customize-button-wrapper" data-block-id="{{ block.id }}">
     <button
-      id="fasteditor-{{ block.id }}"
-      class="fasteditor__button block-{{ block.id }}"
-      data-shop="{{ shop.permanent_domain }}"
-      data-handle="{{ product.handle }}"
-      data-availability="{{ app.metafields.fasteditor_app.availability }}"
-      data-redirect="{{ block.settings.enable_cart_redirect }}"
-      aria-label="{{ block.settings.text | escape }}"
+      id="fasteditor-customize-button-{{ block.id }}"
+      class="fasteditor-customize-button block-{{ block.id }}{% if icon_position == 'right' %} fasteditor-customize-button--icon-right{% endif %}"
       type="button"
+      data-shop="{{ shop.permanent_domain | escape }}"
+      data-handle="{{ product.handle | escape }}"
+      data-availability="{{ is_available }}"
+      data-variant-available="{{ is_variant_available }}"
+      data-redirect="{{ block.settings.enable_cart_redirect }}"
+      data-loading-text="{{ block.settings.loading_text | escape }}"
+      data-adding-to-cart-text="{{ block.settings.adding_to_cart_text | escape }}"
+      data-added-to-cart-text="{{ block.settings.added_to_cart_text | escape }}"
+      data-error-text="{{ block.settings.error_text | escape }}"
+      data-sold-out-text="{{ 'blocks.customize-button.settings.sold_out' | t }}"
+      aria-label="{{ block.settings.text | escape }}"
+      {% unless is_available and is_variant_available %}disabled aria-disabled="true"{% endunless %}
     >
-      {{ block.settings.text }}
+      {%- comment -%} Icon container - always present for loading icon support {%- endcomment -%}
+      <span
+        class="fasteditor-customize-button__icon"
+        {% unless has_icon %}style="display: none;"{% endunless %}
+        aria-hidden="true"
+      >
+        {%- if has_icon -%}
+          <span class="fasteditor-customize-button__icon-main" aria-hidden="true">
+            {%- render 'icon-button',
+              icon: icon_type,
+              icon_color: block.settings.icon_color,
+              icon_size: block.settings.icon_size,
+              icon_custom_image: block.settings.icon_custom_image
+            -%}
+          </span>
+        {%- endif -%}
+        <span class="fasteditor-customize-button__icon-loading" style="display: none;" aria-hidden="true">
+          {%- render 'icon-loading',
+            color: block.settings.icon_color,
+            size: block.settings.icon_size
+          -%}
+        </span>
+      </span>
+
+      {%- comment -%} Button text {%- endcomment -%}
+      <span class="fasteditor-customize-button__text">{{ button_text | escape }}</span>
     </button>
   </div>
-{% endif %}
+{%- endif -%}
 
+{%- comment -%} Initialize button functionality {%- endcomment -%}
 <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const button = document.querySelector("#fasteditor-{{ block.id }}");
-    if (!button) return;
+  (function() {
+    'use strict';
 
-    const button_availability = button.dataset.availability;
-    if (button_availability === "false") {
-       button.setAttribute("disabled", "true")
-       return;
-    }
+    document.addEventListener('DOMContentLoaded', async function() {
+      const button = document.getElementById('fasteditor-customize-button-{{ block.id }}');
+      if (!button) return;
 
-    const originalText = button.textContent;
+      // Check availability
+      const availability = button.dataset.availability;
+      const isVariantAvailable = button.dataset.variantAvailable === 'true';
+      const soldOutText = button.dataset.soldOutText || '{{ 'blocks.customize-button.settings.sold_out' | t }}';
+      if (availability === 'false') {
+        button.setAttribute('disabled', 'true');
+        button.setAttribute('aria-disabled', 'true');
+        return;
+      }
 
-    button.addEventListener("click", () => {
-      handleFastEditorRedirect(button, originalText);
+      if (!isVariantAvailable) {
+        button.setAttribute('disabled', 'true');
+        button.setAttribute('aria-disabled', 'true');
+        const soldOutElement = button.querySelector('.fasteditor-customize-button__text');
+        if (soldOutElement) {
+          soldOutElement.textContent = soldOutText;
+        } else {
+          button.textContent = soldOutText;
+        }
+        return;
+      }
+
+      // Get original text
+      const textElement = button.querySelector('.fasteditor-customize-button__text');
+      const originalText = textElement ? textElement.textContent : button.textContent;
+
+      // Add click handler
+      button.addEventListener('click', function() {
+        if (typeof handleFastEditorRedirect === 'function') {
+          handleFastEditorRedirect(button, originalText);
+        }
+      });
+
+      // Handle auto add to cart
+      if (typeof handleFastEditorAutoAddToCart === 'function') {
+        await handleFastEditorAutoAddToCart(button);
+      }
     });
-
-    await handleFastEditorAutoAddToCart(button);
-  });
+  })();
 </script>
 
 {% schema %}
 {
-  "name": "FastEditor Button",
+  "name": "t:blocks.customize-button.name",
   "target": "section",
   "available_if": "{{ app.metafields.fasteditor_app.paid }}",
   "enabled_on": {
@@ -64,26 +155,24 @@
       "product"
     ]
   },
-  "stylesheet": "customize-button.css",
-  "javascript": "customize-button.js",
+  "stylesheet": "fasteditor-customize-button.css",
+  "javascript": "fasteditor-customize-button-utils.js",
   "settings": [
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Button background color",
-      "default": "#000000"
+      "type": "header",
+      "content": "t:blocks.customize-button.settings.button_text_header"
     },
     {
       "type": "text",
       "id": "text",
-      "label": "Button text",
+      "label": "t:blocks.customize-button.settings.text",
       "default": "Customize"
     },
     {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text color",
-      "default": "#ffffff"
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "t:blocks.customize-button.settings.text_font",
+      "default": "helvetica_n4"
     },
     {
       "type": "range",
@@ -92,14 +181,24 @@
       "max": 64,
       "step": 1,
       "unit": "px",
-      "label": "Font size",
+      "label": "t:blocks.customize-button.settings.text_size",
       "default": 16
     },
     {
-      "type": "font_picker",
-      "id": "text_font",
-      "label": "Text font",
-      "default": "helvetica_n4"
+      "type": "color",
+      "id": "text_color",
+      "label": "t:blocks.customize-button.settings.text_color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "t:blocks.customize-button.settings.button_appearance_header"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "t:blocks.customize-button.settings.bg_color",
+      "default": "#000000"
     },
     {
       "type": "range",
@@ -108,13 +207,13 @@
       "max": 99,
       "step": 1,
       "unit": "px",
-      "label": "Border width",
+      "label": "t:blocks.customize-button.settings.border_width",
       "default": 0
     },
     {
       "type": "color",
       "id": "border_color",
-      "label": "Border color",
+      "label": "t:blocks.customize-button.settings.border_color",
       "default": "#000000"
     },
     {
@@ -124,15 +223,147 @@
       "max": 99,
       "step": 1,
       "unit": "px",
-      "label": "Border radius",
+      "label": "t:blocks.customize-button.settings.border_radius",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:blocks.customize-button.settings.icon_settings_header"
+    },
+    {
+      "type": "select",
+      "id": "icon_type",
+      "label": "t:blocks.customize-button.settings.icon_type",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:blocks.customize-button.settings.icon_type_none"
+        },
+        {
+          "value": "pen",
+          "label": "t:blocks.customize-button.settings.icon_type_pen"
+        },
+        {
+          "value": "brush",
+          "label": "t:blocks.customize-button.settings.icon_type_brush"
+        },
+        {
+          "value": "image",
+          "label": "t:blocks.customize-button.settings.icon_type_image"
+        },
+        {
+          "value": "images",
+          "label": "t:blocks.customize-button.settings.icon_type_images"
+        },
+        {
+          "value": "link",
+          "label": "t:blocks.customize-button.settings.icon_type_link"
+        },
+        {
+          "value": "settings",
+          "label": "t:blocks.customize-button.settings.icon_type_settings"
+        },
+        {
+          "value": "custom",
+          "label": "t:blocks.customize-button.settings.icon_type_custom"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_custom_image",
+      "label": "t:blocks.customize-button.settings.custom_icon_image",
+      "info": "t:blocks.customize-button.settings.custom_icon_image_info"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "t:blocks.customize-button.settings.icon_color",
+      "default": "#ffffff",
+      "info": "t:blocks.customize-button.settings.icon_color_info"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 8,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "label": "t:blocks.customize-button.settings.icon_size",
+      "default": 20,
+      "info": "t:blocks.customize-button.settings.icon_size_info"
+    },
+    {
+      "type": "range",
+      "id": "icon_gap",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "t:blocks.customize-button.settings.icon_gap",
+      "default": 8,
+      "info": "t:blocks.customize-button.settings.icon_gap_info"
+    },
+    {
+      "type": "select",
+      "id": "icon_position",
+      "label": "t:blocks.customize-button.settings.icon_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:blocks.customize-button.settings.icon_position_left"
+        },
+        {
+          "value": "right",
+          "label": "t:blocks.customize-button.settings.icon_position_right"
+        }
+      ],
+      "default": "left",
+      "info": "t:blocks.customize-button.settings.icon_position_info"
+    },
+    {
+      "type": "header",
+      "content": "t:blocks.customize-button.settings.button_state_texts_header"
+    },
+    {
+      "type": "text",
+      "id": "loading_text",
+      "label": "t:blocks.customize-button.settings.loading_text",
+      "default": "Loading...",
+      "info": "t:blocks.customize-button.settings.loading_text_info"
+    },
+    {
+      "type": "text",
+      "id": "adding_to_cart_text",
+      "label": "t:blocks.customize-button.settings.adding_to_cart_text",
+      "default": "Adding to cart...",
+      "info": "t:blocks.customize-button.settings.adding_to_cart_text_info"
+    },
+    {
+      "type": "text",
+      "id": "added_to_cart_text",
+      "label": "t:blocks.customize-button.settings.added_to_cart_text",
+      "default": "Added to cart",
+      "info": "t:blocks.customize-button.settings.added_to_cart_text_info"
+    },
+    {
+      "type": "text",
+      "id": "error_text",
+      "label": "t:blocks.customize-button.settings.error_text",
+      "default": "Error",
+      "info": "t:blocks.customize-button.settings.error_text_info"
+    },
+    {
+      "type": "header",
+      "content": "t:blocks.customize-button.settings.button_behavior_header"
     },
     {
       "type": "checkbox",
       "id": "enable_cart_redirect",
       "default": true,
-      "label": "Redirect to cart page after adding to cart"
-    },
+      "label": "t:blocks.customize-button.settings.enable_cart_redirect"
+    }
   ]
 }
 {% endschema %}

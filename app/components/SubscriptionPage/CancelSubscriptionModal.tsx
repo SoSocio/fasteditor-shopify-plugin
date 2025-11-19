@@ -1,12 +1,14 @@
 import { useFetcher } from "@remix-run/react";
 import { Modal, TitleBar } from "@shopify/app-bridge-react";
 import { BlockStack, Box, Text } from "@shopify/polaris";
+import { useTranslation } from "react-i18next";
 
 /**
  * Modal component for confirming subscription cancellation.
  * Uses Shopify native modal API via ui-modal element.
  */
 export const CancelSubscriptionModal = () => {
+  const { t } = useTranslation();
   const fetcher = useFetcher();
   const handleCancelSubscription = () => {
     try {
@@ -14,9 +16,9 @@ export const CancelSubscriptionModal = () => {
         null,
         {method: "POST", action: "/app/subscription/cancel"}
       );
-      shopify.toast.show("Subscription cancelled successfully");
+      shopify.toast.show(t("subscription-page.cancel-modal.success-message"));
     } catch (error) {
-      shopify.toast.show("Failed to cancel subscription");
+      shopify.toast.show(t("subscription-page.cancel-modal.error-message"));
     }
   }
   return (
@@ -24,16 +26,16 @@ export const CancelSubscriptionModal = () => {
       <Box padding="400">
         <BlockStack gap="200">
           <Text as="p" variant="headingMd">
-            Are you sure you want to cancel your subscription?
+            {t("subscription-page.cancel-modal.confirm-question")}
           </Text>
           <Text as="p" variant="bodyMd">
-            If you cancel your subscription, access to all paid features will be revoked, and you won't be able to use the remaining paid period.
+            {t("subscription-page.cancel-modal.confirm-description")}
           </Text>
         </BlockStack>
       </Box>
-      <TitleBar title="Cancel Subscription">
-        <button variant="primary" onClick={handleCancelSubscription}>Cancel Subscription</button>
-        <button onClick={() => shopify.modal.hide("cancelSubscriptionModal")}>Keep Subscription</button>
+      <TitleBar title={t("subscription-page.cancel-modal.title")}>
+        <button variant="primary" onClick={handleCancelSubscription}>{t("subscription-page.cancel-modal.cancel-button")}</button>
+        <button onClick={() => shopify.modal.hide("cancelSubscriptionModal")}>{t("subscription-page.cancel-modal.keep-button")}</button>
       </TitleBar>
     </Modal>
   );
