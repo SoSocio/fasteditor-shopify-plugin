@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 import i18next from './i18next.server';
 import type { LoaderFunctionArgs } from '@remix-run/node';
 import { useEffect, useState } from "react";
-import { useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "./shopify.server";
 import { getMerchant } from "./models/merchant.server";
 import i18n from "./i18n";
@@ -77,19 +76,15 @@ export default function App() {
   const [shopifyLocale, setShopifyLocale] = useState<string>(locale);
   const { i18n } = useTranslation();
 
-  const shopify = useAppBridge();
-
   // Use locale from loader (merchant's language from database) as priority
   // Fallback to Shopify App Bridge locale if needed
   useEffect(() => {
-    const finalLocale = locale || shopify.config.locale || 'en';
+    const finalLocale = locale || 'en';
     setShopifyLocale(finalLocale);
     if (i18n.language !== finalLocale) {
       i18n.changeLanguage(finalLocale);
     }
-  }, [locale, shopify, i18n]);
-
-  console.log("shopifyLocale", shopifyLocale);
+  }, [locale, i18n]);
 
   return (
     <html lang={shopifyLocale} dir={i18n.dir()}>

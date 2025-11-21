@@ -2,7 +2,6 @@ import {useLoaderData} from "@remix-run/react";
 import type {LoaderFunctionArgs} from "@remix-run/node";
 
 import {
-  Page,
   Layout,
   Card,
   BlockStack,
@@ -19,6 +18,7 @@ import {
   UsageLimitBannerWithAction
 } from "../components/banners/UsageLimit/UsageLimitBannerWithAction";
 import { useTranslation } from "react-i18next";
+import { PageLayout } from "../components/layout/PageLayout";
 
 
 const ENDPOINT = "/app/_index";
@@ -54,7 +54,7 @@ const Index = () => {
   }
 
   return (
-    <Page title={t("getting-started-page.title")}>
+    <PageLayout title={t("getting-started-page.title")}>
       <Box paddingBlockEnd="500">
         <Layout>
           <Layout.Section>
@@ -155,7 +155,7 @@ const Index = () => {
           </Layout.Section>
         </Layout>
       </Box>
-    </Page>
+    </PageLayout>
   );
 };
 

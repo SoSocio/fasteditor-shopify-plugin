@@ -1,7 +1,8 @@
 import React from "react";
 import {useLoaderData} from "@remix-run/react";
 import type {LoaderFunctionArgs} from "@remix-run/node";
-import {Page, Layout, Card, BlockStack} from "@shopify/polaris";
+import {Layout, Card, BlockStack} from "@shopify/polaris";
+import {useTranslation} from "react-i18next";
 import type {Product, PageInfo} from "../types/products.types";
 import type {ShopSettingsCore} from "../types/shop.types";
 
@@ -13,9 +14,10 @@ import {
   getProductsByQuery,
 } from "../services/products.server";
 
+import {PageLayout} from "../components/layout/PageLayout";
 import {ProductsTableInfo} from "../components/DashboardPage/ProductsTableInfo";
 import {ProductsTable} from "../components/DashboardPage/ProductsTable";
-import {ErrorBanner} from "../components/DashboardPage/ErrorBanner";
+import {ErrorBanner} from "../components/banners/ErrorBanner";
 import {
   UsageLimitBannerWithAction
 } from "../components/banners/UsageLimit/UsageLimitBannerWithAction";
@@ -83,6 +85,7 @@ export const loader = async (
  * Renders the Dashboard UI for managing FastEditor-enabled products.
  */
 const Dashboard = () => {
+  const {t} = useTranslation();
   const {
     products,
     pageInfo,
@@ -97,14 +100,14 @@ const Dashboard = () => {
 
   if (!pageInfo) {
     return (
-      <Page fullWidth>
+      <PageLayout title={t("dashboard-page.title")} fullWidth>
         <ErrorBanner/>
-      </Page>
+      </PageLayout>
     )
   }
 
   return (
-    <Page fullWidth>
+    <PageLayout title={t("dashboard-page.title")} fullWidth>
       <Layout>
         <Layout.Section>
           <Card>
@@ -120,7 +123,7 @@ const Dashboard = () => {
           </Card>
         </Layout.Section>
       </Layout>
-    </Page>
+    </PageLayout>
   );
 }
 export default Dashboard;

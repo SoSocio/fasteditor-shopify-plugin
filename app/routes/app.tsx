@@ -14,7 +14,7 @@ import {SUPPORT_EMAIL} from "../constants";
 import {getShopSettings} from "../models/shopSettings.server";
 import {getAllAppSubscriptions} from "../services/app.server";
 import NoSubscriptionPage from "app/components/SubscriptionPage/NoSubscriptionPage";
-import { getMerchant, createMerchant, updateMerchantLanguage } from "../models/merchant.server";
+import { getMerchant, createMerchant } from "../models/merchant.server";
 import i18n from "../i18n";
 
 export const links = () => [{rel: "stylesheet", href: polarisStyles}];
@@ -53,14 +53,6 @@ export const loader = async ({
         merchantLanguage
       );
       console.info(`[app.tsx] Created new merchant for userId: ${userId}, shop: ${session.shop}, language: ${merchantLanguage}`);
-    } else if (existingMerchant.language !== merchantLanguage) {
-      // Existing user - update language if it changed
-      await updateMerchantLanguage(
-        String(userId),
-        session.shop,
-        merchantLanguage
-      );
-      console.info(`[app.tsx] Updated merchant language for userId: ${userId}, shop: ${session.shop}, new language: ${merchantLanguage}`);
     }
     // If merchant exists and language hasn't changed, do nothing
   }

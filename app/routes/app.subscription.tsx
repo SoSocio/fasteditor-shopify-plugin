@@ -1,6 +1,6 @@
 import type {LoaderFunctionArgs} from "@remix-run/node";
 import {useLoaderData} from "@remix-run/react";
-import {BlockStack, Card, InlineGrid, Layout, Page} from "@shopify/polaris";
+import {BlockStack, Card, InlineGrid, Layout} from "@shopify/polaris";
 import {TitleBar} from "@shopify/app-bridge-react";
 import { useTranslation } from "react-i18next";
 
@@ -9,6 +9,7 @@ import {authenticate} from "../shopify.server";
 import {transformSubscription} from "../services/billing.server";
 import {getAllAppSubscriptions, getAppMetafield} from "../services/app.server";
 
+import {PageLayout} from "../components/layout/PageLayout";
 import {CurrentSubscription} from "../components/SubscriptionPage/CurrentSubscription";
 import {UsageSubscription} from "../components/SubscriptionPage/UsageSubscription";
 import {CancelSubscriptionModal} from "../components/SubscriptionPage/CancelSubscriptionModal";
@@ -110,7 +111,7 @@ const Subscription = () => {
   };
 
   return (
-    <Page fullWidth title={t("subscription-page.title")}>
+    <PageLayout title={t("subscription-page.title")} fullWidth>
       <TitleBar>
         <button variant="primary" onClick={handleOpenCancelModal}>
           {t("subscription-page.cancel-button")}
@@ -136,7 +137,7 @@ const Subscription = () => {
       </BlockStack>
 
       <CancelSubscriptionModal />
-    </Page>
+    </PageLayout>
   );
 };
 
