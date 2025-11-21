@@ -1,52 +1,69 @@
 {
   "blocks": {
     "customize-button": {
-      "name": "Bouton FastEditor",
+      "name": "Bouton de personnalisation",
       "settings": {
-        "bg_color": "Couleur de fond du bouton",
-        "text": "Texte du bouton",
-        "text_color": "Couleur du texte",
-        "text_size": "Taille de la police",
-        "text_font": "Police du texte",
-        "border_width": "Largeur de la bordure",
-        "border_color": "Couleur de la bordure",
-        "border_radius": "Rayon de la bordure",
-        "enable_cart_redirect": "Rediriger vers le panier après ajout",
-        "loading_text": "Texte de chargement",
-        "adding_to_cart_text": "Texte d'ajout au panier",
-        "added_to_cart_text": "Texte ajouté au panier",
-        "error_text": "Texte d'erreur",
-        "button_text_header": "Texte du bouton",
-        "button_appearance_header": "Apparence du bouton",
-        "icon_settings_header": "Paramètres de l'icône",
-        "icon_type": "Type d'icône",
-        "icon_type_none": "Aucun",
-        "icon_type_pen": "Stylo",
-        "icon_type_brush": "Pinceau",
-        "icon_type_image": "Image",
-        "icon_type_images": "Images",
-        "icon_type_link": "Lien",
-        "icon_type_settings": "Paramètres",
-        "icon_type_custom": "Personnalisé",
-        "custom_icon_image": "Image d'icône personnalisée",
-        "custom_icon_image_info": "S'applique si type 'Personnalisé' sélectionné",
-        "icon_color": "Couleur de l'icône",
-        "icon_color_info": "S'applique uniquement aux icônes intégrées",
-        "icon_size": "Taille de l'icône",
-        "icon_size_info": "S'applique si icône sélectionnée",
-        "icon_gap": "Espacement de l'icône",
-        "icon_gap_info": "Distance entre l'icône et le texte",
-        "icon_position": "Position de l'icône",
-        "icon_position_left": "Gauche",
-        "icon_position_right": "Droite",
-        "icon_position_info": "S'applique si icône sélectionnée",
-        "button_state_texts_header": "Textes d'état du bouton",
-        "loading_text_info": "Texte affiché lorsque le bouton est en chargement",
-        "adding_to_cart_text_info": "Texte lors de l'ajout au panier",
-        "added_to_cart_text_info": "Texte après ajout au panier",
-        "error_text_info": "Texte affiché lorsqu'une erreur se produit",
-        "button_behavior_header": "Comportement du bouton",
-        "sold_out": "Épuisé"
+        "button_text": {
+          "header": "Texte du bouton",
+          "text": "Texte du bouton",
+          "text_font": "Police du texte",
+          "text_size": "Taille de la police",
+          "text_color": "Couleur du texte"
+        },
+        "button_appearance": {
+          "header": "Apparence du bouton",
+          "bg_color": "Couleur de fond du bouton",
+          "border_width": "Largeur de la bordure",
+          "border_color": "Couleur de la bordure",
+          "border_radius": "Rayon de la bordure"
+        },
+        "icon_settings": {
+          "header": "Paramètres de l'icône",
+          "icon_type": {
+            "label": "Type d'icône",
+            "options": {
+              "none": "Aucun",
+              "pen": "Stylo",
+              "brush": "Pinceau",
+              "image": "Image",
+              "images": "Images",
+              "link": "Lien",
+              "settings": "Paramètres",
+              "custom": "Personnalisé"
+            }
+          },
+          "custom_icon_image": "Image d'icône personnalisée",
+          "custom_icon_image_info": "S'applique si type 'Personnalisé' sélectionné",
+          "icon_color": "Couleur de l'icône",
+          "icon_color_info": "S'applique uniquement aux icônes intégrées",
+          "icon_size": "Taille de l'icône",
+          "icon_size_info": "S'applique si icône sélectionnée",
+          "icon_gap": "Espacement de l'icône",
+          "icon_gap_info": "Distance entre l'icône et le texte",
+          "icon_position": {
+            "label": "Position de l'icône",
+            "options": {
+              "left": "Gauche",
+              "right": "Droite"
+            },
+            "info": "S'applique si icône sélectionnée"
+          }
+        },
+        "button_state_texts": {
+          "header": "Textes d'état du bouton",
+          "loading_text": "Texte de chargement",
+          "loading_text_info": "Texte affiché lorsque le bouton est en chargement",
+          "adding_to_cart_text": "Texte d'ajout au panier",
+          "adding_to_cart_text_info": "Texte lors de l'ajout au panier",
+          "added_to_cart_text": "Texte ajouté au panier",
+          "added_to_cart_text_info": "Texte après ajout au panier",
+          "error_text": "Texte d'erreur",
+          "error_text_info": "Texte affiché lorsqu'une erreur se produit"
+        },
+        "button_behavior": {
+          "header": "Comportement du bouton",
+          "enable_cart_redirect": "Rediriger vers le panier après ajout"
+        }
       }
     }
   }

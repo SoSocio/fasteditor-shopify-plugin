@@ -37,6 +37,7 @@
     }
   },
   "dashboard-page": {
+    "title": "Dashboard",
     "products-table-info": {
       "title": "Produkte mit dem FastEditor-Tag",
       "description": "Die Tabelle unten zeigt Produkte, die mit <code>fasteditor</code> markiert sind.",
@@ -188,5 +189,13 @@
   },
   "footer": {
     "support-text": "Brauchen Sie Hilfe? Kontaktieren Sie unser Support-Team unter"
+  },
+  "language-switcher": {
+    "label": "Sprache",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français"
+    }
   }
 }

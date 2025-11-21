@@ -19,8 +19,7 @@
   endif
   assign button_text = block.settings.text
   if is_variant_available == false
-    assign sold_out_key = 'blocks.customize-button.settings.sold_out'
-    assign button_text = sold_out_key | t
+    assign button_text = 'customize_button.sold_out' | t
     assign has_icon = false
   endif
 -%}
@@ -61,7 +60,7 @@
       data-adding-to-cart-text="{{ block.settings.adding_to_cart_text | escape }}"
       data-added-to-cart-text="{{ block.settings.added_to_cart_text | escape }}"
       data-error-text="{{ block.settings.error_text | escape }}"
-      data-sold-out-text="{{ 'blocks.customize-button.settings.sold_out' | t }}"
+      data-sold-out-text="{{ 'customize_button.sold_out' | t }}"
       aria-label="{{ block.settings.text | escape }}"
       {% unless is_available and is_variant_available %}disabled aria-disabled="true"{% endunless %}
     >
@@ -107,7 +106,7 @@
       // Check availability
       const availability = button.dataset.availability;
       const isVariantAvailable = button.dataset.variantAvailable === 'true';
-      const soldOutText = button.dataset.soldOutText || '{{ 'blocks.customize-button.settings.sold_out' | t }}';
+      const soldOutText = button.dataset.soldOutText || '{{ 'customize_button.sold_out' | t }}';
       if (availability === 'false') {
         button.setAttribute('disabled', 'true');
         button.setAttribute('aria-disabled', 'true');
@@ -160,18 +159,18 @@
   "settings": [
     {
       "type": "header",
-      "content": "t:blocks.customize-button.settings.button_text_header"
+      "content": "t:blocks.customize-button.settings.button_text.header"
     },
     {
       "type": "text",
       "id": "text",
-      "label": "t:blocks.customize-button.settings.text",
+      "label": "t:blocks.customize-button.settings.button_text.text",
       "default": "Customize"
     },
     {
       "type": "font_picker",
       "id": "text_font",
-      "label": "t:blocks.customize-button.settings.text_font",
+      "label": "t:blocks.customize-button.settings.button_text.text_font",
       "default": "helvetica_n4"
     },
     {
@@ -181,23 +180,23 @@
       "max": 64,
       "step": 1,
       "unit": "px",
-      "label": "t:blocks.customize-button.settings.text_size",
+      "label": "t:blocks.customize-button.settings.button_text.text_size",
       "default": 16
     },
     {
       "type": "color",
       "id": "text_color",
-      "label": "t:blocks.customize-button.settings.text_color",
+      "label": "t:blocks.customize-button.settings.button_text.text_color",
       "default": "#ffffff"
     },
     {
       "type": "header",
-      "content": "t:blocks.customize-button.settings.button_appearance_header"
+      "content": "t:blocks.customize-button.settings.button_appearance.header"
     },
     {
       "type": "color",
       "id": "bg_color",
-      "label": "t:blocks.customize-button.settings.bg_color",
+      "label": "t:blocks.customize-button.settings.button_appearance.bg_color",
       "default": "#000000"
     },
     {
@@ -207,13 +206,13 @@
       "max": 99,
       "step": 1,
       "unit": "px",
-      "label": "t:blocks.customize-button.settings.border_width",
+      "label": "t:blocks.customize-button.settings.button_appearance.border_width",
       "default": 0
     },
     {
       "type": "color",
       "id": "border_color",
-      "label": "t:blocks.customize-button.settings.border_color",
+      "label": "t:blocks.customize-button.settings.button_appearance.border_color",
       "default": "#000000"
     },
     {
@@ -223,49 +222,49 @@
       "max": 99,
       "step": 1,
       "unit": "px",
-      "label": "t:blocks.customize-button.settings.border_radius",
+      "label": "t:blocks.customize-button.settings.button_appearance.border_radius",
       "default": 0
     },
     {
       "type": "header",
-      "content": "t:blocks.customize-button.settings.icon_settings_header"
+      "content": "t:blocks.customize-button.settings.icon_settings.header"
     },
     {
       "type": "select",
       "id": "icon_type",
-      "label": "t:blocks.customize-button.settings.icon_type",
+      "label": "t:blocks.customize-button.settings.icon_settings.icon_type.label",
       "options": [
         {
           "value": "none",
-          "label": "t:blocks.customize-button.settings.icon_type_none"
+          "label": "t:blocks.customize-button.settings.icon_settings.icon_type.options.none"
         },
         {
           "value": "pen",
-          "label": "t:blocks.customize-button.settings.icon_type_pen"
+          "label": "t:blocks.customize-button.settings.icon_settings.icon_type.options.pen"
         },
         {
           "value": "brush",
-          "label": "t:blocks.customize-button.settings.icon_type_brush"
+          "label": "t:blocks.customize-button.settings.icon_settings.icon_type.options.brush"
         },
         {
           "value": "image",
-          "label": "t:blocks.customize-button.settings.icon_type_image"
+          "label": "t:blocks.customize-button.settings.icon_settings.icon_type.options.image"
         },
         {
           "value": "images",
-          "label": "t:blocks.customize-button.settings.icon_type_images"
+          "label": "t:blocks.customize-button.settings.icon_settings.icon_type.options.images"
         },
         {
           "value": "link",
-          "label": "t:blocks.customize-button.settings.icon_type_link"
+          "label": "t:blocks.customize-button.settings.icon_settings.icon_type.options.link"
         },
         {
           "value": "settings",
-          "label": "t:blocks.customize-button.settings.icon_type_settings"
+          "label": "t:blocks.customize-button.settings.icon_settings.icon_type.options.settings"
         },
         {
           "value": "custom",
-          "label": "t:blocks.customize-button.settings.icon_type_custom"
+          "label": "t:blocks.customize-button.settings.icon_settings.icon_type.options.custom"
         }
       ],
       "default": "none"
@@ -273,15 +272,15 @@
     {
       "type": "image_picker",
       "id": "icon_custom_image",
-      "label": "t:blocks.customize-button.settings.custom_icon_image",
-      "info": "t:blocks.customize-button.settings.custom_icon_image_info"
+      "label": "t:blocks.customize-button.settings.icon_settings.custom_icon_image",
+      "info": "t:blocks.customize-button.settings.icon_settings.custom_icon_image_info"
     },
     {
       "type": "color",
       "id": "icon_color",
-      "label": "t:blocks.customize-button.settings.icon_color",
+      "label": "t:blocks.customize-button.settings.icon_settings.icon_color",
       "default": "#ffffff",
-      "info": "t:blocks.customize-button.settings.icon_color_info"
+      "info": "t:blocks.customize-button.settings.icon_settings.icon_color_info"
     },
     {
       "type": "range",
@@ -290,9 +289,9 @@
       "max": 64,
       "step": 1,
       "unit": "px",
-      "label": "t:blocks.customize-button.settings.icon_size",
+      "label": "t:blocks.customize-button.settings.icon_settings.icon_size",
       "default": 20,
-      "info": "t:blocks.customize-button.settings.icon_size_info"
+      "info": "t:blocks.customize-button.settings.icon_settings.icon_size_info"
     },
     {
       "type": "range",
@@ -301,68 +300,68 @@
       "max": 32,
       "step": 1,
       "unit": "px",
-      "label": "t:blocks.customize-button.settings.icon_gap",
+      "label": "t:blocks.customize-button.settings.icon_settings.icon_gap",
       "default": 8,
-      "info": "t:blocks.customize-button.settings.icon_gap_info"
+      "info": "t:blocks.customize-button.settings.icon_settings.icon_gap_info"
     },
     {
       "type": "select",
       "id": "icon_position",
-      "label": "t:blocks.customize-button.settings.icon_position",
+      "label": "t:blocks.customize-button.settings.icon_settings.icon_position.label",
       "options": [
         {
           "value": "left",
-          "label": "t:blocks.customize-button.settings.icon_position_left"
+          "label": "t:blocks.customize-button.settings.icon_settings.icon_position.options.left"
         },
         {
           "value": "right",
-          "label": "t:blocks.customize-button.settings.icon_position_right"
+          "label": "t:blocks.customize-button.settings.icon_settings.icon_position.options.right"
         }
       ],
       "default": "left",
-      "info": "t:blocks.customize-button.settings.icon_position_info"
+      "info": "t:blocks.customize-button.settings.icon_settings.icon_position.info"
     },
     {
       "type": "header",
-      "content": "t:blocks.customize-button.settings.button_state_texts_header"
+      "content": "t:blocks.customize-button.settings.button_state_texts.header"
     },
     {
       "type": "text",
       "id": "loading_text",
-      "label": "t:blocks.customize-button.settings.loading_text",
+      "label": "t:blocks.customize-button.settings.button_state_texts.loading_text",
       "default": "Loading...",
-      "info": "t:blocks.customize-button.settings.loading_text_info"
+      "info": "t:blocks.customize-button.settings.button_state_texts.loading_text_info"
     },
     {
       "type": "text",
       "id": "adding_to_cart_text",
-      "label": "t:blocks.customize-button.settings.adding_to_cart_text",
+      "label": "t:blocks.customize-button.settings.button_state_texts.adding_to_cart_text",
       "default": "Adding to cart...",
-      "info": "t:blocks.customize-button.settings.adding_to_cart_text_info"
+      "info": "t:blocks.customize-button.settings.button_state_texts.adding_to_cart_text_info"
     },
     {
       "type": "text",
       "id": "added_to_cart_text",
-      "label": "t:blocks.customize-button.settings.added_to_cart_text",
+      "label": "t:blocks.customize-button.settings.button_state_texts.added_to_cart_text",
       "default": "Added to cart",
-      "info": "t:blocks.customize-button.settings.added_to_cart_text_info"
+      "info": "t:blocks.customize-button.settings.button_state_texts.added_to_cart_text_info"
     },
     {
       "type": "text",
       "id": "error_text",
-      "label": "t:blocks.customize-button.settings.error_text",
+      "label": "t:blocks.customize-button.settings.button_state_texts.error_text",
       "default": "Error",
-      "info": "t:blocks.customize-button.settings.error_text_info"
+      "info": "t:blocks.customize-button.settings.button_state_texts.error_text_info"
     },
     {
       "type": "header",
-      "content": "t:blocks.customize-button.settings.button_behavior_header"
+      "content": "t:blocks.customize-button.settings.button_behavior.header"
     },
     {
       "type": "checkbox",
       "id": "enable_cart_redirect",
       "default": true,
-      "label": "t:blocks.customize-button.settings.enable_cart_redirect"
+      "label": "t:blocks.customize-button.settings.button_behavior.enable_cart_redirect"
     }
   ]
 }
