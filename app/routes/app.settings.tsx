@@ -1,9 +1,9 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {useFetcher, useLoaderData} from "@remix-run/react";
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
-import type {IntegrationActionData, IntegrationFormValues} from "../types/integration.types";
+import type{IntegrationActionData, IntegrationFormValues} from "../types/integration.types";
 
-import {BlockStack, Layout, Page} from "@shopify/polaris";
+import {BlockStack, Layout} from "@shopify/polaris";
 import { useTranslation } from "react-i18next";
 
 import {authenticate} from "../shopify.server";
@@ -15,6 +15,7 @@ import {
 } from "../services/fastEditorFactory.server";
 import {getAppMetafield} from "../services/app.server";
 
+import {PageLayout} from "../components/layout/PageLayout";
 import ShopIntegrationCard from "../components/SettingsPage/ShopIntegrationCard";
 import ShopIntegrationForm from "../components/SettingsPage/ShopIntegrationForm";
 import {
@@ -184,7 +185,7 @@ const Index = () => {
   }
 
   return (
-    <Page fullWidth title={t("settings-page.title")}>
+    <PageLayout title={t("settings-page.title")} fullWidth>
       <BlockStack gap="500">
         <Layout>
           <Layout.Section>
@@ -205,7 +206,7 @@ const Index = () => {
           </Layout.Section>
         </Layout>
       </BlockStack>
-    </Page>
+    </PageLayout>
   );
 }
 export default Index;

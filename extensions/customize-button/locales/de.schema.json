@@ -1,52 +1,69 @@
 {
   "blocks": {
     "customize-button": {
-      "name": "FastEditor-Button",
+      "name": "Personalisierungs-Button",
       "settings": {
-        "bg_color": "Button-Hintergrundfarbe",
-        "text": "Button-Text",
-        "text_color": "Textfarbe",
-        "text_size": "Schriftgröße",
-        "text_font": "Textschrift",
-        "border_width": "Rahmenbreite",
-        "border_color": "Rahmenfarbe",
-        "border_radius": "Rahmenradius",
-        "enable_cart_redirect": "Nach Hinzufügen zum Warenkorb weiterleiten",
-        "loading_text": "Ladetext",
-        "adding_to_cart_text": "Text beim Hinzufügen zum Warenkorb",
-        "added_to_cart_text": "Text nach dem Hinzufügen zum Warenkorb",
-        "error_text": "Fehlertext",
-        "button_text_header": "Button-Text",
-        "button_appearance_header": "Button-Erscheinungsbild",
-        "icon_settings_header": "Symbol-Einstellungen",
-        "icon_type": "Symboltyp",
-        "icon_type_none": "Keine",
-        "icon_type_pen": "Stift",
-        "icon_type_brush": "Pinsel",
-        "icon_type_image": "Bild",
-        "icon_type_images": "Bilder",
-        "icon_type_link": "Link",
-        "icon_type_settings": "Einstellungen",
-        "icon_type_custom": "Benutzerdefiniert",
-        "custom_icon_image": "Benutzerdefiniertes Symbolbild",
-        "custom_icon_image_info": "Gilt nur bei Symboltyp 'Benutzerdefiniert'",
-        "icon_color": "Symbolfarbe",
-        "icon_color_info": "Gilt nur für integrierte Symbole",
-        "icon_size": "Symbolgröße",
-        "icon_size_info": "Gilt nur, wenn ein Symbol ausgewählt ist",
-        "icon_gap": "Symbolabstand",
-        "icon_gap_info": "Abstand zwischen Symbol und Text",
-        "icon_position": "Symbolposition",
-        "icon_position_left": "Links",
-        "icon_position_right": "Rechts",
-        "icon_position_info": "Gilt nur, wenn ein Symbol ausgewählt ist",
-        "button_state_texts_header": "Button-Status-Texte",
-        "loading_text_info": "Text, der angezeigt wird, wenn der Button lädt",
-        "adding_to_cart_text_info": "Text beim Hinzufügen zum Warenkorb",
-        "added_to_cart_text_info": "Text nach Hinzufügen zum Warenkorb",
-        "error_text_info": "Text, der bei einem Fehler angezeigt wird",
-        "button_behavior_header": "Button-Verhalten",
-        "sold_out": "Ausverkauft"
+        "button_text": {
+          "header": "Button-Text",
+          "text": "Button-Text",
+          "text_font": "Textschrift",
+          "text_size": "Schriftgröße",
+          "text_color": "Textfarbe"
+        },
+        "button_appearance": {
+          "header": "Button-Erscheinungsbild",
+          "bg_color": "Button-Hintergrundfarbe",
+          "border_width": "Rahmenbreite",
+          "border_color": "Rahmenfarbe",
+          "border_radius": "Rahmenradius"
+        },
+        "icon_settings": {
+          "header": "Symbol-Einstellungen",
+          "icon_type": {
+            "label": "Symboltyp",
+            "options": {
+              "none": "Keine",
+              "pen": "Stift",
+              "brush": "Pinsel",
+              "image": "Bild",
+              "images": "Bilder",
+              "link": "Link",
+              "settings": "Einstellungen",
+              "custom": "Benutzerdefiniert"
+            }
+          },
+          "custom_icon_image": "Benutzerdefiniertes Symbolbild",
+          "custom_icon_image_info": "Gilt nur bei Symboltyp 'Benutzerdefiniert'",
+          "icon_color": "Symbolfarbe",
+          "icon_color_info": "Gilt nur für integrierte Symbole",
+          "icon_size": "Symbolgröße",
+          "icon_size_info": "Gilt nur, wenn ein Symbol ausgewählt ist",
+          "icon_gap": "Symbolabstand",
+          "icon_gap_info": "Abstand zwischen Symbol und Text",
+          "icon_position": {
+            "label": "Symbolposition",
+            "options": {
+              "left": "Links",
+              "right": "Rechts"
+            },
+            "info": "Gilt nur, wenn ein Symbol ausgewählt ist"
+          }
+        },
+        "button_state_texts": {
+          "header": "Button-Status-Texte",
+          "loading_text": "Ladetext",
+          "loading_text_info": "Text, der angezeigt wird, wenn der Button lädt",
+          "adding_to_cart_text": "Text beim Hinzufügen zum Warenkorb",
+          "adding_to_cart_text_info": "Text beim Hinzufügen zum Warenkorb",
+          "added_to_cart_text": "Text nach dem Hinzufügen zum Warenkorb",
+          "added_to_cart_text_info": "Text nach Hinzufügen zum Warenkorb",
+          "error_text": "Fehlertext",
+          "error_text_info": "Text, der bei einem Fehler angezeigt wird"
+        },
+        "button_behavior": {
+          "header": "Button-Verhalten",
+          "enable_cart_redirect": "Nach Hinzufügen zum Warenkorb weiterleiten"
+        }
       }
     }
   }
