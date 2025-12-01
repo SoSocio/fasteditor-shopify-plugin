@@ -3,10 +3,10 @@ export interface SmartLinkRequestData {
   variantId: string;
   productHandle: string;
   quantity: number;
+  userId?: string;
 }
 
 export interface SmartLinkShopSettings {
-  id: string;
   language: string;
   country: string;
   currency: string;
@@ -15,7 +15,6 @@ export interface SmartLinkShopSettings {
 }
 
 export interface SmartLinkPayload {
-  id: string;
   language: string;
   country: string;
   currency: string;
@@ -23,4 +22,5 @@ export interface SmartLinkPayload {
   quantity: number;
   variantSKU: string;
   cartUrl: string;
+  userId?: string;
 }
