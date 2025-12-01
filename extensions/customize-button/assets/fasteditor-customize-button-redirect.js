@@ -55,6 +55,9 @@
       : DEFAULTS.QUANTITY;
     const loadingText = button.dataset.loadingText || DEFAULTS.LOADING_TEXT;
 
+    // Get or create userId from cookie
+    const userId = window.getOrCreateUserId ? window.getOrCreateUserId() : null;
+
     try {
       setButtonState(button, loadingText);
       setButtonLoadingIcon(button, true);
@@ -65,7 +68,7 @@
           'Content-Type': 'application/json',
           'ngrok-skip-browser-warning': '69420',
         },
-        body: JSON.stringify({ shop, variantId, quantity, productHandle }),
+        body: JSON.stringify({ shop, variantId, quantity, productHandle, userId }),
       });
 
       const responseData = await response.json();

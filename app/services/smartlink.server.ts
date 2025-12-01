@@ -18,14 +18,14 @@ const ENDPOINT = "/app/smartlink";
  */
 export async function parseAndValidateRequest(request: Request): Promise<SmartLinkRequestData> {
   const data: SmartLinkRequestData = await request.json();
-  const {shop, variantId, productHandle, quantity} = data;
+  const {shop, variantId, productHandle, quantity, userId} = data;
 
   if (!shop || !variantId || !productHandle || !quantity) {
     console.warn(`[${ENDPOINT}] Validation failed: Missing required fields.`);
     throw new Response("Fields 'shop', 'variantId', 'productHandle', and 'quantity' are required.", {status: 400});
   }
 
-  return {shop, variantId, productHandle, quantity};
+  return {shop, variantId, productHandle, quantity, userId};
 }
 
 /**
@@ -49,7 +49,6 @@ export async function fetchShopSettings(shop: string): Promise<SmartLinkShopSett
   }
 
   return {
-    id: settings.id ?? "",
     language: settings.language ?? "",
     country: settings.country ?? "",
     currency: settings.currency ?? "",
@@ -86,7 +85,6 @@ export async function fetchProductSKU(variantId: string, shop: string): Promise<
  */
 export function buildFastEditorPayload(
   {
-    id,
     language,
     country,
     currency,
@@ -94,9 +92,10 @@ export function buildFastEditorPayload(
     quantity,
     variantSKU,
     cartUrl,
+    userId,
   }: SmartLinkPayload) {
   return {
-    userId: id,
+    userId,
     sku: variantSKU,
     language,
     country,

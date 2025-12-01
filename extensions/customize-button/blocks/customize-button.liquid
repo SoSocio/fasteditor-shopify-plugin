@@ -25,6 +25,7 @@
 -%}
 
 {%- comment -%} Load scripts in correct order {%- endcomment -%}
+<script src="{{ 'cookie-user-id.js' | asset_url }}" defer></script>
 <script src="{{ 'fasteditor-customize-button-utils.js' | asset_url }}" defer></script>
 <script src="{{ 'fasteditor-customize-button-redirect.js' | asset_url }}" defer></script>
 <script src="{{ 'fasteditor-customize-button-cart.js' | asset_url }}" defer></script>
