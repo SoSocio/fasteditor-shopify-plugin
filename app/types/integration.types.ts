@@ -27,6 +27,7 @@ export interface IntegrationFormProps {
   isApiDomainError: boolean;
   errors?: IntegrationErrorsData;
   fastEditorError: boolean;
+  isLoading?: boolean;
 }
 
 export interface IntegrationCardProps {

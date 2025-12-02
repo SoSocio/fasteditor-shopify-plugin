@@ -41,10 +41,12 @@ export const loader = async ({
 
   // Create or update merchant record only if needed
   const userId = session.onlineAccessInfo?.associated_user.id;
+  console.log("[app.tsx] userId", userId);
   if (userId) {
     const merchantLanguage = session.onlineAccessInfo?.associated_user.locale || i18n.fallbackLng;
+    console.log("[app.tsx] merchantLanguage", merchantLanguage);
     const existingMerchant = await getMerchant(String(userId), session.shop);
-
+    console.log("[app.tsx] existingMerchant", existingMerchant);
     if (!existingMerchant) {
       // New user - create merchant record
       await createMerchant(
@@ -58,7 +60,9 @@ export const loader = async ({
   }
 
   const shopSettings = await getShopSettings(session.shop);
+  console.log("[app.tsx] shopSettings", shopSettings);
   if (!shopSettings) {
+    console.log("[app.tsx] shopSettings not found. 1 case");
     return {
       apiKey: process.env.SHOPIFY_API_KEY || "",
       supportEmail: SUPPORT_EMAIL,
@@ -67,26 +71,29 @@ export const loader = async ({
   }
 
   const subscriptions = await getAllAppSubscriptions(admin);
+  console.log("[app.tsx] subscriptions", subscriptions);
   if (
     !shopSettings?.shopifySubscriptionId ||
     !subscriptions ||
     subscriptions.length === 0
   ) {
+    console.log("[app.tsx] shopSettings?.shopifySubscriptionId or subscriptions not found. 2 case");
     appAvailability = false;
   }
 
   const currentSubscription = subscriptions.find(
     (subscription) => subscription.id === shopSettings?.shopifySubscriptionId
   );
+  console.log("[app.tsx] currentSubscription", currentSubscription);
 
   if (!currentSubscription) {
+    console.log("[app.tsx] currentSubscription not found. 3 case");
     appAvailability = false;
-  }
-
-  const currentSubscriptionStatus = currentSubscription?.status?.toUpperCase();
-
-  if (!currentSubscriptionStatus || currentSubscriptionStatus !== "ACTIVE") {
-    appAvailability = false;
+  } else {
+    const currentSubscriptionStatus = currentSubscription.status?.toUpperCase();
+    if (!currentSubscriptionStatus || currentSubscriptionStatus !== "ACTIVE") {
+      appAvailability = false;
+    }
   }
 
   return {

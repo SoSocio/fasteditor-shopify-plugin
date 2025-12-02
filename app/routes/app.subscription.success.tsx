@@ -17,7 +17,9 @@ const ENDPOINT = "/app/subscription/success";
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const {admin, session, redirect} = await authenticate.admin(request);
   const searchParams = new URL(request.url).searchParams;
+  console.log("[app.subscription.success.tsx] searchParams", searchParams);
   const chargeId = searchParams.get("charge_id");
+  console.log("[app.subscription.success.tsx] chargeId", chargeId);
 
   if (!chargeId) {
     console.error(`[${ENDPOINT}] Missing charge_id parameter`);
@@ -27,8 +29,11 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
   try {
     // Fetch all subscriptions to find the newly created one
     const subscriptions = await getAllAppSubscriptions(admin);
+    console.log("[app.subscription.success.tsx] subscriptions", subscriptions);
     const subscriptionId = formatSubscriptionId(chargeId);
+    console.log("[app.subscription.success.tsx] subscriptionId", subscriptionId);
     const currentSubscription = subscriptions.find((s) => s?.id === subscriptionId);
+    console.log("[app.subscription.success.tsx] currentSubscription", currentSubscription);
 
     // If subscription not found, redirect to app home
     if (!currentSubscription) {
@@ -40,6 +45,7 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
 
     // Create shop settings for new installations
     if (!shopSettings) {
+      console.log("[app.subscription.success.tsx] shopSettings not found");
       const createdAt = new Date(currentSubscription.createdAt);
       const trialStartDate = createdAt;
       const trialEndDate = calculateTrialEndDate(createdAt, currentSubscription.trialDays);
