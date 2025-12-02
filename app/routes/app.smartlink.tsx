@@ -32,10 +32,13 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
 
   try {
     const data = await parseAndValidateRequest(request);
+    console.log("[SMARTLINK] data", data);
     const shopSettings = await fetchShopSettings(data.shop);
+    console.log("[SMARTLINK] shopSettings", shopSettings);
     const variantSKU = await fetchProductSKU(data.variantId, data.shop);
-
+    console.log("[SMARTLINK] variantSKU", variantSKU);
     const cartUrl = `https://${data.shop}/products/${data.productHandle}`;
+    console.log("[SMARTLINK] cartUrl", cartUrl);
     const fastEditorParams = buildFastEditorPayload({
       ...shopSettings,
       variantId: data.variantId,
@@ -44,10 +47,11 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
       cartUrl,
       userId: data.userId,
     });
+    console.log("[SMARTLINK] fastEditorParams", fastEditorParams);
 
     const fastEditor = new FastEditorAPI(shopSettings.fastEditorApiKey, shopSettings.fastEditorDomain);
     const response: FastEditorIntegrationData = await fastEditor.createSmartLink(fastEditorParams);
-
+    console.log("[SMARTLINK] response", response);
     console.info(`[${ENDPOINT}] SmartLink created successfully.`);
     return new Response(JSON.stringify({
       message: "SmartLink created successfully.",
