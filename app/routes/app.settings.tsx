@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useFetcher, useLoaderData} from "@remix-run/react";
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import type{IntegrationActionData, IntegrationFormValues} from "../types/integration.types";
@@ -201,6 +201,7 @@ const Index = () => {
                 isApiDomainError={isApiDomainError}
                 errors={formErrors}
                 fastEditorError={fastEditorError}
+                isLoading={fetcher.state === "submitting" || fetcher.state === "loading"}
               />
             </ShopIntegrationCard>
           </Layout.Section>

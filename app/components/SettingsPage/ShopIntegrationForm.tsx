@@ -11,7 +11,8 @@ const ShopIntegrationForm: React.FC<IntegrationFormProps> = (
     isApiKeyError,
     isApiDomainError,
     errors,
-    fastEditorError
+    fastEditorError,
+    isLoading = false
   }
 ) => {
   const { t } = useTranslation();
@@ -55,7 +56,7 @@ const ShopIntegrationForm: React.FC<IntegrationFormProps> = (
             message={fastEditorError ? t("settings-page.integration-form.connection-failed-error") : ""}
           />
         </BlockStack>
-        <Button submit>{t("settings-page.integration-form.connect-button")}</Button>
+        <Button submit loading={isLoading}>{t("settings-page.integration-form.connect-button")}</Button>
       </FormLayout>
     </Form>
   );

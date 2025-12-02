@@ -1,5 +1,4 @@
 import {BlockStack, Box, Text} from '@shopify/polaris';
-import React from 'react';
 import {StatusBadge} from "./StatusBadge";
 import type {ActiveSubscription} from "../../types/billing.types";
 import { useTranslation } from "react-i18next";
