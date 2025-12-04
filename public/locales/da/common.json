@@ -1,0 +1,209 @@
+{
+  "getting-started-page": {
+    "title": "Kom i gang",
+    "integration": {
+      "title": "FastEditor Integration",
+      "description": "Før du bruger FastEditor, skal du forbinde din butik til platformen via Indstillinger-siden.",
+      "button": "Gå til Indstillinger"
+    },
+    "customization-button": {
+      "title": "Tilpasningsknap",
+      "description": "Tilføj en tilpasningsknap til din produktsidemal og stil den, så den matcher dit tema.",
+      "button": "Tilpas udseende"
+    },
+    "product-setup": {
+      "title": "Produktopsætning",
+      "description": "For at linke et Shopify-produkt til FastEditor, følg disse trin:",
+      "steps": {
+        "item-1": "Opret eller vælg et produkt i Shopify.",
+        "item-2": "Gå til FastEditor-platformen.",
+        "item-3": "Find det tilsvarende produkt.",
+        "item-4": "Klik på <b>Konfigurationer</b>.",
+        "item-5": "Du kommer til produktdetaljesiden.",
+        "item-6": "Vælg de filtre, du vil bruge.",
+        "item-7": "Klik på <b>SmartLink payload</b>.",
+        "item-8": "Kopiér <b>SKU</b>.",
+        "item-9": "Gå tilbage til produktindstillingerne i Shopify.",
+        "item-10": "<b>Hvis produktet ikke har varianter:</b> indsæt SKU i feltet <i>SKU (Stock Keeping Unit)</i> i Lager-sektionen og gem dine ændringer.",
+        "item-11": "<b>Hvis produktet har varianter:</b> åbn den specifikke variant, indsæt SKU i feltet <i>SKU (Stock Keeping Unit)</i> i Lager-sektionen og gem dine ændringer."
+      },
+      "display-button-description": "For at vise tilpasningsknappen på produktsiden:",
+      "display-steps": {
+        "item-1": "Åbn produktet, du vil tilpasse.",
+        "item-2": "Scroll til <b>Tags</b>-sektionen.",
+        "item-3": "Tilføj tagget <code>fasteditor</code>."
+      },
+      "button": "Gå til Produkter"
+    }
+  },
+  "dashboard-page": {
+    "title": "Dashboard",
+    "products-table-info": {
+      "title": "Produkter med FastEditor-tagget",
+      "description": "Tabellen nedenfor viser produkter, der er tagget med <code>fasteditor</code>.",
+      "tag-instructions-title": "For at tagge et produkt:",
+      "steps": {
+        "item-1": "Gå til <strong>Produkter</strong>",
+        "item-2": "Vælg et produkt",
+        "item-3": "I Tags-sektionen, indtast <strong>fasteditor</strong> og tryk på <strong>Enter</strong>",
+        "item-4": "Klik på <strong>Gem</strong>"
+      }
+    },
+    "products-table": {
+      "resource-name": {
+        "singular": "produkt",
+        "plural": "produkter"
+      },
+      "empty-state": {
+        "title": "Ingen produkter endnu",
+        "description": "Sørg for, at dine produkter har tagget fasteditor."
+      },
+      "search-placeholder": "Søg efter produktitel eller SKU",
+      "headings": {
+        "product": "Produkt",
+        "sku": "SKU",
+        "price": "Pris",
+        "quantity": "Antal"
+      },
+      "default-variant-title": "Standardtitel"
+    },
+    "error-banner": {
+      "title": "Vi kunne ikke indlæse dine dashboard-data",
+      "return-button": "Tilbage",
+      "messages": {
+        "item-1": "Dataene kunne ikke findes baseret på dine nuværende filtre.",
+        "item-2": "Hvis problemet fortsætter, prøv at opdatere siden eller kontakt supporten."
+      }
+    },
+    "tabs": {
+      "all": "Alle",
+      "active": "Aktiv",
+      "draft": "Kladde",
+      "archived": "Arkiveret"
+    },
+    "sort": {
+      "product-label": "Produkt",
+      "direction-az": "A-Z",
+      "direction-za": "Z-A"
+    }
+  },
+  "settings-page": {
+    "title": "Indstillinger",
+    "integration-card": {
+      "connected-badge": "Forbundet",
+      "not-connected-badge": "Ikke forbundet",
+      "title": "Forbind din butik til FastEditor",
+      "description": "For at forbinde din butik, indtast din FastEditor API-nøgle og Domæne nedenfor, og klik derefter på <strong>Forbind</strong>. Hvis forbindelsen lykkes, vil du se en bekræftelsesbesked, og statusen opdateres til <strong>Forbundet</strong>. Hvis du har problemer med at forbinde FastEditor, kontakt venligst vores support. Du finder e-mailen nederst på siden."
+    },
+    "integration-form": {
+      "api-key-label": "API-nøgle",
+      "api-domain-label": "API-domæne",
+      "connect-button": "Forbind",
+      "connection-failed-error": "Forbindelse til FastEditor mislykkedes. Tjek venligst din API-nøgle og Domæne og prøv igen.",
+      "validation-errors": {
+        "api-key-required": "API-nøgle er påkrævet",
+        "api-domain-required": "API-domæne er påkrævet"
+      },
+      "success-message": "FastEditor-integrationen lykkedes.",
+      "validation-errors-title": "Valideringsfejl"
+    }
+  },
+  "subscription-page": {
+    "title": "Abonnement",
+    "cancel-button": "Annuller",
+    "current-subscription": {
+      "per-month": "/ måned",
+      "started-on": "Startede:",
+      "ends-on": "Slutter:"
+    },
+    "usage-subscription": {
+      "title": "Nuværende app-udgiftsgrænse",
+      "remaining-amount": "Resterende beløb:",
+      "spent": "brugt",
+      "limit": "grænse",
+      "change-limit-button": "Ændre grænse"
+    },
+    "cancel-modal": {
+      "title": "Annuller abonnement",
+      "confirm-question": "Er du sikker på, at du vil annullere dit abonnement?",
+      "confirm-description": "Hvis du annullerer dit abonnement, bliver adgangen til alle betalte funktioner tilbagekaldt, og du vil ikke være i stand til at bruge den resterende betalte periode.",
+      "cancel-button": "Annuller abonnement",
+      "keep-button": "Behold abonnement",
+      "success-message": "Abonnement annulleret succesfuldt",
+      "error-message": "Kunne ikke annullere abonnement"
+    },
+    "status": {
+      "active": "Aktiv",
+      "cancelled": "Annulleret",
+      "declined": "Afvist",
+      "pending": "Afventer",
+      "expired": "Udløbet",
+      "frozen": "Frosset"
+    }
+  },
+  "auth-page": {
+    "title": "Log ind",
+    "shop-domain-label": "Butiksdomæne",
+    "shop-domain-help": "eksempel.myshopify.com",
+    "login-button": "Log ind"
+  },
+  "home-page": {
+    "heading": "En kort overskrift om FastEditor",
+    "tagline": "En tagline om FastEditor, der beskriver dit værdiforslag.",
+    "shop-domain-label": "Butiksdomæne",
+    "shop-domain-example": "f.eks: mit-butiksdomæne.myshopify.com",
+    "login-button": "Log ind",
+    "product-feature-title": "Produktfunktion",
+    "product-feature-description": "Nogle detaljer om din funktion og dens fordel for din kunde."
+  },
+  "no-subscription-page": {
+    "heading": "Aktiver dit abonnement for at fortsætte",
+    "activate-button": "Aktiver abonnement",
+    "description": "For at fortsætte med at bruge FastEditor, aktiver venligst din månedlige plan. Du vil blive omdirigeret til faktureringssiden for at bekræfte dit abonnement.",
+    "error-message": "Kan ikke oprette abonnement"
+  },
+  "usage-limit-banner": {
+    "title": "Brugsgrænse overskredet",
+    "description": "Din nuværende brug har overskredet den tilladte grænse for denne faktureringscyklus. Som et resultat er applikationen midlertidigt utilgængelig.",
+    "list-item-1": "Adgang til alle app-funktioner er blokeret, indtil brugsgrænsen øges eller faktureringscyklussen nulstilles.",
+    "list-item-2": "For at genoprette adgangen, gennemgå venligst din abonnementsplan eller øg din brugsgrænse i indstillingerne.",
+    "go-to-subscription-button": "Gå til Abonnement",
+    "change-limit-button": "Ændre grænse"
+  },
+  "errors": {
+    "login": {
+      "missing-shop": "Indtast venligst dit butiksdomæne for at logge ind",
+      "invalid-shop": "Indtast venligst et gyldigt butiksdomæne for at logge ind"
+    },
+    "subscription": {
+      "unable-to-fetch-shop-settings": "Kunne ikke hente butiksindstillinger",
+      "unable-to-fetch-subscriptions": "Kunne ikke hente abonnementer",
+      "unable-to-fetch-current-subscription": "Kunne ikke hente nuværende abonnement"
+    }
+  },
+  "navigation": {
+    "home": "Hjem",
+    "dashboard": "Dashboard",
+    "settings": "Indstillinger",
+    "subscription": "Abonnement"
+  },
+  "footer": {
+    "support-text": "Har du brug for hjælp? Kontakt vores supportteam på"
+  },
+  "language-switcher": {
+    "label": "Sprog",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "nl": "Nederlands",
+      "sv": "Svenska",
+      "es": "Español",
+      "pt": "Português",
+      "pl": "Polski",
+      "it": "Italiano",
+      "da": "Dansk"
+    }
+  }
+}
+
