@@ -1,0 +1,209 @@
+{
+  "getting-started-page": {
+    "title": "Primeros pasos",
+    "integration": {
+      "title": "Integración FastEditor",
+      "description": "Antes de usar FastEditor, conecte su tienda a la plataforma a través de la página de Configuración.",
+      "button": "Ir a Configuración"
+    },
+    "customization-button": {
+      "title": "Botón de personalización",
+      "description": "Agregue un botón de personalización a la plantilla de su página de producto y estilícelo para que coincida con su tema.",
+      "button": "Personalizar apariencia"
+    },
+    "product-setup": {
+      "title": "Configuración del producto",
+      "description": "Para vincular un producto de Shopify con FastEditor, siga estos pasos:",
+      "steps": {
+        "item-1": "Cree o seleccione un producto en Shopify.",
+        "item-2": "Vaya a la plataforma FastEditor.",
+        "item-3": "Encuentre el producto correspondiente.",
+        "item-4": "Haga clic en <b>Configuraciones</b>.",
+        "item-5": "Llegará a la página de detalles del producto.",
+        "item-6": "Seleccione los filtros que desea usar.",
+        "item-7": "Haga clic en <b>SmartLink payload</b>.",
+        "item-8": "Copie el <b>SKU</b>.",
+        "item-9": "Vuelva a la configuración del producto en Shopify.",
+        "item-10": "<b>Si el producto no tiene variantes:</b> pegue el SKU en el campo <i>SKU (Stock Keeping Unit)</i> en la sección de Inventario y guarde sus cambios.",
+        "item-11": "<b>Si el producto tiene variantes:</b> abra la variante específica, pegue el SKU en el campo <i>SKU (Stock Keeping Unit)</i> en la sección de Inventario y guarde sus cambios."
+      },
+      "display-button-description": "Para mostrar el botón de personalización en la página del producto:",
+      "display-steps": {
+        "item-1": "Abra el producto que desea personalizar.",
+        "item-2": "Desplácese hasta la sección <b>Etiquetas</b>.",
+        "item-3": "Agregue la etiqueta <code>fasteditor</code>."
+      },
+      "button": "Ir a Productos"
+    }
+  },
+  "dashboard-page": {
+    "title": "Panel de control",
+    "products-table-info": {
+      "title": "Productos con la etiqueta FastEditor",
+      "description": "La tabla a continuación muestra productos etiquetados con <code>fasteditor</code>.",
+      "tag-instructions-title": "Para etiquetar un producto:",
+      "steps": {
+        "item-1": "Vaya a <strong>Productos</strong>",
+        "item-2": "Seleccione un producto",
+        "item-3": "En la sección Etiquetas, ingrese <strong>fasteditor</strong> y presione <strong>Enter</strong>",
+        "item-4": "Haga clic en <strong>Guardar</strong>"
+      }
+    },
+    "products-table": {
+      "resource-name": {
+        "singular": "producto",
+        "plural": "productos"
+      },
+      "empty-state": {
+        "title": "Aún no hay productos",
+        "description": "Asegúrese de que sus productos tengan la etiqueta fasteditor."
+      },
+      "search-placeholder": "Buscar por título de producto o SKU",
+      "headings": {
+        "product": "Producto",
+        "sku": "SKU",
+        "price": "Precio",
+        "quantity": "Cantidad"
+      },
+      "default-variant-title": "Título predeterminado"
+    },
+    "error-banner": {
+      "title": "No pudimos cargar los datos de su panel de control",
+      "return-button": "Volver",
+      "messages": {
+        "item-1": "No se pudieron encontrar los datos según sus filtros actuales.",
+        "item-2": "Si el problema persiste, intente actualizar la página o contacte con el soporte."
+      }
+    },
+    "tabs": {
+      "all": "Todos",
+      "active": "Activo",
+      "draft": "Borrador",
+      "archived": "Archivado"
+    },
+    "sort": {
+      "product-label": "Producto",
+      "direction-az": "A-Z",
+      "direction-za": "Z-A"
+    }
+  },
+  "settings-page": {
+    "title": "Configuración",
+    "integration-card": {
+      "connected-badge": "Conectado",
+      "not-connected-badge": "No conectado",
+      "title": "Conecte su tienda a FastEditor",
+      "description": "Para conectar su tienda, ingrese su Clave API de FastEditor y Dominio a continuación, luego haga clic en <strong>Conectar</strong>. Si la conexión es exitosa, verá un mensaje de confirmación y el estado se actualizará a <strong>Conectado</strong>. Si tiene algún problema al conectar FastEditor, póngase en contacto con nuestro soporte. Encontrará el correo electrónico en la parte inferior de la página."
+    },
+    "integration-form": {
+      "api-key-label": "Clave API",
+      "api-domain-label": "Dominio API",
+      "connect-button": "Conectar",
+      "connection-failed-error": "La conexión a FastEditor falló. Por favor, verifique su Clave API y Dominio e intente nuevamente.",
+      "validation-errors": {
+        "api-key-required": "La Clave API es obligatoria",
+        "api-domain-required": "El Dominio API es obligatorio"
+      },
+      "success-message": "La integración de FastEditor fue exitosa.",
+      "validation-errors-title": "Errores de validación"
+    }
+  },
+  "subscription-page": {
+    "title": "Suscripción",
+    "cancel-button": "Cancelar",
+    "current-subscription": {
+      "per-month": "/ mes",
+      "started-on": "Iniciado el:",
+      "ends-on": "Termina el:"
+    },
+    "usage-subscription": {
+      "title": "Límite de gasto actual de la aplicación",
+      "remaining-amount": "Cantidad restante:",
+      "spent": "gastado",
+      "limit": "límite",
+      "change-limit-button": "Cambiar límite"
+    },
+    "cancel-modal": {
+      "title": "Cancelar suscripción",
+      "confirm-question": "¿Está seguro de que desea cancelar su suscripción?",
+      "confirm-description": "Si cancela su suscripción, se revocará el acceso a todas las funciones de pago y no podrá usar el período de pago restante.",
+      "cancel-button": "Cancelar suscripción",
+      "keep-button": "Mantener suscripción",
+      "success-message": "Suscripción cancelada exitosamente",
+      "error-message": "Error al cancelar la suscripción"
+    },
+    "status": {
+      "active": "Activo",
+      "cancelled": "Cancelado",
+      "declined": "Rechazado",
+      "pending": "Pendiente",
+      "expired": "Expirado",
+      "frozen": "Congelado"
+    }
+  },
+  "auth-page": {
+    "title": "Iniciar sesión",
+    "shop-domain-label": "Dominio de la tienda",
+    "shop-domain-help": "ejemplo.myshopify.com",
+    "login-button": "Iniciar sesión"
+  },
+  "home-page": {
+    "heading": "Un encabezado corto sobre FastEditor",
+    "tagline": "Un eslogan sobre FastEditor que describe su propuesta de valor.",
+    "shop-domain-label": "Dominio de la tienda",
+    "shop-domain-example": "ej: mi-dominio-tienda.myshopify.com",
+    "login-button": "Iniciar sesión",
+    "product-feature-title": "Función del producto",
+    "product-feature-description": "Algunos detalles sobre su función y su beneficio para su cliente."
+  },
+  "no-subscription-page": {
+    "heading": "Active su suscripción para continuar",
+    "activate-button": "Activar suscripción",
+    "description": "Para continuar usando FastEditor, active su plan mensual. Será redirigido a la página de facturación para confirmar su suscripción.",
+    "error-message": "No se puede crear la suscripción"
+  },
+  "usage-limit-banner": {
+    "title": "Límite de uso excedido",
+    "description": "Su uso actual ha excedido el límite permitido para este ciclo de facturación. Como resultado, la aplicación no está disponible temporalmente.",
+    "list-item-1": "El acceso a todas las funciones de la aplicación está bloqueado hasta que se aumente el límite de uso o se reinicie el ciclo de facturación.",
+    "list-item-2": "Para restaurar el acceso, revise su plan de suscripción o aumente su límite de uso en la configuración.",
+    "go-to-subscription-button": "Ir a Suscripción",
+    "change-limit-button": "Cambiar límite"
+  },
+  "errors": {
+    "login": {
+      "missing-shop": "Ingrese el dominio de su tienda para iniciar sesión",
+      "invalid-shop": "Ingrese un dominio de tienda válido para iniciar sesión"
+    },
+    "subscription": {
+      "unable-to-fetch-shop-settings": "No se pudieron obtener la configuración de la tienda",
+      "unable-to-fetch-subscriptions": "No se pudieron obtener las suscripciones",
+      "unable-to-fetch-current-subscription": "No se pudo obtener la suscripción actual"
+    }
+  },
+  "navigation": {
+    "home": "Inicio",
+    "dashboard": "Panel de control",
+    "settings": "Configuración",
+    "subscription": "Suscripción"
+  },
+  "footer": {
+    "support-text": "¿Necesita ayuda? Contacte a nuestro equipo de soporte en"
+  },
+  "language-switcher": {
+    "label": "Idioma",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "nl": "Nederlands",
+      "sv": "Svenska",
+      "es": "Español",
+      "pt": "Português",
+      "pl": "Polski",
+      "it": "Italiano",
+      "da": "Dansk"
+    }
+  }
+}
+

@@ -195,7 +195,14 @@
     "languages": {
       "en": "English",
       "de": "Deutsch",
-      "fr": "Français"
+      "fr": "Français",
+      "nl": "Nederlands",
+      "sv": "Svenska",
+      "es": "Español",
+      "pt": "Português",
+      "pl": "Polski",
+      "it": "Italiano",
+      "da": "Dansk"
     }
   }
 }
