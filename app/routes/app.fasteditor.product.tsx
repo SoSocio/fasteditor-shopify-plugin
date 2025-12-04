@@ -4,7 +4,7 @@ import {
   extractFastEditorUrlFromRequest,
   validateProductData
 } from "../services/fasteditorProduct.server";
-import {actionMethodNotAllowed, errorResponse} from "../services/app.server";
+import {actionMethodNotAllowed} from "../services/app.server";
 
 const ENDPOINT = "/app/fasteditor/product";
 
@@ -20,22 +20,50 @@ export const loader = async ({request}: LoaderFunctionArgs): Promise<Response> =
     validateProductData(product);
 
     console.info(`[${ENDPOINT}] Product data fetched successfully.`);
-    return new Response(JSON.stringify({
-      message: "Product data fetched successfully.",
-      data: {
-        variantId: product.customAttributes.variantId,
-        quantity: product.quantity,
-        projectKey: product.projectKey,
-        imageUrl: product.imageUrl
-      },
-    }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
+    return new Response(
+      JSON.stringify({
+        statusCode: 200,
+        statusText: "success",
+        data: {
+          variantId: product.customAttributes.variantId,
+          quantity: product.quantity,
+          projectKey: product.projectKey,
+          imageUrl: product.imageUrl
+        },
+        ok: true,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    });
+    );
   } catch (error) {
-    return await errorResponse(error, ENDPOINT, "Failed to resolve product")
+    // If error is already a structured Response, return it as-is
+    if (error instanceof Response) {
+      return error;
+    }
+
+    // Handle unexpected errors
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`[${ENDPOINT}] Unexpected error:`, errorMessage);
+
+    return new Response(
+      JSON.stringify({
+        statusCode: 500,
+        statusText: "Internal server error",
+        message: "An unexpected error occurred while resolving product.",
+        code: "INTERNAL_ERROR",
+        ok: false,
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
 };
 
