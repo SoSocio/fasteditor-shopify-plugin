@@ -1,0 +1,209 @@
+{
+  "getting-started-page": {
+    "title": "Primeiros passos",
+    "integration": {
+      "title": "Integração FastEditor",
+      "description": "Antes de usar o FastEditor, conecte sua loja à plataforma através da página de Configurações.",
+      "button": "Ir para Configurações"
+    },
+    "customization-button": {
+      "title": "Botão de personalização",
+      "description": "Adicione um botão de personalização ao modelo da sua página de produto e estilize-o para corresponder ao seu tema.",
+      "button": "Personalizar aparência"
+    },
+    "product-setup": {
+      "title": "Configuração do produto",
+      "description": "Para vincular um produto Shopify ao FastEditor, siga estes passos:",
+      "steps": {
+        "item-1": "Crie ou selecione um produto no Shopify.",
+        "item-2": "Vá para a plataforma FastEditor.",
+        "item-3": "Encontre o produto correspondente.",
+        "item-4": "Clique em <b>Configurações</b>.",
+        "item-5": "Você chegará à página de detalhes do produto.",
+        "item-6": "Selecione os filtros que deseja usar.",
+        "item-7": "Clique em <b>SmartLink payload</b>.",
+        "item-8": "Copie o <b>SKU</b>.",
+        "item-9": "Volte para as configurações do produto no Shopify.",
+        "item-10": "<b>Se o produto não tiver variantes:</b> cole o SKU no campo <i>SKU (Stock Keeping Unit)</i> na seção de Inventário e salve suas alterações.",
+        "item-11": "<b>Se o produto tiver variantes:</b> abra a variante específica, cole o SKU no campo <i>SKU (Stock Keeping Unit)</i> na seção de Inventário e salve suas alterações."
+      },
+      "display-button-description": "Para exibir o botão de personalização na página do produto:",
+      "display-steps": {
+        "item-1": "Abra o produto que deseja personalizar.",
+        "item-2": "Role até a seção <b>Tags</b>.",
+        "item-3": "Adicione a tag <code>fasteditor</code>."
+      },
+      "button": "Ir para Produtos"
+    }
+  },
+  "dashboard-page": {
+    "title": "Painel",
+    "products-table-info": {
+      "title": "Produtos com a tag FastEditor",
+      "description": "A tabela abaixo mostra produtos marcados com <code>fasteditor</code>.",
+      "tag-instructions-title": "Para marcar um produto:",
+      "steps": {
+        "item-1": "Vá para <strong>Produtos</strong>",
+        "item-2": "Selecione um produto",
+        "item-3": "Na seção Tags, digite <strong>fasteditor</strong> e pressione <strong>Enter</strong>",
+        "item-4": "Clique em <strong>Salvar</strong>"
+      }
+    },
+    "products-table": {
+      "resource-name": {
+        "singular": "produto",
+        "plural": "produtos"
+      },
+      "empty-state": {
+        "title": "Ainda não há produtos",
+        "description": "Certifique-se de que seus produtos tenham a tag fasteditor."
+      },
+      "search-placeholder": "Pesquisar por título do produto ou SKU",
+      "headings": {
+        "product": "Produto",
+        "sku": "SKU",
+        "price": "Preço",
+        "quantity": "Quantidade"
+      },
+      "default-variant-title": "Título padrão"
+    },
+    "error-banner": {
+      "title": "Não foi possível carregar os dados do seu painel",
+      "return-button": "Voltar",
+      "messages": {
+        "item-1": "Os dados não puderam ser encontrados com base nos seus filtros atuais.",
+        "item-2": "Se o problema persistir, tente atualizar a página ou entre em contato com o suporte."
+      }
+    },
+    "tabs": {
+      "all": "Todos",
+      "active": "Ativo",
+      "draft": "Rascunho",
+      "archived": "Arquivado"
+    },
+    "sort": {
+      "product-label": "Produto",
+      "direction-az": "A-Z",
+      "direction-za": "Z-A"
+    }
+  },
+  "settings-page": {
+    "title": "Configurações",
+    "integration-card": {
+      "connected-badge": "Conectado",
+      "not-connected-badge": "Não conectado",
+      "title": "Conecte sua loja ao FastEditor",
+      "description": "Para conectar sua loja, insira sua Chave API do FastEditor e Domínio abaixo e clique em <strong>Conectar</strong>. Se a conexão for bem-sucedida, você verá uma mensagem de confirmação e o status será atualizado para <strong>Conectado</strong>. Se tiver problemas ao conectar o FastEditor, entre em contato com nosso suporte. Você encontrará o e-mail na parte inferior da página."
+    },
+    "integration-form": {
+      "api-key-label": "Chave API",
+      "api-domain-label": "Domínio API",
+      "connect-button": "Conectar",
+      "connection-failed-error": "Falha na conexão com o FastEditor. Verifique sua Chave API e Domínio e tente novamente.",
+      "validation-errors": {
+        "api-key-required": "A Chave API é obrigatória",
+        "api-domain-required": "O Domínio API é obrigatório"
+      },
+      "success-message": "A integração do FastEditor foi bem-sucedida.",
+      "validation-errors-title": "Erros de validação"
+    }
+  },
+  "subscription-page": {
+    "title": "Assinatura",
+    "cancel-button": "Cancelar",
+    "current-subscription": {
+      "per-month": "/ mês",
+      "started-on": "Iniciado em:",
+      "ends-on": "Termina em:"
+    },
+    "usage-subscription": {
+      "title": "Limite de gastos atual do aplicativo",
+      "remaining-amount": "Valor restante:",
+      "spent": "gasto",
+      "limit": "limite",
+      "change-limit-button": "Alterar limite"
+    },
+    "cancel-modal": {
+      "title": "Cancelar assinatura",
+      "confirm-question": "Tem certeza de que deseja cancelar sua assinatura?",
+      "confirm-description": "Se você cancelar sua assinatura, o acesso a todos os recursos pagos será revogado e você não poderá usar o período pago restante.",
+      "cancel-button": "Cancelar assinatura",
+      "keep-button": "Manter assinatura",
+      "success-message": "Assinatura cancelada com sucesso",
+      "error-message": "Falha ao cancelar assinatura"
+    },
+    "status": {
+      "active": "Ativo",
+      "cancelled": "Cancelado",
+      "declined": "Recusado",
+      "pending": "Pendente",
+      "expired": "Expirado",
+      "frozen": "Congelado"
+    }
+  },
+  "auth-page": {
+    "title": "Entrar",
+    "shop-domain-label": "Domínio da loja",
+    "shop-domain-help": "exemplo.myshopify.com",
+    "login-button": "Entrar"
+  },
+  "home-page": {
+    "heading": "Um título curto sobre o FastEditor",
+    "tagline": "Um slogan sobre o FastEditor que descreve sua proposta de valor.",
+    "shop-domain-label": "Domínio da loja",
+    "shop-domain-example": "ex: meu-dominio-loja.myshopify.com",
+    "login-button": "Entrar",
+    "product-feature-title": "Recurso do produto",
+    "product-feature-description": "Alguns detalhes sobre seu recurso e seu benefício para seu cliente."
+  },
+  "no-subscription-page": {
+    "heading": "Ative sua assinatura para continuar",
+    "activate-button": "Ativar assinatura",
+    "description": "Para continuar usando o FastEditor, ative seu plano mensal. Você será redirecionado para a página de cobrança para confirmar sua assinatura.",
+    "error-message": "Não é possível criar assinatura"
+  },
+  "usage-limit-banner": {
+    "title": "Limite de uso excedido",
+    "description": "Seu uso atual excedeu o limite permitido para este ciclo de cobrança. Como resultado, o aplicativo está temporariamente indisponível.",
+    "list-item-1": "O acesso a todos os recursos do aplicativo está bloqueado até que o limite de uso seja aumentado ou o ciclo de cobrança seja redefinido.",
+    "list-item-2": "Para restaurar o acesso, revise seu plano de assinatura ou aumente seu limite de uso nas configurações.",
+    "go-to-subscription-button": "Ir para Assinatura",
+    "change-limit-button": "Alterar limite"
+  },
+  "errors": {
+    "login": {
+      "missing-shop": "Digite o domínio da sua loja para entrar",
+      "invalid-shop": "Digite um domínio de loja válido para entrar"
+    },
+    "subscription": {
+      "unable-to-fetch-shop-settings": "Não foi possível buscar as configurações da loja",
+      "unable-to-fetch-subscriptions": "Não foi possível buscar as assinaturas",
+      "unable-to-fetch-current-subscription": "Não foi possível buscar a assinatura atual"
+    }
+  },
+  "navigation": {
+    "home": "Início",
+    "dashboard": "Painel",
+    "settings": "Configurações",
+    "subscription": "Assinatura"
+  },
+  "footer": {
+    "support-text": "Precisa de ajuda? Entre em contato com nossa equipe de suporte em"
+  },
+  "language-switcher": {
+    "label": "Idioma",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "nl": "Nederlands",
+      "sv": "Svenska",
+      "es": "Español",
+      "pt": "Português",
+      "pl": "Polski",
+      "it": "Italiano",
+      "da": "Dansk"
+    }
+  }
+}
+

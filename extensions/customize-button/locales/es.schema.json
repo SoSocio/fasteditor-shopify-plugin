@@ -1,0 +1,71 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "Botón de personalización",
+      "settings": {
+        "button_text": {
+          "header": "Texto del botón",
+          "text": "Texto del botón",
+          "text_font": "Fuente del texto",
+          "text_size": "Tamaño de fuente",
+          "text_color": "Color del texto"
+        },
+        "button_appearance": {
+          "header": "Apariencia del botón",
+          "bg_color": "Color de fondo del botón",
+          "border_width": "Ancho del borde",
+          "border_color": "Color del borde",
+          "border_radius": "Radio del borde"
+        },
+        "icon_settings": {
+          "header": "Configuración del icono",
+          "icon_type": {
+            "label": "Tipo de icono",
+            "options": {
+              "none": "Ninguno",
+              "pen": "Bolígrafo",
+              "brush": "Pincel",
+              "image": "Imagen",
+              "images": "Imágenes",
+              "link": "Enlace",
+              "settings": "Configuración",
+              "custom": "Personalizado"
+            }
+          },
+          "custom_icon_image": "Imagen de icono personalizada",
+          "custom_icon_image_info": "Solo se aplica cuando el tipo de icono 'Personalizado' está seleccionado",
+          "icon_color": "Color del icono",
+          "icon_color_info": "Solo se aplica a iconos integrados",
+          "icon_size": "Tamaño del icono",
+          "icon_size_info": "Solo se aplica cuando se selecciona un icono",
+          "icon_gap": "Espaciado del icono",
+          "icon_gap_info": "Distancia entre el icono y el texto",
+          "icon_position": {
+            "label": "Posición del icono",
+            "options": {
+              "left": "Izquierda",
+              "right": "Derecha"
+            },
+            "info": "Solo se aplica cuando se selecciona un icono"
+          }
+        },
+        "button_state_texts": {
+          "header": "Textos de estado del botón",
+          "loading_text": "Texto de carga",
+          "loading_text_info": "Texto que se muestra cuando el botón está cargando",
+          "adding_to_cart_text": "Texto al agregar al carrito",
+          "adding_to_cart_text_info": "Texto que se muestra al agregar un artículo al carrito",
+          "added_to_cart_text": "Texto después de agregar al carrito",
+          "added_to_cart_text_info": "Texto que se muestra después de que se agrega un artículo al carrito",
+          "error_text": "Texto de error",
+          "error_text_info": "Texto que se muestra cuando ocurre un error"
+        },
+        "button_behavior": {
+          "header": "Comportamiento del botón",
+          "enable_cart_redirect": "Redirigir a la página del carrito después de agregar al carrito"
+        }
+      }
+    }
+  }
+}
+

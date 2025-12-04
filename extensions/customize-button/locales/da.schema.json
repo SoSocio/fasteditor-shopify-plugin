@@ -1,0 +1,71 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "Tilpasningsknap",
+      "settings": {
+        "button_text": {
+          "header": "Knaptekst",
+          "text": "Knaptekst",
+          "text_font": "Tekstskrifttype",
+          "text_size": "Skriftstørrelse",
+          "text_color": "Tekstfarve"
+        },
+        "button_appearance": {
+          "header": "Knapudseende",
+          "bg_color": "Knapbaggrundsfarve",
+          "border_width": "Kantbredde",
+          "border_color": "Kantfarve",
+          "border_radius": "Kantradius"
+        },
+        "icon_settings": {
+          "header": "Ikonindstillinger",
+          "icon_type": {
+            "label": "Ikontype",
+            "options": {
+              "none": "Ingen",
+              "pen": "Pen",
+              "brush": "Pensel",
+              "image": "Billede",
+              "images": "Billeder",
+              "link": "Link",
+              "settings": "Indstillinger",
+              "custom": "Tilpasset"
+            }
+          },
+          "custom_icon_image": "Tilpasset ikonbillede",
+          "custom_icon_image_info": "Gælder kun, når ikontype 'Tilpasset' er valgt",
+          "icon_color": "Ikonfarve",
+          "icon_color_info": "Gælder kun for indbyggede ikoner",
+          "icon_size": "Ikonstørrelse",
+          "icon_size_info": "Gælder kun, når et ikon er valgt",
+          "icon_gap": "Ikonafstand",
+          "icon_gap_info": "Afstand mellem ikon og tekst",
+          "icon_position": {
+            "label": "Ikonposition",
+            "options": {
+              "left": "Venstre",
+              "right": "Højre"
+            },
+            "info": "Gælder kun, når et ikon er valgt"
+          }
+        },
+        "button_state_texts": {
+          "header": "Knapstatustekster",
+          "loading_text": "Indlæsningstekst",
+          "loading_text_info": "Tekst, der vises, når knappen indlæses",
+          "adding_to_cart_text": "Tekst ved tilføjelse til kurv",
+          "adding_to_cart_text_info": "Tekst, der vises, når en vare tilføjes til kurven",
+          "added_to_cart_text": "Tekst efter tilføjelse til kurv",
+          "added_to_cart_text_info": "Tekst, der vises efter at en vare er tilføjet til kurven",
+          "error_text": "Fejltekst",
+          "error_text_info": "Tekst, der vises, når der opstår en fejl"
+        },
+        "button_behavior": {
+          "header": "Knapadfærd",
+          "enable_cart_redirect": "Omdiriger til kurvside efter tilføjelse til kurv"
+        }
+      }
+    }
+  }
+}
+

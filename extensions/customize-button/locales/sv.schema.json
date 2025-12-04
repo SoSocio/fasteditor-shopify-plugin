@@ -1,0 +1,71 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "Anpassningsknapp",
+      "settings": {
+        "button_text": {
+          "header": "Knapptext",
+          "text": "Knapptext",
+          "text_font": "Texttypsnitt",
+          "text_size": "Teckenstorlek",
+          "text_color": "Textfärg"
+        },
+        "button_appearance": {
+          "header": "Knapputseende",
+          "bg_color": "Knappbakgrundsfärg",
+          "border_width": "Kantbredd",
+          "border_color": "Kantfärg",
+          "border_radius": "Kantradie"
+        },
+        "icon_settings": {
+          "header": "Ikoninställningar",
+          "icon_type": {
+            "label": "Ikontyp",
+            "options": {
+              "none": "Ingen",
+              "pen": "Penna",
+              "brush": "Pensel",
+              "image": "Bild",
+              "images": "Bilder",
+              "link": "Länk",
+              "settings": "Inställningar",
+              "custom": "Anpassad"
+            }
+          },
+          "custom_icon_image": "Anpassad ikonbild",
+          "custom_icon_image_info": "Gäller endast när ikontyp 'Anpassad' är vald",
+          "icon_color": "Ikonfärg",
+          "icon_color_info": "Gäller endast för inbyggda ikoner",
+          "icon_size": "Ikonstorlek",
+          "icon_size_info": "Gäller endast när en ikon är vald",
+          "icon_gap": "Ikonavstånd",
+          "icon_gap_info": "Avstånd mellan ikon och text",
+          "icon_position": {
+            "label": "Ikonposition",
+            "options": {
+              "left": "Vänster",
+              "right": "Höger"
+            },
+            "info": "Gäller endast när en ikon är vald"
+          }
+        },
+        "button_state_texts": {
+          "header": "Knappstatustexter",
+          "loading_text": "Laddningstext",
+          "loading_text_info": "Text som visas när knappen laddas",
+          "adding_to_cart_text": "Text vid tillägg i varukorg",
+          "adding_to_cart_text_info": "Text som visas när en artikel läggs till i varukorgen",
+          "added_to_cart_text": "Text efter tillägg i varukorg",
+          "added_to_cart_text_info": "Text som visas efter att en artikel har lagts till i varukorgen",
+          "error_text": "Feltext",
+          "error_text_info": "Text som visas när ett fel uppstår"
+        },
+        "button_behavior": {
+          "header": "Knappbeteende",
+          "enable_cart_redirect": "Omdirigera till varukorgssidan efter tillägg i varukorg"
+        }
+      }
+    }
+  }
+}
+
