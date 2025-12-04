@@ -31,12 +31,17 @@ export const action = async ({
     // Validate language
     if (!language || !i18n.supportedLngs.includes(language)) {
       console.log("Invalid language selection", language);
-      return Response.json(
-        {
+      return new Response(
+        JSON.stringify({
           success: false,
           error: "Invalid language selection",
-        } satisfies ActionResponse,
-        { status: 400 }
+        } satisfies ActionResponse),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
     }
 
@@ -45,12 +50,17 @@ export const action = async ({
 
     if (!userId) {
       console.log("User ID not found in session", userId);
-      return Response.json(
-        {
+      return new Response(
+        JSON.stringify({
           success: false,
           error: "User ID not found in session",
-        } satisfies ActionResponse,
-        { status: 400 }
+        } satisfies ActionResponse),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
     }
 
@@ -61,19 +71,32 @@ export const action = async ({
       `[app.language.update] Language updated for userId: ${userId}, shop: ${session.shop}, language: ${language}`
     );
 
-    return Response.json({
-      success: true,
-      language,
-    } satisfies ActionResponse);
+    return new Response(
+      JSON.stringify({
+        success: true,
+        language,
+      } satisfies ActionResponse),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   } catch (error) {
     console.error("[app.language.update] Error updating language:", error);
 
-    return Response.json(
-      {
+    return new Response(
+      JSON.stringify({
         success: false,
         error: "Failed to update language preference",
-      } satisfies ActionResponse,
-      { status: 500 }
+      } satisfies ActionResponse),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 };
