@@ -148,12 +148,46 @@
         },
       });
 
-      const { data } = await response.json();
+      let responseData;
+      try {
+        responseData = await response.json();
+      } catch (parseError) {
+        console.error('[FastEditor] Failed to parse response:', parseError);
+        setButtonLoadingIcon(button, false);
+        setButtonState(button, errorText, false);
+        return;
+      }
+
+      // Check for structured error response from backend
+      if (!response.ok || !responseData.ok) {
+        console.error('[FastEditor] API error:', {
+          statusCode: responseData.statusCode || response.status,
+          message: responseData.message || responseData.statusText,
+          code: responseData.code || 'UNKNOWN_ERROR',
+        });
+        
+        setButtonLoadingIcon(button, false);
+        setButtonState(button, errorText, false);
+        
+        // Restore original text after 3 seconds
+        setTimeout(() => {
+          setButtonState(button, originalText, false);
+        }, TIMEOUTS.TEXT_RESTORE);
+        return;
+      }
 
       // Validate response data
-      if (!response.ok || !data?.variantId || !data?.quantity || 
+      const { data } = responseData;
+      if (!data?.variantId || !data?.quantity || 
           !data?.projectKey || !data?.imageUrl) {
-        throw new Error('Invalid product data from server');
+        console.error('[FastEditor] Missing required fields in response:', data);
+        setButtonLoadingIcon(button, false);
+        setButtonState(button, errorText, false);
+        
+        setTimeout(() => {
+          setButtonState(button, originalText, false);
+        }, TIMEOUTS.TEXT_RESTORE);
+        return;
       }
 
       // Add item to cart
@@ -185,9 +219,16 @@
         location.reload();
       }
     } catch (error) {
+      // Handle network errors and other unexpected errors
       console.error('[FastEditor] Cart initialization error:', error);
+      
       setButtonLoadingIcon(button, false);
-      setButtonState(button, errorText);
+      setButtonState(button, errorText, false);
+      
+      // Restore original text after 3 seconds
+      setTimeout(() => {
+        setButtonState(button, originalText, false);
+      }, TIMEOUTS.TEXT_RESTORE);
     }
   }
 
