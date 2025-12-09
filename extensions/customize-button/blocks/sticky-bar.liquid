@@ -219,7 +219,7 @@
 
 {% schema %}
 {
-  "name": "FastEditor Sticky Bar",
+  "name": "t:blocks.sticky-bar.name",
   "target": "body",
   "available_if": "{{ app.metafields.fasteditor_app.paid }}",
   "enabled_on": {
@@ -230,22 +230,22 @@
   "settings": [
     {
       "type": "header",
-      "content": "Layout"
+      "content": "t:blocks.sticky-bar.settings.layout.header"
     },
     {
       "type": "select",
       "id": "desktop_position",
-      "label": "Desktop position",
+      "label": "t:blocks.sticky-bar.settings.layout.desktop_position.label",
       "default": "bottom",
       "options": [
-        { "value": "top", "label": "Top" },
-        { "value": "bottom", "label": "Bottom" }
+        { "value": "top", "label": "t:blocks.sticky-bar.settings.layout.desktop_position.options.top" },
+        { "value": "bottom", "label": "t:blocks.sticky-bar.settings.layout.desktop_position.options.bottom" }
       ]
     },
     {
       "type": "range",
       "id": "button_radius",
-      "label": "Button border radius",
+      "label": "t:blocks.sticky-bar.settings.layout.button_radius",
       "min": 0,
       "max": 32,
       "step": 1,
@@ -255,119 +255,113 @@
     {
       "type": "select",
       "id": "mobile_position",
-      "label": "Mobile position",
+      "label": "t:blocks.sticky-bar.settings.layout.mobile_position.label",
       "default": "bottom",
       "options": [
-        { "value": "top", "label": "Top" },
-        { "value": "bottom", "label": "Bottom" }
+        { "value": "top", "label": "t:blocks.sticky-bar.settings.layout.mobile_position.options.top" },
+        { "value": "bottom", "label": "t:blocks.sticky-bar.settings.layout.mobile_position.options.bottom" }
       ]
     },
     {
       "type": "header",
-      "content": "Colors"
+      "content": "t:blocks.sticky-bar.settings.colors.header"
     },
     {
       "type": "color",
       "id": "background_color",
-      "label": "Bar background",
+      "label": "t:blocks.sticky-bar.settings.colors.background_color",
       "default": "#ffffff"
     },
     {
       "type": "color",
       "id": "text_color",
-      "label": "Bar text",
-      "default": "#111111"
-    },
-    {
-      "type": "color",
-      "id": "customize_button_text_color",
-      "label": "Customize button text",
+      "label": "t:blocks.sticky-bar.settings.colors.text_color",
       "default": "#111111"
     },
     {
       "type": "color",
       "id": "customize_button_background",
-      "label": "Customize button background",
+      "label": "t:blocks.sticky-bar.settings.colors.customize_button_background",
       "default": "#ffffff"
     },
     {
       "type": "color",
-      "id": "customize_button_border",
-      "label": "Customize button border",
+      "id": "customize_button_text_color",
+      "label": "t:blocks.sticky-bar.settings.colors.customize_button_text_color",
       "default": "#111111"
     },
     {
       "type": "color",
       "id": "add_button_background",
-      "label": "Add to cart button background",
+      "label": "t:blocks.sticky-bar.settings.colors.add_button_background",
       "default": "#111111"
     },
     {
       "type": "color",
       "id": "add_button_text",
-      "label": "Add to cart button text",
+      "label": "t:blocks.sticky-bar.settings.colors.add_button_text",
       "default": "#ffffff"
     },
     {
       "type": "header",
-      "content": "Buttons"
+      "content": "t:blocks.sticky-bar.settings.buttons.header"
     },
     {
       "type": "text",
       "id": "customize_button_text",
-      "label": "Customize button text",
+      "label": "t:blocks.sticky-bar.settings.buttons.customize_button_text",
       "default": "Customize"
     },
     {
       "type": "text",
       "id": "customize_loading_text",
-      "label": "Customize loading text",
+      "label": "t:blocks.sticky-bar.settings.buttons.customize_loading_text",
       "default": "Loading..."
     },
     {
       "type": "text",
       "id": "add_to_cart_added_text",
-      "label": "Added to cart text",
+      "label": "t:blocks.sticky-bar.settings.buttons.add_to_cart_added_text",
       "default": "Added to cart"
     },
     {
       "type": "text",
       "id": "add_to_cart_button_text",
-      "label": "Add to cart button text",
+      "label": "t:blocks.sticky-bar.settings.buttons.add_to_cart_button_text",
       "default": "Add to cart"
     },
     {
       "type": "text",
       "id": "add_to_cart_adding_text",
-      "label": "Adding to cart text",
+      "label": "t:blocks.sticky-bar.settings.buttons.add_to_cart_adding_text",
       "default": "Adding to cart..."
     },
     {
       "type": "text",
       "id": "add_to_cart_error_text",
-      "label": "Error text",
+      "label": "t:blocks.sticky-bar.settings.buttons.add_to_cart_error_text",
       "default": "Something went wrong"
     },
     {
       "type": "text",
       "id": "add_to_cart_sold_out_text",
-      "label": "Sold out text",
+      "label": "t:blocks.sticky-bar.settings.buttons.add_to_cart_sold_out_text",
       "default": "Sold out"
     },
     {
       "type": "header",
-      "content": "Visibility"
+      "content": "t:blocks.sticky-bar.settings.visibility.header"
     },
     {
       "type": "select",
       "id": "add_to_cart_visibility",
-      "label": "Add to cart button visibility",
+      "label": "t:blocks.sticky-bar.settings.visibility.add_to_cart_visibility.label",
       "default": "both",
       "options": [
-        { "value": "both", "label": "Show on mobile and desktop" },
-        { "value": "mobile", "label": "Show on mobile only" },
-        { "value": "desktop", "label": "Show on desktop only" },
-        { "value": "none", "label": "Hide on both" }
+        { "value": "both", "label": "t:blocks.sticky-bar.settings.visibility.add_to_cart_visibility.options.both" },
+        { "value": "mobile", "label": "t:blocks.sticky-bar.settings.visibility.add_to_cart_visibility.options.mobile" },
+        { "value": "desktop", "label": "t:blocks.sticky-bar.settings.visibility.add_to_cart_visibility.options.desktop" },
+        { "value": "none", "label": "t:blocks.sticky-bar.settings.visibility.add_to_cart_visibility.options.none" }
       ]
     }
   ]

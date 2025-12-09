@@ -65,6 +65,60 @@
           "enable_cart_redirect": "Przekieruj do strony koszyka po dodaniu do koszyka"
         }
       }
+    },
+    "sticky-bar": {
+      "name": "Pasek sticky FastEditor",
+      "settings": {
+        "layout": {
+          "header": "Układ",
+          "desktop_position": {
+            "label": "Pozycja na desktopie",
+            "options": {
+              "top": "Góra",
+              "bottom": "Dół"
+            }
+          },
+          "button_radius": "Promień obramowania przycisku",
+          "mobile_position": {
+            "label": "Pozycja na urządzeniu mobilnym",
+            "options": {
+              "top": "Góra",
+              "bottom": "Dół"
+            }
+          }
+        },
+        "colors": {
+          "header": "Kolory",
+          "background_color": "Tło paska",
+          "text_color": "Tekst paska",
+          "customize_button_background": "Tło przycisku personalizacji",
+          "customize_button_text_color": "Tekst przycisku personalizacji",
+          "add_button_background": "Tło przycisku dodaj do koszyka",
+          "add_button_text": "Tekst przycisku dodaj do koszyka"
+        },
+        "buttons": {
+          "header": "Przyciski",
+          "customize_button_text": "Tekst przycisku personalizacji",
+          "customize_loading_text": "Tekst ładowania personalizacji",
+          "add_to_cart_added_text": "Tekst po dodaniu do koszyka",
+          "add_to_cart_button_text": "Tekst przycisku dodaj do koszyka",
+          "add_to_cart_adding_text": "Tekst podczas dodawania do koszyka",
+          "add_to_cart_error_text": "Tekst błędu",
+          "add_to_cart_sold_out_text": "Tekst wyprzedane"
+        },
+        "visibility": {
+          "header": "Widoczność",
+          "add_to_cart_visibility": {
+            "label": "Widoczność przycisku dodaj do koszyka",
+            "options": {
+              "both": "Pokaż na mobile i desktopie",
+              "mobile": "Pokaż tylko na mobile",
+              "desktop": "Pokaż tylko na desktopie",
+              "none": "Ukryj na obu"
+            }
+          }
+        }
+      }
     }
   }
 }

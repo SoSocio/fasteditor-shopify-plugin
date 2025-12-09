@@ -65,6 +65,60 @@
           "enable_cart_redirect": "Doorverwijzen naar winkelwagenpagina na toevoegen aan winkelwagen"
         }
       }
+    },
+    "sticky-bar": {
+      "name": "FastEditor stickybalk",
+      "settings": {
+        "layout": {
+          "header": "Lay-out",
+          "desktop_position": {
+            "label": "Desktop-positie",
+            "options": {
+              "top": "Boven",
+              "bottom": "Onder"
+            }
+          },
+          "button_radius": "Knoprand-radius",
+          "mobile_position": {
+            "label": "Mobiele positie",
+            "options": {
+              "top": "Boven",
+              "bottom": "Onder"
+            }
+          }
+        },
+        "colors": {
+          "header": "Kleuren",
+          "background_color": "Balkachtergrond",
+          "text_color": "Balktekst",
+          "customize_button_background": "Achtergrond van de aanpassingsknop",
+          "customize_button_text_color": "Tekst van de aanpassingsknop",
+          "add_button_background": "Achtergrond van de winkelwagenknop",
+          "add_button_text": "Tekst van de winkelwagenknop"
+        },
+        "buttons": {
+          "header": "Knoppen",
+          "customize_button_text": "Tekst van de aanpassingsknop",
+          "customize_loading_text": "Laadtekst voor aanpassen",
+          "add_to_cart_added_text": "Tekst na toevoegen aan winkelwagen",
+          "add_to_cart_button_text": "Tekst van de winkelwagenknop",
+          "add_to_cart_adding_text": "Tekst tijdens toevoegen aan winkelwagen",
+          "add_to_cart_error_text": "Fouttekst",
+          "add_to_cart_sold_out_text": "Uitverkocht-tekst"
+        },
+        "visibility": {
+          "header": "Zichtbaarheid",
+          "add_to_cart_visibility": {
+            "label": "Zichtbaarheid van de winkelwagenknop",
+            "options": {
+              "both": "Tonen op mobiel en desktop",
+              "mobile": "Tonen alleen op mobiel",
+              "desktop": "Tonen alleen op desktop",
+              "none": "Verbergen op beide"
+            }
+          }
+        }
+      }
     }
   }
 }

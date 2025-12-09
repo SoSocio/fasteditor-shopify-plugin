@@ -65,6 +65,60 @@
           "enable_cart_redirect": "Redirect to cart page after adding to cart"
         }
       }
+    },
+    "sticky-bar": {
+      "name": "FastEditor Sticky Bar",
+      "settings": {
+        "layout": {
+          "header": "Layout",
+          "desktop_position": {
+            "label": "Desktop position",
+            "options": {
+              "top": "Top",
+              "bottom": "Bottom"
+            }
+          },
+          "button_radius": "Button border radius",
+          "mobile_position": {
+            "label": "Mobile position",
+            "options": {
+              "top": "Top",
+              "bottom": "Bottom"
+            }
+          }
+        },
+        "colors": {
+          "header": "Colors",
+          "background_color": "Bar background",
+          "text_color": "Bar text",
+          "customize_button_background": "Customize button background",
+          "customize_button_text_color": "Customize button text",
+          "add_button_background": "Add to cart button background",
+          "add_button_text": "Add to cart button text"
+        },
+        "buttons": {
+          "header": "Buttons",
+          "customize_button_text": "Customize button text",
+          "customize_loading_text": "Customize loading text",
+          "add_to_cart_added_text": "Added to cart text",
+          "add_to_cart_button_text": "Add to cart button text",
+          "add_to_cart_adding_text": "Adding to cart text",
+          "add_to_cart_error_text": "Error text",
+          "add_to_cart_sold_out_text": "Sold out text"
+        },
+        "visibility": {
+          "header": "Visibility",
+          "add_to_cart_visibility": {
+            "label": "Add to cart button visibility",
+            "options": {
+              "both": "Show on mobile and desktop",
+              "mobile": "Show on mobile only",
+              "desktop": "Show on desktop only",
+              "none": "Hide on both"
+            }
+          }
+        }
+      }
     }
   }
 }
