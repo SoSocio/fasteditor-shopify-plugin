@@ -65,6 +65,60 @@
           "enable_cart_redirect": "Redirigir a la página del carrito después de agregar al carrito"
         }
       }
+    },
+    "sticky-bar": {
+      "name": "Barra fija FastEditor",
+      "settings": {
+        "layout": {
+          "header": "Diseño",
+          "desktop_position": {
+            "label": "Posición en escritorio",
+            "options": {
+              "top": "Superior",
+              "bottom": "Inferior"
+            }
+          },
+          "button_radius": "Radio del borde del botón",
+          "mobile_position": {
+            "label": "Posición en móvil",
+            "options": {
+              "top": "Superior",
+              "bottom": "Inferior"
+            }
+          }
+        },
+        "colors": {
+          "header": "Colores",
+          "background_color": "Fondo de la barra",
+          "text_color": "Texto de la barra",
+          "customize_button_background": "Fondo del botón de personalización",
+          "customize_button_text_color": "Texto del botón de personalización",
+          "add_button_background": "Fondo del botón de añadir al carrito",
+          "add_button_text": "Texto del botón de añadir al carrito"
+        },
+        "buttons": {
+          "header": "Botones",
+          "customize_button_text": "Texto del botón de personalización",
+          "customize_loading_text": "Texto de carga de personalización",
+          "add_to_cart_added_text": "Texto después de añadir al carrito",
+          "add_to_cart_button_text": "Texto del botón de añadir al carrito",
+          "add_to_cart_adding_text": "Texto al añadir al carrito",
+          "add_to_cart_error_text": "Texto de error",
+          "add_to_cart_sold_out_text": "Texto de agotado"
+        },
+        "visibility": {
+          "header": "Visibilidad",
+          "add_to_cart_visibility": {
+            "label": "Visibilidad del botón de añadir al carrito",
+            "options": {
+              "both": "Mostrar en móvil y escritorio",
+              "mobile": "Mostrar solo en móvil",
+              "desktop": "Mostrar solo en escritorio",
+              "none": "Ocultar en ambos"
+            }
+          }
+        }
+      }
     }
   }
 }

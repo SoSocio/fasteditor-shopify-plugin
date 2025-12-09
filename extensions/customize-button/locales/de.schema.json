@@ -65,6 +65,60 @@
           "enable_cart_redirect": "Nach Hinzufügen zum Warenkorb weiterleiten"
         }
       }
+    },
+    "sticky-bar": {
+      "name": "FastEditor Sticky Bar",
+      "settings": {
+        "layout": {
+          "header": "Layout",
+          "desktop_position": {
+            "label": "Desktop-Position",
+            "options": {
+              "top": "Oben",
+              "bottom": "Unten"
+            }
+          },
+          "button_radius": "Button-Randradius",
+          "mobile_position": {
+            "label": "Mobile Position",
+            "options": {
+              "top": "Oben",
+              "bottom": "Unten"
+            }
+          }
+        },
+        "colors": {
+          "header": "Farben",
+          "background_color": "Leistenhintergrund",
+          "text_color": "Leistentext",
+          "customize_button_background": "Hintergrund des Anpassungs-Buttons",
+          "customize_button_text_color": "Text des Anpassungs-Buttons",
+          "add_button_background": "Hintergrund des In-den-Warenkorb-Buttons",
+          "add_button_text": "Text des In-den-Warenkorb-Buttons"
+        },
+        "buttons": {
+          "header": "Buttons",
+          "customize_button_text": "Text des Anpassungs-Buttons",
+          "customize_loading_text": "Lade-Text für Anpassung",
+          "add_to_cart_added_text": "Text nach Hinzufügen zum Warenkorb",
+          "add_to_cart_button_text": "Text des In-den-Warenkorb-Buttons",
+          "add_to_cart_adding_text": "Text beim Hinzufügen zum Warenkorb",
+          "add_to_cart_error_text": "Fehlermeldung",
+          "add_to_cart_sold_out_text": "Text bei Ausverkauft"
+        },
+        "visibility": {
+          "header": "Sichtbarkeit",
+          "add_to_cart_visibility": {
+            "label": "Sichtbarkeit des In-den-Warenkorb-Buttons",
+            "options": {
+              "both": "Auf Mobil und Desktop anzeigen",
+              "mobile": "Nur auf Mobil anzeigen",
+              "desktop": "Nur auf Desktop anzeigen",
+              "none": "Auf beiden ausblenden"
+            }
+          }
+        }
+      }
     }
   }
 }
