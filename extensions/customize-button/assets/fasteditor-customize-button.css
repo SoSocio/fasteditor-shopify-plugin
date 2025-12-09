@@ -5,7 +5,6 @@
 
 /* CSS Custom Properties */
 :root {
-  --fasteditor-customize-button-gap-default: 8px;
   --fasteditor-customize-button-transition: opacity 0.1s ease-in-out;
   --fasteditor-customize-button-opacity-hover: 0.8;
   --fasteditor-customize-button-opacity-disabled: 0.6;
@@ -17,7 +16,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--icon-gap, var(--fasteditor-customize-button-gap-default));
+  gap: var(--icon-gap, 8px);
   
   /* Spacing */
   padding: 10px 20px;
@@ -33,10 +32,10 @@
   color: var(--button-text-color, #fff);
   
   /* Typography */
-  font-size: var(--button-font-size, 16px);
-  font-family: var(--button-font-family, sans-serif);
+  font-size: var(--button-font-size, 14px);
+  font-family: var(--button-font-family, inherit);
   font-weight: inherit;
-  line-height: 1.5;
+  line-height: 1.4;
   text-align: center;
   
   /* Interaction */
