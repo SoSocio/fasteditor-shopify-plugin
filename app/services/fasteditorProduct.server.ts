@@ -3,6 +3,23 @@ import type {ProductDataFromFastEditor} from "../types/fastEditor.types";
 const ENDPOINT = "app/fasteditor/product";
 
 /**
+ * Creates a structured error response for extensions.
+ */
+function createErrorResponse(
+  statusCode: number,
+  message: string,
+  code?: string
+) {
+  return {
+    statusCode,
+    statusText: message,
+    message,
+    ...(code && {code}),
+    ok: false,
+  };
+}
+
+/**
  * Extracts and validates the `url` query parameter from the request.
  *
  * @param request - The incoming request object
@@ -15,8 +32,10 @@ export function extractFastEditorUrlFromRequest(request: Request): string {
 
   if (!fastEditorUrl || !fastEditorUrl.trim()) {
     console.warn(`[${ENDPOINT}] Missing or empty "url" query parameter`);
-    throw new Response("Query parameter 'url' is required and must be non-empty.", {
+    const errorResponse = createErrorResponse(400, "Query parameter 'url' is required and must be non-empty.", "MISSING_URL_PARAMETER");
+    throw new Response(JSON.stringify(errorResponse), {
       status: 400,
+      headers: {"Content-Type": "application/json"},
     });
   }
 
@@ -43,8 +62,14 @@ export async function fetchProductDataFromFastEditor(
       throw error;
     }
 
-    throw new Response("Unexpected error occurred while fetching product from FastEditor.", {
+    const errorResponse = createErrorResponse(
+      500,
+      "Unexpected error occurred while fetching product from FastEditor.",
+      "UNEXPECTED_ERROR"
+    );
+    throw new Response(JSON.stringify(errorResponse), {
       status: 500,
+      headers: {"Content-Type": "application/json"},
     });
   }
 }
@@ -63,8 +88,14 @@ export async function fetchRawFastEditorResponse(
 
   if (!response.ok) {
     console.warn(`[${ENDPOINT}] FastEditor request failed with status ${response.status}`);
-    throw new Response("Failed to fetch product data from FastEditor.", {
-      status: response.status,
+    const errorResponse = createErrorResponse(
+      response.status >= 500 ? 502 : response.status,
+      "Failed to fetch product data from FastEditor.",
+      "FASTEDITOR_FETCH_ERROR"
+    );
+    throw new Response(JSON.stringify(errorResponse), {
+      status: response.status >= 500 ? 502 : response.status,
+      headers: {"Content-Type": "application/json"},
     });
   }
 
@@ -85,7 +116,11 @@ export function parseFastEditorProduct(
 
   if (!product) {
     console.warn(`[${ENDPOINT}] FastEditor returned empty product array`);
-    throw new Response("FastEditor returned empty product data.", {status: 422});
+    const errorResponse = createErrorResponse(422, "FastEditor returned empty product data.", "EMPTY_PRODUCT_DATA");
+    throw new Response(JSON.stringify(errorResponse), {
+      status: 422,
+      headers: {"Content-Type": "application/json"},
+    });
   }
 
   return product as ProductDataFromFastEditor;
@@ -105,8 +140,14 @@ export function validateProductData(product: ProductDataFromFastEditor): void {
     !product.customAttributes?.variantId
   ) {
     console.warn(`[${ENDPOINT}] Product data missing required fields.`);
-    throw new Response("Product data is missing required fields: 'projectKey', 'quantity', 'variantId'.", {
+    const errorResponse = createErrorResponse(
+      422,
+      "Product data is missing required fields: 'projectKey', 'quantity', 'variantId'.",
+      "MISSING_REQUIRED_FIELDS"
+    );
+    throw new Response(JSON.stringify(errorResponse), {
       status: 422,
+      headers: {"Content-Type": "application/json"},
     });
   }
 }
