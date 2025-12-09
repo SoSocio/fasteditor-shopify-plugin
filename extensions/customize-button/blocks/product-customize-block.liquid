@@ -1,149 +1,106 @@
 {%- comment -%}
-  FastEditor Customize Button Block
-  Renders a customizable button for FastEditor product customization
+  Product Customize Block
+  Renders a customizable button for product customization.
+  Only renders for products with 'fasteditor' tag or in design mode.
 {%- endcomment -%}
 
 {%- liquid
+  # Block settings
   assign font = block.settings.text_font
   assign icon_type = block.settings.icon_type | default: 'none'
   assign icon_position = block.settings.icon_position | default: 'left'
-  assign is_available = app.metafields.fasteditor_app.availability
+
+  # Product variant data
   assign selected_variant = product.selected_or_first_available_variant
   assign is_variant_available = false
   if selected_variant
     assign is_variant_available = selected_variant.available
   endif
-  assign has_icon = false
-  if icon_type != 'none'
-    assign has_icon = true
-  endif
-  assign button_text = block.settings.text
-  if is_variant_available == false
-    assign button_text = 'customize_button.sold_out' | t
-    assign has_icon = false
+-%}
+
+{%- capture variants_json -%}
+[
+{%- for variant in product.variants -%}
+  {
+    "id": "{{ variant.id }}",
+    "available": {{ variant.available | json }}
+  }{% unless forloop.last %},{% endunless %}
+{%- endfor -%}
+]
+{%- endcapture -%}
+
+{%- liquid
+
+  # Button text and icon - always keep original text and icon
+  assign display_icon_type = icon_type
+
+  # App availability
+  assign is_app_available = app.metafields.fasteditor_app.availability
+
+  # Visibility check: only show for products with 'fasteditor' tag or in design mode
+  assign show_button = false
+  if request.design_mode or product.tags contains 'fasteditor'
+    assign show_button = true
   endif
 -%}
 
-{%- comment -%} Load scripts in correct order {%- endcomment -%}
-<script src="{{ 'cookie-user-id.js' | asset_url }}" defer></script>
-<script src="{{ 'fasteditor-customize-button-utils.js' | asset_url }}" defer></script>
-<script src="{{ 'fasteditor-customize-button-redirect.js' | asset_url }}" defer></script>
-<script src="{{ 'fasteditor-customize-button-cart.js' | asset_url }}" defer></script>
+{%- if show_button -%}
+  {%- comment -%} Scoped styles for this block instance {%- endcomment -%}
+  <style>
+    {{ font | font_face }}
 
-{%- comment -%} Scoped styles for this block instance {%- endcomment -%}
-<style>
-  {{ font | font_face }}
+    .fasteditor-customize-button-{{ block.id }} {
+      --button-bg-color: {{ block.settings.bg_color }};
+      --button-text-color: {{ block.settings.text_color }};
+      --button-font-size: {{ block.settings.text_size }}px;
+      --button-font-family: {{ font.family }}, {{ font.fallback_families }};
+      --button-border-width: {{ block.settings.border_width }}px;
+      --button-border-color: {{ block.settings.border_color }};
+      --button-border-radius: {{ block.settings.border_radius }}px;
+      --icon-gap: {{ block.settings.icon_gap}}px;
+    }
+  </style>
 
-  .block-{{ block.id }} {
-    --button-bg-color: {{ block.settings.bg_color }};
-    --button-text-color: {{ block.settings.text_color }};
-    --button-font-size: {{ block.settings.text_size }}px;
-    --button-font-family: {{ font.family }}, {{ font.fallback_families }};
-    --button-border-width: {{ block.settings.border_width }}px;
-    --button-border-color: {{ block.settings.border_color }};
-    --button-border-radius: {{ block.settings.border_radius }}px;
-    --icon-gap: {{ block.settings.icon_gap | default: 8 }}px;
-  }
-</style>
+  {%- liquid
+    # Prepare customize button attributes
+    assign customize_button_disabled = false
+    if is_app_available != true or is_variant_available != true
+      assign customize_button_disabled = true
+    endif
+  -%}
 
-{%- if request.design_mode or product.tags contains 'fasteditor' -%}
-  <div class="fasteditor-customize-button-wrapper" data-block-id="{{ block.id }}">
-    <button
-      id="fasteditor-customize-button-{{ block.id }}"
-      class="fasteditor-customize-button block-{{ block.id }}{% if icon_position == 'right' %} fasteditor-customize-button--icon-right{% endif %}"
-      type="button"
-      data-shop="{{ shop.permanent_domain | escape }}"
-      data-handle="{{ product.handle | escape }}"
-      data-availability="{{ is_available }}"
-      data-variant-available="{{ is_variant_available }}"
-      data-redirect="{{ block.settings.enable_cart_redirect }}"
-      data-loading-text="{{ block.settings.loading_text | escape }}"
-      data-adding-to-cart-text="{{ block.settings.adding_to_cart_text | escape }}"
-      data-added-to-cart-text="{{ block.settings.added_to_cart_text | escape }}"
-      data-error-text="{{ block.settings.error_text | escape }}"
-      data-sold-out-text="{{ 'customize_button.sold_out' | t }}"
-      aria-label="{{ block.settings.text | escape }}"
-      {% unless is_available and is_variant_available %}disabled aria-disabled="true"{% endunless %}
-    >
-      {%- comment -%} Icon container - always present for loading icon support {%- endcomment -%}
-      <span
-        class="fasteditor-customize-button__icon"
-        {% unless has_icon %}style="display: none;"{% endunless %}
-        aria-hidden="true"
-      >
-        {%- if has_icon -%}
-          <span class="fasteditor-customize-button__icon-main" aria-hidden="true">
-            {%- render 'icon-button',
-              icon: icon_type,
-              icon_color: block.settings.icon_color,
-              icon_size: block.settings.icon_size,
-              icon_custom_image: block.settings.icon_custom_image
-            -%}
-          </span>
-        {%- endif -%}
-        <span class="fasteditor-customize-button__icon-loading" style="display: none;" aria-hidden="true">
-          {%- render 'icon-loading',
-            color: block.settings.icon_color,
-            size: block.settings.icon_size
-          -%}
-        </span>
-      </span>
+  {%- capture customize_button_attributes -%}
+    data-shop="{{ shop.permanent_domain | escape }}"
+    data-handle="{{ product.handle | escape }}"
+    data-section-id="{{ section.id }}"
+    data-availability="{{ is_app_available | json }}"
+    data-variant-available="{{ is_variant_available | json }}"
+    data-initial-variant-id="{{ selected_variant.id }}"
+    data-variants='{{ variants_json | escape }}'
+    data-redirect="{{ block.settings.enable_cart_redirect }}"
+    data-loading-text="{{ block.settings.loading_text | escape }}"
+    data-adding-to-cart-text="{{ block.settings.adding_to_cart_text | escape }}"
+    data-added-to-cart-text="{{ block.settings.added_to_cart_text | escape }}"
+    data-error-text="{{ block.settings.error_text | escape }}"
+    data-sold-out-text="{{ 'customize_button.sold_out' | t }}"
+  {%- endcapture -%}
 
-      {%- comment -%} Button text {%- endcomment -%}
-      <span class="fasteditor-customize-button__text">{{ button_text | escape }}</span>
-    </button>
-  </div>
+  {%- comment -%} Web component wrapper {%- endcomment -%}
+  {%- liquid
+    # Determine button text (always original)
+    assign button_text = block.settings.text
+  -%}
+  {%- render 'button-customize',
+    button_text: button_text,
+    button_attributes: customize_button_attributes,
+    is_disabled: customize_button_disabled,
+    icon_type: display_icon_type,
+    icon_position: icon_position,
+    icon_color: block.settings.icon_color,
+    icon_size: block.settings.icon_size,
+    icon_custom_image: block.settings.icon_custom_image,
+  -%}
 {%- endif -%}
-
-{%- comment -%} Initialize button functionality {%- endcomment -%}
-<script>
-  (function() {
-    'use strict';
-
-    document.addEventListener('DOMContentLoaded', async function() {
-      const button = document.getElementById('fasteditor-customize-button-{{ block.id }}');
-      if (!button) return;
-
-      // Check availability
-      const availability = button.dataset.availability;
-      const isVariantAvailable = button.dataset.variantAvailable === 'true';
-      const soldOutText = button.dataset.soldOutText || '{{ 'customize_button.sold_out' | t }}';
-      if (availability === 'false') {
-        button.setAttribute('disabled', 'true');
-        button.setAttribute('aria-disabled', 'true');
-        return;
-      }
-
-      if (!isVariantAvailable) {
-        button.setAttribute('disabled', 'true');
-        button.setAttribute('aria-disabled', 'true');
-        const soldOutElement = button.querySelector('.fasteditor-customize-button__text');
-        if (soldOutElement) {
-          soldOutElement.textContent = soldOutText;
-        } else {
-          button.textContent = soldOutText;
-        }
-        return;
-      }
-
-      // Get original text
-      const textElement = button.querySelector('.fasteditor-customize-button__text');
-      const originalText = textElement ? textElement.textContent : button.textContent;
-
-      // Add click handler
-      button.addEventListener('click', function() {
-        if (typeof handleFastEditorRedirect === 'function') {
-          handleFastEditorRedirect(button, originalText);
-        }
-      });
-
-      // Handle auto add to cart
-      if (typeof handleFastEditorAutoAddToCart === 'function') {
-        await handleFastEditorAutoAddToCart(button);
-      }
-    });
-  })();
-</script>
 
 {% schema %}
 {
@@ -155,8 +112,6 @@
       "product"
     ]
   },
-  "stylesheet": "fasteditor-customize-button.css",
-  "javascript": "fasteditor-customize-button-utils.js",
   "settings": [
     {
       "type": "header",

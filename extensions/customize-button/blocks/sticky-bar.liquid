@@ -1,0 +1,375 @@
+{%- comment -%}
+  FastEditor Sticky Bar Block
+  Displays a configurable sticky bar with product info and actions.
+  Only renders for products with 'fasteditor' tag or in design mode.
+{%- endcomment -%}
+
+{%- liquid
+  # Product variant data
+  assign selected_variant = product.selected_or_first_available_variant
+  assign initial_variant_id = selected_variant.id
+  assign is_variant_available = false
+  if selected_variant
+    assign is_variant_available = selected_variant.available
+  endif
+
+  # Variant title handling
+  assign selected_variant_title = selected_variant.title
+  if selected_variant_title == 'Default Title'
+    assign selected_variant_title = blank
+  endif
+
+  # Pricing data
+  assign selected_variant_compare_price = selected_variant.compare_at_price
+  assign has_compare_price = false
+  if selected_variant_compare_price and selected_variant_compare_price > selected_variant.price
+    assign has_compare_price = true
+  endif
+
+  # Image data
+  assign selected_image = selected_variant.featured_image
+  if selected_image == blank
+    assign selected_image = selected_variant.featured_media.preview_image
+  endif
+  if selected_image == blank
+    assign selected_image = product.featured_image
+  endif
+  if selected_image == blank and product.featured_media
+    assign selected_image = product.featured_media.preview_image
+  endif
+  assign product_image_json = selected_image | default: product.featured_image | json
+
+  # Block settings
+  assign add_to_cart_visibility = block.settings.add_to_cart_visibility | default: 'both'
+  assign mobile_position = block.settings.mobile_position | default: 'bottom'
+  assign desktop_position = block.settings.desktop_position | default: 'bottom'
+
+  # App availability
+  assign is_app_available = app.metafields.fasteditor_app.availability
+
+  # Visibility check: only show for products with 'fasteditor' tag or in design mode
+  assign show_sticky_bar = false
+  if product and product.variants.size > 0
+    if request.design_mode or product.tags contains 'fasteditor'
+      assign show_sticky_bar = true
+    endif
+  endif
+-%}
+
+{%- comment -%} Generate variants JSON for JavaScript {%- endcomment -%}
+{%- capture variants_json -%}
+[
+{%- for variant in product.variants -%}
+  {
+    "id": "{{ variant.id }}",
+    "title": {{ variant.title | json }},
+    "price": {{ variant.price | json }},
+    "compare_at_price": {{ variant.compare_at_price | json }},
+    "available": {{ variant.available | json }},
+    {%- liquid
+      assign variant_img = variant.featured_image
+      if variant_img == blank
+        assign variant_img = variant.featured_media.preview_image
+      endif
+    -%}
+    "featured_image": {{ variant_img | json }}
+  }{% unless forloop.last %},{% endunless %}
+{%- endfor -%}
+]
+{%- endcapture -%}
+
+{%- if show_sticky_bar -%}
+  <style>
+    .fasteditor-customize-button-{{ block.id }} {
+      --button-bg-color: {{ block.settings.customize_button_background }};
+      --button-text-color: {{ block.settings.customize_button_text_color }};
+      --button-border-radius: {{ block.settings.button_radius }}px;
+    }
+  </style>
+
+  {%- comment -%} Sticky bar container {%- endcomment -%}
+  <fasteditor-sticky-bar
+    class="fasteditor-sticky-bar fasteditor-sticky-bar--mobile-{{ mobile_position }} fasteditor-sticky-bar--desktop-{{ desktop_position }}"
+    data-block-id="{{ block.id }}"
+    data-section-id="{{ section.id }}"
+    data-add-to-cart-visibility="{{ add_to_cart_visibility }}"
+    data-mobile-position="{{ mobile_position }}"
+    data-desktop-position="{{ desktop_position }}"
+    data-position-state="{{ mobile_position }}"
+    data-money-format="{{ shop.money_format | escape }}"
+    data-money-with-currency-format="{{ shop.money_with_currency_format | escape }}"
+    data-variants='{{ variants_json | escape }}'
+    data-initial-variant-id="{{ initial_variant_id }}"
+    data-product-title="{{ product.title | escape }}"
+    data-product-image='{{ product_image_json | escape }}'
+    data-state="hidden"
+    style="
+      --fasteditor-bar-background: {{ block.settings.background_color }};
+      --fasteditor-bar-text: {{ block.settings.text_color }};
+      --fasteditor-button-radius: {{ block.settings.button_radius }}px;
+      --fasteditor-add-button-background: {{ block.settings.add_button_background }};
+      --fasteditor-add-button-text: {{ block.settings.add_button_text }};
+    "
+  >
+    <div class="page-width fasteditor-sticky-bar__inner">
+      {%- comment -%} Product image {%- endcomment -%}
+      <div class="fasteditor-sticky-bar__media">
+        {%- if selected_image -%}
+          <img
+            src="{{ selected_image | image_url: width: 200, height: 200, crop: 'center' }}"
+            alt="{{ selected_image.alt | default: product.title | escape }}"
+            width="64"
+            height="64"
+            loading="lazy"
+            decoding="async"
+            data-fasteditor-image
+          >
+        {%- else -%}
+          <img
+            src="{{ product.featured_image | image_url: width: 200, height: 200, crop: 'center' }}"
+            alt="{{ product.title | escape }}"
+            width="64"
+            height="64"
+            loading="lazy"
+            decoding="async"
+            data-fasteditor-image
+            style="display: none;"
+          >
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Product details {%- endcomment -%}
+      <div class="fasteditor-sticky-bar__details">
+        <p class="fasteditor-sticky-bar__title">{{ product.title | escape }}</p>
+        <p
+          class="fasteditor-sticky-bar__variant"
+          data-fasteditor-variant
+          {%- if selected_variant_title == blank -%}style="display: none;"{%- endif -%}
+        >
+          {{ selected_variant_title | escape }}
+        </p>
+        <div class="fasteditor-sticky-bar__pricing">
+          <span class="fasteditor-sticky-bar__price" data-fasteditor-price>
+            {{ selected_variant.price | money_with_currency }}
+          </span>
+          <span
+            class="fasteditor-sticky-bar__compare-price"
+            data-fasteditor-compare-price
+            {%- unless has_compare_price -%}style="display: none;"{%- endunless -%}
+          >
+            {%- if has_compare_price -%}
+              {{ selected_variant_compare_price | money_with_currency }}
+            {%- endif -%}
+          </span>
+        </div>
+      </div>
+
+      {%- comment -%} Action buttons {%- endcomment -%}
+      <div class="fasteditor-sticky-bar__actions">
+        {%- liquid
+          # Prepare customize button attributes
+          assign sticky_customize_disabled = false
+          if is_app_available != true or is_variant_available != true
+            assign sticky_customize_disabled = true
+          endif
+        -%}
+
+        {%- capture customize_button_attributes -%}
+          data-shop="{{ shop.permanent_domain | escape }}"
+          data-handle="{{ product.handle | escape }}"
+          data-section-id="{{ section.id }}"
+          data-availability="{{ is_app_available | json }}"
+          data-variant-available="{{ is_variant_available | json }}"
+          data-initial-variant-id="{{ initial_variant_id }}"
+          data-variants='{{ variants_json | escape }}'
+          data-redirect="false"
+          data-loading-text="{{ block.settings.customize_loading_text | escape }}"
+          data-adding-to-cart-text="{{ block.settings.add_to_cart_adding_text | escape }}"
+          data-added-to-cart-text="{{ block.settings.add_to_cart_added_text | escape }}"
+          data-error-text="{{ block.settings.add_to_cart_error_text | escape }}"
+          data-sold-out-text="{{ block.settings.add_to_cart_sold_out_text | escape }}"
+        {%- endcapture -%}
+
+        {%- render 'button-customize',
+          button_text: block.settings.customize_button_text,
+          button_attributes: customize_button_attributes,
+          is_disabled: sticky_customize_disabled,
+        -%}
+
+        <button
+          type="button"
+          class="fasteditor-sticky-bar__button fasteditor-sticky-bar__button--add"
+          data-fasteditor-add
+          data-add-text="{{ block.settings.add_to_cart_button_text | escape }}"
+          data-adding-text="{{ block.settings.add_to_cart_adding_text | escape }}"
+          data-added-text="{{ block.settings.add_to_cart_added_text | escape }}"
+          data-error-text="{{ block.settings.add_to_cart_error_text | escape }}"
+          data-sold-out-text="{{ block.settings.add_to_cart_sold_out_text | escape }}"
+        >
+          {{ block.settings.add_to_cart_button_text | escape }}
+        </button>
+      </div>
+    </div>
+  </fasteditor-sticky-bar>
+
+  {%- comment -%} Load assets only when block is visible {%- endcomment -%}
+  <link rel="stylesheet" href="{{ 'fasteditor-sticky-bar.css' | asset_url }}">
+  <script src="{{ 'fasteditor-sticky-bar.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "FastEditor Sticky Bar",
+  "target": "body",
+  "available_if": "{{ app.metafields.fasteditor_app.paid }}",
+  "enabled_on": {
+    "templates": [
+      "product"
+    ]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "desktop_position",
+      "label": "Desktop position",
+      "default": "bottom",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "mobile_position",
+      "label": "Mobile position",
+      "default": "bottom",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Bar background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Bar text",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "customize_button_text_color",
+      "label": "Customize button text",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "customize_button_background",
+      "label": "Customize button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "customize_button_border",
+      "label": "Customize button border",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "add_button_background",
+      "label": "Add to cart button background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "add_button_text",
+      "label": "Add to cart button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "customize_button_text",
+      "label": "Customize button text",
+      "default": "Customize"
+    },
+    {
+      "type": "text",
+      "id": "customize_loading_text",
+      "label": "Customize loading text",
+      "default": "Loading..."
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_added_text",
+      "label": "Added to cart text",
+      "default": "Added to cart"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_button_text",
+      "label": "Add to cart button text",
+      "default": "Add to cart"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_adding_text",
+      "label": "Adding to cart text",
+      "default": "Adding to cart..."
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_error_text",
+      "label": "Error text",
+      "default": "Something went wrong"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_sold_out_text",
+      "label": "Sold out text",
+      "default": "Sold out"
+    },
+    {
+      "type": "header",
+      "content": "Visibility"
+    },
+    {
+      "type": "select",
+      "id": "add_to_cart_visibility",
+      "label": "Add to cart button visibility",
+      "default": "both",
+      "options": [
+        { "value": "both", "label": "Show on mobile and desktop" },
+        { "value": "mobile", "label": "Show on mobile only" },
+        { "value": "desktop", "label": "Show on desktop only" },
+        { "value": "none", "label": "Hide on both" }
+      ]
+    }
+  ]
+}
+{% endschema %}
