@@ -65,6 +65,60 @@
           "enable_cart_redirect": "Rediriger vers le panier après ajout"
         }
       }
+    },
+    "sticky-bar": {
+      "name": "Barre fixe FastEditor",
+      "settings": {
+        "layout": {
+          "header": "Mise en page",
+          "desktop_position": {
+            "label": "Position sur ordinateur",
+            "options": {
+              "top": "Haut",
+              "bottom": "Bas"
+            }
+          },
+          "button_radius": "Rayon de bord du bouton",
+          "mobile_position": {
+            "label": "Position sur mobile",
+            "options": {
+              "top": "Haut",
+              "bottom": "Bas"
+            }
+          }
+        },
+        "colors": {
+          "header": "Couleurs",
+          "background_color": "Arrière-plan de la barre",
+          "text_color": "Texte de la barre",
+          "customize_button_background": "Arrière-plan du bouton de personnalisation",
+          "customize_button_text_color": "Texte du bouton de personnalisation",
+          "add_button_background": "Arrière-plan du bouton Ajouter au panier",
+          "add_button_text": "Texte du bouton Ajouter au panier"
+        },
+        "buttons": {
+          "header": "Boutons",
+          "customize_button_text": "Texte du bouton de personnalisation",
+          "customize_loading_text": "Texte de chargement de personnalisation",
+          "add_to_cart_added_text": "Texte après ajout au panier",
+          "add_to_cart_button_text": "Texte du bouton Ajouter au panier",
+          "add_to_cart_adding_text": "Texte lors de l’ajout au panier",
+          "add_to_cart_error_text": "Texte d’erreur",
+          "add_to_cart_sold_out_text": "Texte rupture de stock"
+        },
+        "visibility": {
+          "header": "Visibilité",
+          "add_to_cart_visibility": {
+            "label": "Visibilité du bouton Ajouter au panier",
+            "options": {
+              "both": "Afficher sur mobile et ordinateur",
+              "mobile": "Afficher uniquement sur mobile",
+              "desktop": "Afficher uniquement sur ordinateur",
+              "none": "Masquer sur les deux"
+            }
+          }
+        }
+      }
     }
   }
 }

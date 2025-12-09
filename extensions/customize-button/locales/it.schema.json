@@ -65,6 +65,60 @@
           "enable_cart_redirect": "Reindirizza alla pagina del carrello dopo l'aggiunta al carrello"
         }
       }
+    },
+    "sticky-bar": {
+      "name": "Barra fissa FastEditor",
+      "settings": {
+        "layout": {
+          "header": "Layout",
+          "desktop_position": {
+            "label": "Posizione desktop",
+            "options": {
+              "top": "In alto",
+              "bottom": "In basso"
+            }
+          },
+          "button_radius": "Raggio bordo pulsante",
+          "mobile_position": {
+            "label": "Posizione mobile",
+            "options": {
+              "top": "In alto",
+              "bottom": "In basso"
+            }
+          }
+        },
+        "colors": {
+          "header": "Colori",
+          "background_color": "Sfondo barra",
+          "text_color": "Testo barra",
+          "customize_button_background": "Sfondo pulsante personalizza",
+          "customize_button_text_color": "Testo pulsante personalizza",
+          "add_button_background": "Sfondo pulsante aggiungi al carrello",
+          "add_button_text": "Testo pulsante aggiungi al carrello"
+        },
+        "buttons": {
+          "header": "Pulsanti",
+          "customize_button_text": "Testo pulsante personalizza",
+          "customize_loading_text": "Testo di caricamento personalizzazione",
+          "add_to_cart_added_text": "Testo dopo aggiunta al carrello",
+          "add_to_cart_button_text": "Testo pulsante aggiungi al carrello",
+          "add_to_cart_adding_text": "Testo durante aggiunta al carrello",
+          "add_to_cart_error_text": "Testo errore",
+          "add_to_cart_sold_out_text": "Testo esaurito"
+        },
+        "visibility": {
+          "header": "Visibilità",
+          "add_to_cart_visibility": {
+            "label": "Visibilità pulsante aggiungi al carrello",
+            "options": {
+              "both": "Mostra su mobile e desktop",
+              "mobile": "Mostra solo su mobile",
+              "desktop": "Mostra solo su desktop",
+              "none": "Nascondi su entrambi"
+            }
+          }
+        }
+      }
     }
   }
 }

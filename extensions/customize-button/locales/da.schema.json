@@ -65,6 +65,60 @@
           "enable_cart_redirect": "Omdiriger til kurvside efter tilføjelse til kurv"
         }
       }
+    },
+    "sticky-bar": {
+      "name": "FastEditor sticky-bjælke",
+      "settings": {
+        "layout": {
+          "header": "Layout",
+          "desktop_position": {
+            "label": "Desktop-position",
+            "options": {
+              "top": "Top",
+              "bottom": "Bund"
+            }
+          },
+          "button_radius": "Knapkant-radius",
+          "mobile_position": {
+            "label": "Mobil-position",
+            "options": {
+              "top": "Top",
+              "bottom": "Bund"
+            }
+          }
+        },
+        "colors": {
+          "header": "Farver",
+          "background_color": "Bjælkebaggrund",
+          "text_color": "Bjælketekst",
+          "customize_button_background": "Baggrund for tilpasningsknap",
+          "customize_button_text_color": "Tekst for tilpasningsknap",
+          "add_button_background": "Baggrund for købsknap",
+          "add_button_text": "Tekst for købsknap"
+        },
+        "buttons": {
+          "header": "Knapper",
+          "customize_button_text": "Tekst for tilpasningsknap",
+          "customize_loading_text": "Indlæser-tekst for tilpasning",
+          "add_to_cart_added_text": "Tekst efter tilføjelse til kurv",
+          "add_to_cart_button_text": "Tekst for købsknap",
+          "add_to_cart_adding_text": "Tekst ved tilføjelse til kurv",
+          "add_to_cart_error_text": "Fejltekst",
+          "add_to_cart_sold_out_text": "Udsolgt-tekst"
+        },
+        "visibility": {
+          "header": "Synlighed",
+          "add_to_cart_visibility": {
+            "label": "Synlighed af købsknap",
+            "options": {
+              "both": "Vis på mobil og desktop",
+              "mobile": "Vis kun på mobil",
+              "desktop": "Vis kun på desktop",
+              "none": "Skjul begge steder"
+            }
+          }
+        }
+      }
     }
   }
 }

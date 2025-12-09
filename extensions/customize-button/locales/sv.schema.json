@@ -65,6 +65,60 @@
           "enable_cart_redirect": "Omdirigera till varukorgssidan efter tillägg i varukorg"
         }
       }
+    },
+    "sticky-bar": {
+      "name": "FastEditor sticky-fält",
+      "settings": {
+        "layout": {
+          "header": "Layout",
+          "desktop_position": {
+            "label": "Position på dator",
+            "options": {
+              "top": "Överst",
+              "bottom": "Nederst"
+            }
+          },
+          "button_radius": "Knappens hörnradie",
+          "mobile_position": {
+            "label": "Position på mobil",
+            "options": {
+              "top": "Överst",
+              "bottom": "Nederst"
+            }
+          }
+        },
+        "colors": {
+          "header": "Färger",
+          "background_color": "Fältets bakgrund",
+          "text_color": "Fältets text",
+          "customize_button_background": "Bakgrund för anpassningsknapp",
+          "customize_button_text_color": "Text för anpassningsknapp",
+          "add_button_background": "Bakgrund för lägg i varukorg-knapp",
+          "add_button_text": "Text för lägg i varukorg-knapp"
+        },
+        "buttons": {
+          "header": "Knappar",
+          "customize_button_text": "Text för anpassningsknapp",
+          "customize_loading_text": "Text vid laddning av anpassning",
+          "add_to_cart_added_text": "Text efter tillagd i varukorg",
+          "add_to_cart_button_text": "Text för lägg i varukorg-knapp",
+          "add_to_cart_adding_text": "Text vid tillägg till varukorg",
+          "add_to_cart_error_text": "Feltext",
+          "add_to_cart_sold_out_text": "Text vid slutsåld"
+        },
+        "visibility": {
+          "header": "Synlighet",
+          "add_to_cart_visibility": {
+            "label": "Synlighet för lägg i varukorg-knapp",
+            "options": {
+              "both": "Visa på mobil och dator",
+              "mobile": "Visa endast på mobil",
+              "desktop": "Visa endast på dator",
+              "none": "Dölj på båda"
+            }
+          }
+        }
+      }
     }
   }
 }
