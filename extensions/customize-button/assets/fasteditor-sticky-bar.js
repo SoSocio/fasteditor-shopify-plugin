@@ -485,6 +485,13 @@
       }
 
       const header = this.findHeaderElement();
+      const mediaQuery = window.matchMedia('(min-width: 750px)');
+      const shouldHideForViewport = () => {
+        const isDesktop = mediaQuery.matches;
+        return isDesktop
+          ? this.dataset.desktopPosition === 'hide'
+          : this.dataset.mobilePosition === 'hide';
+      };
       
       this.setAttribute('data-state', 'hidden');
 
@@ -493,6 +500,10 @@
       }
 
       const toggle = (shouldShow) => {
+        if (shouldHideForViewport()) {
+          this.setAttribute('data-state', 'hidden');
+          return;
+        }
         this.setAttribute('data-state', shouldShow ? 'visible' : 'hidden');
       };
 

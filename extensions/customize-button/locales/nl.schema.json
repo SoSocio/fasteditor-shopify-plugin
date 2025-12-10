@@ -75,7 +75,8 @@
             "label": "Desktop-positie",
             "options": {
               "top": "Boven",
-              "bottom": "Onder"
+              "bottom": "Onder",
+              "hide": "Verbergen"
             }
           },
           "button_radius": "Knoprand-radius",
@@ -83,8 +84,12 @@
             "label": "Mobiele positie",
             "options": {
               "top": "Boven",
-              "bottom": "Onder"
+              "bottom": "Onder",
+              "hide": "Verbergen"
             }
+          },
+          "show_product_details": {
+            "label": "Productdetails tonen op mobiel"
           }
         },
         "colors": {
@@ -111,10 +116,10 @@
           "add_to_cart_visibility": {
             "label": "Zichtbaarheid van de winkelwagenknop",
             "options": {
-              "both": "Tonen op mobiel en desktop",
-              "mobile": "Tonen alleen op mobiel",
-              "desktop": "Tonen alleen op desktop",
-              "none": "Verbergen op beide"
+              "both": "Mobiel + desktop",
+              "mobile": "Mobiel",
+              "desktop": "Desktop",
+              "none": "Verborgen"
             }
           }
         }

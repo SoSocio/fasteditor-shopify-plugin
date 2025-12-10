@@ -75,7 +75,8 @@
             "label": "Desktop-position",
             "options": {
               "top": "Top",
-              "bottom": "Bund"
+              "bottom": "Bund",
+              "hide": "Skjul"
             }
           },
           "button_radius": "Knapkant-radius",
@@ -83,8 +84,12 @@
             "label": "Mobil-position",
             "options": {
               "top": "Top",
-              "bottom": "Bund"
+              "bottom": "Bund",
+              "hide": "Skjul"
             }
+          },
+          "show_product_details": {
+            "label": "Vis produktdetaljer på mobil"
           }
         },
         "colors": {
@@ -109,12 +114,12 @@
         "visibility": {
           "header": "Synlighed",
           "add_to_cart_visibility": {
-            "label": "Synlighed af købsknap",
+            "label": "Synlighed for købsknap",
             "options": {
-              "both": "Vis på mobil og desktop",
-              "mobile": "Vis kun på mobil",
-              "desktop": "Vis kun på desktop",
-              "none": "Skjul begge steder"
+              "both": "Mobil + desktop",
+              "mobile": "Mobil",
+              "desktop": "Desktop",
+              "none": "Skjult"
             }
           }
         }
