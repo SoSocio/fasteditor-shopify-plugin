@@ -75,7 +75,8 @@
             "label": "Position på dator",
             "options": {
               "top": "Överst",
-              "bottom": "Nederst"
+              "bottom": "Nederst",
+              "hide": "Dölj"
             }
           },
           "button_radius": "Knappens hörnradie",
@@ -83,8 +84,12 @@
             "label": "Position på mobil",
             "options": {
               "top": "Överst",
-              "bottom": "Nederst"
+              "bottom": "Nederst",
+              "hide": "Dölj"
             }
+          },
+          "show_product_details": {
+            "label": "Visa produktdetaljer på mobil"
           }
         },
         "colors": {
@@ -109,12 +114,12 @@
         "visibility": {
           "header": "Synlighet",
           "add_to_cart_visibility": {
-            "label": "Synlighet för lägg i varukorg-knapp",
+            "label": "Synlighet för köpknappen",
             "options": {
-              "both": "Visa på mobil och dator",
-              "mobile": "Visa endast på mobil",
-              "desktop": "Visa endast på dator",
-              "none": "Dölj på båda"
+              "both": "Mobil + dator",
+              "mobile": "Mobil",
+              "desktop": "Dator",
+              "none": "Dold"
             }
           }
         }

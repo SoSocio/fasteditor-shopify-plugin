@@ -75,7 +75,8 @@
             "label": "Position sur ordinateur",
             "options": {
               "top": "Haut",
-              "bottom": "Bas"
+              "bottom": "Bas",
+              "hide": "Masquer"
             }
           },
           "button_radius": "Rayon de bord du bouton",
@@ -83,8 +84,12 @@
             "label": "Position sur mobile",
             "options": {
               "top": "Haut",
-              "bottom": "Bas"
+              "bottom": "Bas",
+              "hide": "Masquer"
             }
+          },
+          "show_product_details": {
+            "label": "Afficher les détails produit sur mobile"
           }
         },
         "colors": {
@@ -109,12 +114,12 @@
         "visibility": {
           "header": "Visibilité",
           "add_to_cart_visibility": {
-            "label": "Visibilité du bouton Ajouter au panier",
+            "label": "Visibilité du bouton d’achat",
             "options": {
-              "both": "Afficher sur mobile et ordinateur",
-              "mobile": "Afficher uniquement sur mobile",
-              "desktop": "Afficher uniquement sur ordinateur",
-              "none": "Masquer sur les deux"
+              "both": "Mobile + ordinateur",
+              "mobile": "Mobile",
+              "desktop": "Ordinateur",
+              "none": "Masqué"
             }
           }
         }
