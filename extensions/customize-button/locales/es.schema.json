@@ -75,7 +75,8 @@
             "label": "Posición en escritorio",
             "options": {
               "top": "Superior",
-              "bottom": "Inferior"
+              "bottom": "Inferior",
+              "hide": "Ocultar"
             }
           },
           "button_radius": "Radio del borde del botón",
@@ -83,8 +84,12 @@
             "label": "Posición en móvil",
             "options": {
               "top": "Superior",
-              "bottom": "Inferior"
+              "bottom": "Inferior",
+              "hide": "Ocultar"
             }
+          },
+          "show_product_details": {
+            "label": "Mostrar detalles del producto en móvil"
           }
         },
         "colors": {
@@ -109,12 +114,12 @@
         "visibility": {
           "header": "Visibilidad",
           "add_to_cart_visibility": {
-            "label": "Visibilidad del botón de añadir al carrito",
+            "label": "Visibilidad del botón de compra",
             "options": {
-              "both": "Mostrar en móvil y escritorio",
-              "mobile": "Mostrar solo en móvil",
-              "desktop": "Mostrar solo en escritorio",
-              "none": "Ocultar en ambos"
+              "both": "Móvil + escritorio",
+              "mobile": "Móvil",
+              "desktop": "Escritorio",
+              "none": "Oculto"
             }
           }
         }

@@ -1,57 +1,31 @@
-{%- comment -%}
-  Customize Button Snippet
-  Reusable button component for product customization
+{% comment %}
+  Renders the FastEditor customize button for a product
 
-  Parameters:
-    button_text (string, optional)
-      - Text to display on the button
-      - Default: ''
+  Displays a customizable button with optional icon state, text, and data attributes.
 
-    button_attributes (string, optional)
-      - Additional HTML attributes to add to the button element
-      - Can include data attributes, classes, etc.
-      - Default: ''
+  Accepts:
+  - button_text: {String} Text to display on the button (optional, default: '')
+  - button_attributes: {String} Extra HTML/data attributes to add to the button element (optional)
+  - is_disabled: {Boolean} Whether the button is disabled (optional, default: false)
+  - icon_type: {String} Icon type: none | pen | brush | image | images | link | settings | custom (optional, default: none)
+  - icon_position: {String} Icon position: left | right (optional, default: left)
+  - icon_color: {String} Icon color value (optional)
+  - icon_size: {String} Icon size value (optional)
+  - icon_custom_image: {String} Custom icon image URL/path when icon_type is custom (optional)
+  - block_id: {String} Block id for data-block-id (optional, default: block.id or '')
 
-    is_disabled (boolean, optional)
-      - Whether the button should be disabled
-      - Default: false
-
-    icon_type (string, optional)
-      - Type of icon to display: 'none', 'pen', 'brush', 'image', 'images', 'link', 'settings', 'custom'
-      - Default: 'none'
-
-    icon_position (string, optional)
-      - Position of icon relative to text: 'left' or 'right'
-      - Default: 'left'
-
-    icon_color (string, optional)
-      - Color for the icon (CSS color value)
-      - Default: ''
-
-    icon_size (string, optional)
-      - Size of the icon (CSS size value)
-      - Default: ''
-
-    icon_custom_image (string, optional)
-      - URL or path to custom icon image (used when icon_type is 'custom')
-      - Default: ''
-
-    block_id (string, optional)
-      - ID of the block using this snippet (used for data-block-id attribute)
-      - If not provided, uses block.id if available, otherwise empty string
-      - Default: block.id or ''
-
-  Usage example:
-    {%- render 'button-customize',
-      button_text: 'Customize',
-      button_attributes: 'data-shop="myshop.myshopify.com" data-handle="product-handle"',
-      is_disabled: false,
-      icon_type: 'pen',
-      icon_position: 'left',
-      icon_color: '#000000',
-      icon_size: '20px'
-    -%}
-{%- endcomment -%}
+  Usage:
+  {% render 'button-customize' %}
+  {% render 'button-customize',
+    button_text: 'Customize',
+    button_attributes: 'data-shop="myshop.myshopify.com" data-handle="product-handle"',
+    is_disabled: false,
+    icon_type: 'pen',
+    icon_position: 'left',
+    icon_color: '#000000',
+    icon_size: '20px'
+  %}
+{% endcomment %}
 
 {%- liquid
   # Button appearance
@@ -78,7 +52,7 @@
 <script src="{{ 'fasteditor-shared-utils.js' | asset_url }}" defer></script>
 <script src="{{ 'cookie-user-id.js' | asset_url }}" defer></script>
 
-<fasteditor-customize-button data-block-id="{{ block_id }}" class="fasteditor-customize-button-wrapper">
+<fasteditor-customize-button data-block-id="{{ block_id }}">
   <button
     id="fasteditor-customize-button-{{ block.id }}"
     class="fasteditor-customize-button fasteditor-customize-button-{{ block.id }}{% if icon_position == 'right' %} fasteditor-customize-button--icon-right{% endif %}"
@@ -87,7 +61,6 @@
     {{ button_attributes | strip }}
     {%- if is_disabled -%}disabled aria-disabled="true"{%- endif -%}
   >
-    {%- comment -%} Icon container - always present for loading icon support {%- endcomment -%}
     <span
       class="fasteditor-customize-button__icon"
       {%- unless has_icon -%}style="display: none;"{%- endunless -%}
@@ -111,7 +84,6 @@
       </span>
     </span>
 
-    {%- comment -%} Button text {%- endcomment -%}
     <span class="fasteditor-customize-button__text">
       {{ button_text | escape }}
     </span>

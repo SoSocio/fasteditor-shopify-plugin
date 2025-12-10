@@ -267,9 +267,13 @@
    * @returns {number}
    */
   function resolveQuantity(form) {
-    if (!form) return DEFAULTS.QUANTITY;
-    const input = form.querySelector(SELECTORS.QUANTITY_INPUT);
-    const value = input ? parseInt(input.value, 10) : DEFAULTS.QUANTITY;
+    const input =
+      (form && form.querySelector(SELECTORS.QUANTITY_INPUT))
+      || document.querySelector(SELECTORS.QUANTITY_INPUT);
+
+    if (!input) return DEFAULTS.QUANTITY;
+
+    const value = parseInt(input.value, 10);
     return Number.isNaN(value) ? DEFAULTS.QUANTITY : value;
   }
 

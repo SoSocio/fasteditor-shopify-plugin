@@ -75,7 +75,8 @@
             "label": "Desktop-Position",
             "options": {
               "top": "Oben",
-              "bottom": "Unten"
+              "bottom": "Unten",
+              "hide": "Ausblenden"
             }
           },
           "button_radius": "Button-Randradius",
@@ -83,8 +84,12 @@
             "label": "Mobile Position",
             "options": {
               "top": "Oben",
-              "bottom": "Unten"
+              "bottom": "Unten",
+              "hide": "Ausblenden"
             }
+          },
+          "show_product_details": {
+            "label": "Produktdetails auf Mobil anzeigen"
           }
         },
         "colors": {
@@ -109,12 +114,12 @@
         "visibility": {
           "header": "Sichtbarkeit",
           "add_to_cart_visibility": {
-            "label": "Sichtbarkeit des In-den-Warenkorb-Buttons",
+            "label": "Sichtbarkeit des Warenkorb-Buttons",
             "options": {
-              "both": "Auf Mobil und Desktop anzeigen",
-              "mobile": "Nur auf Mobil anzeigen",
-              "desktop": "Nur auf Desktop anzeigen",
-              "none": "Auf beiden ausblenden"
+              "both": "Mobil + Desktop",
+              "mobile": "Mobil",
+              "desktop": "Desktop",
+              "none": "Ausblenden"
             }
           }
         }
