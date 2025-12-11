@@ -1,49 +1,49 @@
 {
   "getting-started-page": {
-    "title": "Inizia",
+    "title": "Primi Passi",
     "integration": {
       "title": "Integrazione FastEditor",
-      "description": "Prima di utilizzare FastEditor, collega il tuo negozio alla piattaforma tramite la pagina Impostazioni.",
+      "description": "Prima di usare FastEditor, collega il tuo negozio dalla pagina delle impostazioni.",
       "button": "Vai alle Impostazioni"
     },
     "customization-button": {
       "title": "Pulsante di personalizzazione",
-      "description": "Aggiungi un pulsante di personalizzazione al modello della tua pagina prodotto e personalizzalo per abbinarlo al tuo tema.",
-      "button": "Personalizza aspetto"
+      "description": "Aggiungi un pulsante di personalizzazione al modello della pagina prodotto e adatta lo stile al tema del tuo negozio.",
+      "button": "Personalizza Aspetto"
     },
     "product-setup": {
-      "title": "Configurazione prodotto",
-      "description": "Per collegare un prodotto Shopify a FastEditor, segui questi passaggi:",
+      "title": "Configurazione del prodotto",
+      "description": "Segui questi passaggi per collegare un prodotto Shopify a FastEditor:",
       "steps": {
         "item-1": "Crea o seleziona un prodotto in Shopify.",
-        "item-2": "Vai alla piattaforma FastEditor.",
+        "item-2": "Accedi alla piattaforma FastEditor.",
         "item-3": "Trova il prodotto corrispondente.",
         "item-4": "Clicca su <b>Configurazioni</b>.",
-        "item-5": "Arriverai alla pagina dei dettagli del prodotto.",
+        "item-5": "Verrai reindirizzato alla pagina dei dettagli del prodotto.",
         "item-6": "Seleziona i filtri che desideri utilizzare.",
         "item-7": "Clicca su <b>SmartLink payload</b>.",
         "item-8": "Copia il <b>SKU</b>.",
         "item-9": "Torna alle impostazioni del prodotto in Shopify.",
-        "item-10": "<b>Se il prodotto non ha varianti:</b> incolla lo SKU nel campo <i>SKU (Stock Keeping Unit)</i> nella sezione Inventario e salva le modifiche.",
-        "item-11": "<b>Se il prodotto ha varianti:</b> apri la variante specifica, incolla lo SKU nel campo <i>SKU (Stock Keeping Unit)</i> nella sezione Inventario e salva le modifiche."
+        "item-10": "<b>Se il prodotto non ha varianti:</b> incolla lo SKU nel campo <i>SKU (Unità di magazzino)</i> nella sezione Inventario e salva le modifiche.",
+        "item-11": "<b>Se il prodotto ha varianti:</b> apri la variante specifica, incolla lo SKU nel campo <i>SKU (Unità di magazzino)</i> e salva le modifiche."
       },
-      "display-button-description": "Per visualizzare il pulsante di personalizzazione sulla pagina prodotto:",
+      "display-button-description": "Per mostrare il pulsante di personalizzazione nella pagina del prodotto:",
       "display-steps": {
         "item-1": "Apri il prodotto che desideri personalizzare.",
         "item-2": "Scorri fino alla sezione <b>Tag</b>.",
         "item-3": "Aggiungi il tag <code>fasteditor</code>."
       },
-      "button": "Vai ai Prodotti"
+      "button": "Visualizza Prodotti"
     }
   },
   "dashboard-page": {
-    "title": "Dashboard",
+    "title": "Panoramica",
     "products-table-info": {
-      "title": "Prodotti con il tag FastEditor",
-      "description": "La tabella sottostante mostra i prodotti contrassegnati con <code>fasteditor</code>.",
-      "tag-instructions-title": "Per contrassegnare un prodotto:",
+      "title": "Prodotti con tag FastEditor",
+      "description": "La tabella mostra i prodotti con il tag <code>fasteditor</code>.",
+      "tag-instructions-title": "Per aggiungere un tag a un prodotto:",
       "steps": {
-        "item-1": "Vai a <strong>Prodotti</strong>",
+        "item-1": "Vai su <strong>Prodotti</strong>",
         "item-2": "Seleziona un prodotto",
         "item-3": "Nella sezione Tag, inserisci <strong>fasteditor</strong> e premi <strong>Invio</strong>",
         "item-4": "Clicca su <strong>Salva</strong>"
@@ -55,10 +55,10 @@
         "plural": "prodotti"
       },
       "empty-state": {
-        "title": "Nessun prodotto ancora",
+        "title": "Nessun prodotto presente",
         "description": "Assicurati che i tuoi prodotti abbiano il tag fasteditor."
       },
-      "search-placeholder": "Cerca per titolo prodotto o SKU",
+      "search-placeholder": "Cerca per nome prodotto o SKU",
       "headings": {
         "product": "Prodotto",
         "sku": "SKU",
@@ -68,23 +68,23 @@
       "default-variant-title": "Titolo predefinito"
     },
     "error-banner": {
-      "title": "Impossibile caricare i dati della dashboard",
+      "title": "Impossibile caricare i dati della panoramica",
       "return-button": "Indietro",
       "messages": {
-        "item-1": "I dati non sono stati trovati in base ai filtri attuali.",
-        "item-2": "Se il problema persiste, prova ad aggiornare la pagina o contatta il supporto."
+        "item-1": "Nessun dato trovato con i filtri selezionati.",
+        "item-2": "Se il problema persiste, aggiorna la pagina o contatta l'assistenza."
       }
     },
     "tabs": {
       "all": "Tutti",
-      "active": "Attivo",
-      "draft": "Bozza",
-      "archived": "Archiviato"
+      "active": "Attivi",
+      "draft": "Bozze",
+      "archived": "Archiviati"
     },
     "sort": {
       "product-label": "Prodotto",
-      "direction-az": "A-Z",
-      "direction-za": "Z-A"
+      "direction-az": "Crescente",
+      "direction-za": "Decrescente"
     }
   },
   "settings-page": {
@@ -93,40 +93,41 @@
       "connected-badge": "Connesso",
       "not-connected-badge": "Non connesso",
       "title": "Collega il tuo negozio a FastEditor",
-      "description": "Per collegare il tuo negozio, inserisci la tua Chiave API FastEditor e Dominio qui sotto, quindi clicca su <strong>Connetti</strong>. Se la connessione ha successo, vedrai un messaggio di conferma e lo stato verrà aggiornato a <strong>Connesso</strong>. Se riscontri problemi durante la connessione di FastEditor, contatta il nostro supporto. Troverai l'email in fondo alla pagina."
+      "description": "Inserisci la tua chiave API e dominio FastEditor qui sotto e clicca <strong>Collega</strong>. Se la connessione ha successo, vedrai un messaggio di conferma. Contatta l'assistenza in caso di problemi."
     },
     "integration-form": {
       "api-key-label": "Chiave API",
       "api-domain-label": "Dominio API",
-      "connect-button": "Connetti",
-      "connection-failed-error": "Connessione a FastEditor fallita. Controlla la tua Chiave API e Dominio e riprova.",
+      "connect-button": "Collega",
+      "connection-failed-error": "Connessione a FastEditor fallita. Controlla chiave API e dominio.",
       "validation-errors": {
-        "api-key-required": "La Chiave API è obbligatoria",
-        "api-domain-required": "Il Dominio API è obbligatorio"
+        "api-key-required": "Chiave API richiesta",
+        "api-domain-required": "Dominio API richiesto"
       },
-      "success-message": "L'integrazione FastEditor è riuscita.",
-      "validation-errors-title": "Errori di validazione"
+      "success-message": "Integrazione con FastEditor completata con successo.",
+      "validation-errors-title": "Errori di convalida"
     }
   },
   "subscription-page": {
     "title": "Abbonamento",
     "cancel-button": "Annulla",
     "current-subscription": {
+      "monthly-plan": "Abbonamento mensile",
       "per-month": "/ mese",
       "started-on": "Iniziato il:",
       "ends-on": "Termina il:"
     },
     "usage-subscription": {
-      "title": "Limite di spesa attuale dell'app",
-      "remaining-amount": "Importo rimanente:",
+      "title": "Limite di spesa attuale",
+      "remaining-amount": "Importo residuo:",
       "spent": "speso",
       "limit": "limite",
       "change-limit-button": "Modifica limite"
     },
     "cancel-modal": {
       "title": "Annulla abbonamento",
-      "confirm-question": "Sei sicuro di voler annullare il tuo abbonamento?",
-      "confirm-description": "Se annulli il tuo abbonamento, l'accesso a tutte le funzionalità a pagamento verrà revocato e non potrai utilizzare il periodo a pagamento rimanente.",
+      "confirm-question": "Sei sicuro di voler annullare l'abbonamento?",
+      "confirm-description": "Se annulli l'abbonamento, perderai l'accesso a tutte le funzioni a pagamento, anche per il periodo rimanente.",
       "cancel-button": "Annulla abbonamento",
       "keep-button": "Mantieni abbonamento",
       "success-message": "Abbonamento annullato con successo",
@@ -136,9 +137,9 @@
       "active": "Attivo",
       "cancelled": "Annullato",
       "declined": "Rifiutato",
-      "pending": "In attesa",
+      "pending": "In sospeso",
       "expired": "Scaduto",
-      "frozen": "Congelato"
+      "frozen": "Bloccato"
     }
   },
   "auth-page": {
@@ -148,47 +149,47 @@
     "login-button": "Accedi"
   },
   "home-page": {
-    "heading": "Un breve titolo su FastEditor",
-    "tagline": "Uno slogan su FastEditor che descrive la tua proposta di valore.",
+    "heading": "Breve introduzione a FastEditor",
+    "tagline": "Breve descrizione del valore che FastEditor offre.",
     "shop-domain-label": "Dominio del negozio",
-    "shop-domain-example": "es: mio-dominio-negozio.myshopify.com",
+    "shop-domain-example": "es.: mio-negozio.myshopify.com",
     "login-button": "Accedi",
-    "product-feature-title": "Funzionalità prodotto",
-    "product-feature-description": "Alcuni dettagli sulla tua funzionalità e sul suo beneficio per il cliente."
+    "product-feature-title": "Funzione del prodotto",
+    "product-feature-description": "Descrizione della funzione e dei suoi benefici per il cliente."
   },
   "no-subscription-page": {
-    "heading": "Attiva il tuo abbonamento per continuare",
+    "heading": "Attiva l'abbonamento per continuare",
     "activate-button": "Attiva abbonamento",
-    "description": "Per continuare a utilizzare FastEditor, attiva il tuo piano mensile. Verrai reindirizzato alla pagina di fatturazione per confermare il tuo abbonamento.",
+    "description": "Per continuare a usare FastEditor, attiva il tuo piano mensile. Verrai reindirizzato alla pagina di fatturazione.",
     "error-message": "Impossibile creare l'abbonamento"
   },
   "usage-limit-banner": {
     "title": "Limite di utilizzo superato",
-    "description": "Il tuo utilizzo attuale ha superato il limite consentito per questo ciclo di fatturazione. Di conseguenza, l'applicazione è temporaneamente non disponibile.",
-    "list-item-1": "L'accesso a tutte le funzionalità dell'app è bloccato fino a quando il limite di utilizzo non viene aumentato o il ciclo di fatturazione non viene reimpostato.",
-    "list-item-2": "Per ripristinare l'accesso, rivedi il tuo piano di abbonamento o aumenta il limite di utilizzo nelle impostazioni.",
-    "go-to-subscription-button": "Vai all'Abbonamento",
+    "description": "L'utilizzo attuale ha superato il limite consentito per questo ciclo di fatturazione. L'applicazione è temporaneamente non disponibile.",
+    "list-item-1": "L'accesso a tutte le funzioni dell'app è bloccato fino a quando il limite non sarà aumentato o il ciclo di fatturazione non sarà reimpostato.",
+    "list-item-2": "Per ripristinare l'accesso, controlla il tuo piano di abbonamento o aumenta il limite nelle impostazioni.",
+    "go-to-subscription-button": "Visualizza abbonamento",
     "change-limit-button": "Modifica limite"
   },
   "errors": {
     "login": {
-      "missing-shop": "Inserisci il dominio del tuo negozio per accedere",
-      "invalid-shop": "Inserisci un dominio negozio valido per accedere"
+      "missing-shop": "Inserisci il dominio del negozio per accedere",
+      "invalid-shop": "Inserisci un dominio del negozio valido"
     },
     "subscription": {
-      "unable-to-fetch-shop-settings": "Impossibile recuperare le impostazioni del negozio",
-      "unable-to-fetch-subscriptions": "Impossibile recuperare gli abbonamenti",
-      "unable-to-fetch-current-subscription": "Impossibile recuperare l'abbonamento corrente"
+      "unable-to-fetch-shop-settings": "Impossibile ottenere le impostazioni del negozio",
+      "unable-to-fetch-subscriptions": "Impossibile ottenere gli abbonamenti",
+      "unable-to-fetch-current-subscription": "Impossibile ottenere l'abbonamento corrente"
     }
   },
   "navigation": {
     "home": "Home",
-    "dashboard": "Dashboard",
+    "dashboard": "Panoramica",
     "settings": "Impostazioni",
     "subscription": "Abbonamento"
   },
   "footer": {
-    "support-text": "Hai bisogno di aiuto? Contatta il nostro team di supporto a"
+    "support-text": "Hai bisogno di aiuto? Contatta il nostro supporto a"
   },
   "language-switcher": {
     "label": "Lingua",
@@ -206,4 +207,3 @@
     }
   }
 }
-

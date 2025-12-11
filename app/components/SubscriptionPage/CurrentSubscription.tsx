@@ -6,6 +6,11 @@ import { useTranslation } from "react-i18next";
 export const CurrentSubscription = ({subscription}: { subscription: ActiveSubscription }) => {
   const { t, i18n } = useTranslation();
   const subscriptionPrice = `${Number(subscription.appRecurringPricing.price.amount).toFixed(0)} ${subscription.appRecurringPricing.price.currencyCode}`
+  const planNameKeyMap: Record<string, string> = {
+    "Monthly subscription": "subscription-page.current-subscription.monthly-plan",
+  };
+  const planNameKey = planNameKeyMap[subscription.name];
+  const planName = planNameKey ? t(planNameKey) : subscription.name;
 
   const formatted = (date: string) => (
     new Intl.DateTimeFormat(i18n.language || "en", {
@@ -21,7 +26,7 @@ export const CurrentSubscription = ({subscription}: { subscription: ActiveSubscr
         <StatusBadge status={subscription.status}/>
       </Box>
       <BlockStack gap="300">
-        <Text variant="headingLg" as="h2">{subscription.name}</Text>
+        <Text variant="headingLg" as="h2">{planName}</Text>
         <BlockStack gap="200">
           <Text as="h3" variant="headingMd">
             {subscriptionPrice} {t("subscription-page.current-subscription.per-month")}

@@ -2,51 +2,51 @@
   "getting-started-page": {
     "title": "Aan de slag",
     "integration": {
-      "title": "FastEditor Integratie",
-      "description": "Voordat u FastEditor gebruikt, verbindt u uw winkel met het platform via de Instellingen pagina.",
-      "button": "Ga naar Instellingen"
+      "title": "FastEditor-integratie",
+      "description": "Voordat u FastEditor gebruikt, koppelt u uw winkel via de instellingenpagina.",
+      "button": "Ga naar instellingen"
     },
     "customization-button": {
       "title": "Aanpassingsknop",
-      "description": "Voeg een aanpassingsknop toe aan uw productpagina-sjabloon en pas deze aan zodat deze overeenkomt met uw thema.",
+      "description": "Voeg een aanpassingsknop toe aan uw productpagina en pas de stijl aan uw thema aan.",
       "button": "Uiterlijk aanpassen"
     },
     "product-setup": {
       "title": "Productinstelling",
-      "description": "Om een Shopify-product te koppelen aan FastEditor, volgt u deze stappen:",
+      "description": "Volg deze stappen om een Shopify-product te koppelen aan FastEditor:",
       "steps": {
-        "item-1": "Maak of selecteer een product in Shopify.",
-        "item-2": "Ga naar het FastEditor platform.",
+        "item-1": "Maak een product aan of selecteer er één in Shopify.",
+        "item-2": "Ga naar het FastEditor-platform.",
         "item-3": "Zoek het bijbehorende product.",
         "item-4": "Klik op <b>Configuraties</b>.",
-        "item-5": "U komt op de productdetailpagina.",
+        "item-5": "U wordt doorgestuurd naar de productdetailpagina.",
         "item-6": "Selecteer de filters die u wilt gebruiken.",
         "item-7": "Klik op <b>SmartLink payload</b>.",
         "item-8": "Kopieer de <b>SKU</b>.",
         "item-9": "Ga terug naar de productinstellingen in Shopify.",
-        "item-10": "<b>Als het product geen varianten heeft:</b> plak de SKU in het <i>SKU (Stock Keeping Unit)</i> veld in de sectie Voorraad en sla uw wijzigingen op.",
-        "item-11": "<b>Als het product varianten heeft:</b> open de specifieke variant, plak de SKU in het <i>SKU (Stock Keeping Unit)</i> veld in de sectie Voorraad en sla uw wijzigingen op."
+        "item-10": "<b>Als het product geen varianten heeft:</b> plak de SKU in het veld <i>SKU (Stock Keeping Unit)</i> onder Voorraad en sla op.",
+        "item-11": "<b>Als het product varianten heeft:</b> open de variant, plak de SKU in het veld <i>SKU (Stock Keeping Unit)</i> en sla op."
       },
       "display-button-description": "Om de aanpassingsknop op de productpagina weer te geven:",
       "display-steps": {
         "item-1": "Open het product dat u wilt aanpassen.",
-        "item-2": "Scroll naar de sectie <b>Tags</b>.",
+        "item-2": "Ga naar de sectie <b>Tags</b>.",
         "item-3": "Voeg de tag <code>fasteditor</code> toe."
       },
-      "button": "Ga naar Producten"
+      "button": "Producten bekijken"
     }
   },
   "dashboard-page": {
-    "title": "Dashboard",
+    "title": "Overzicht",
     "products-table-info": {
-      "title": "Producten met de FastEditor tag",
-      "description": "De onderstaande tabel toont producten die zijn getagd met <code>fasteditor</code>.",
-      "tag-instructions-title": "Om een product te taggen:",
+      "title": "Producten met de FastEditor-tag",
+      "description": "De tabel hieronder toont producten met de tag <code>fasteditor</code>.",
+      "tag-instructions-title": "Een tag toevoegen aan een product:",
       "steps": {
-        "item-1": "Ga naar <strong>Producten</strong>",
-        "item-2": "Selecteer een product",
-        "item-3": "Voer in de sectie Tags <strong>fasteditor</strong> in en druk op <strong>Enter</strong>",
-        "item-4": "Klik op <strong>Opslaan</strong>"
+        "item-1": "Ga naar <strong>Producten</strong>.",
+        "item-2": "Selecteer een product.",
+        "item-3": "Voer in de tagsectie <strong>fasteditor</strong> in en druk op <strong>Enter</strong>.",
+        "item-4": "Klik op <strong>Opslaan</strong>."
       }
     },
     "products-table": {
@@ -56,35 +56,35 @@
       },
       "empty-state": {
         "title": "Nog geen producten",
-        "description": "Zorg ervoor dat uw producten de fasteditor tag hebben."
+        "description": "Controleer of uw producten de tag fasteditor hebben."
       },
-      "search-placeholder": "Zoeken op producttitel of SKU",
+      "search-placeholder": "Zoeken op titel of SKU",
       "headings": {
         "product": "Product",
         "sku": "SKU",
         "price": "Prijs",
-        "quantity": "Hoeveelheid"
+        "quantity": "Aantal"
       },
       "default-variant-title": "Standaardtitel"
     },
     "error-banner": {
-      "title": "We konden uw dashboardgegevens niet laden",
+      "title": "Gegevens voor het overzicht konden niet worden geladen",
       "return-button": "Terug",
       "messages": {
-        "item-1": "De gegevens konden niet worden gevonden op basis van uw huidige filters.",
-        "item-2": "Als het probleem aanhoudt, probeer dan de pagina te vernieuwen of neem contact op met de ondersteuning."
+        "item-1": "Geen gegevens beschikbaar voor de huidige filters.",
+        "item-2": "Als het probleem blijft bestaan, ververs de pagina of neem contact op met ondersteuning."
       }
     },
     "tabs": {
       "all": "Alle",
       "active": "Actief",
-      "draft": "Concept",
+      "draft": "Concepten",
       "archived": "Gearchiveerd"
     },
     "sort": {
       "product-label": "Product",
-      "direction-az": "A-Z",
-      "direction-za": "Z-A"
+      "direction-az": "Oplopend",
+      "direction-za": "Aflopend"
     }
   },
   "settings-page": {
@@ -92,19 +92,19 @@
     "integration-card": {
       "connected-badge": "Verbonden",
       "not-connected-badge": "Niet verbonden",
-      "title": "Verbind uw winkel met FastEditor",
-      "description": "Om uw winkel te verbinden, voert u hieronder uw FastEditor API-sleutel en domein in en klikt u vervolgens op <strong>Verbinden</strong>. Als de verbinding succesvol is, ziet u een bevestigingsbericht en wordt de status bijgewerkt naar <strong>Verbonden</strong>. Als u problemen ondervindt bij het verbinden van FastEditor, neem dan contact op met onze ondersteuning. U vindt het e-mailadres onderaan de pagina."
+      "title": "Koppel uw winkel aan FastEditor",
+      "description": "Voer hieronder uw FastEditor API-sleutel en domein in en klik op <strong>Verbinden</strong>. Bij een succesvolle koppeling verschijnt een bevestiging. Neem contact op met ondersteuning als er een fout optreedt."
     },
     "integration-form": {
       "api-key-label": "API-sleutel",
       "api-domain-label": "API-domein",
       "connect-button": "Verbinden",
-      "connection-failed-error": "Verbinding met FastEditor mislukt. Controleer uw API-sleutel en domein en probeer het opnieuw.",
+      "connection-failed-error": "Kan geen verbinding maken met FastEditor. Controleer de API-sleutel en het domein.",
       "validation-errors": {
         "api-key-required": "API-sleutel is verplicht",
         "api-domain-required": "API-domein is verplicht"
       },
-      "success-message": "FastEditor-integratie is succesvol.",
+      "success-message": "FastEditor-integratie succesvol.",
       "validation-errors-title": "Validatiefouten"
     }
   },
@@ -112,31 +112,32 @@
     "title": "Abonnement",
     "cancel-button": "Annuleren",
     "current-subscription": {
+      "monthly-plan": "Maandelijks abonnement",
       "per-month": "/ maand",
       "started-on": "Gestart op:",
       "ends-on": "Eindigt op:"
     },
     "usage-subscription": {
-      "title": "Huidige app-uitgavenlimiet",
+      "title": "Huidige uitgavenlimiet",
       "remaining-amount": "Resterend bedrag:",
-      "spent": "uitgegeven",
+      "spent": "gebruikt",
       "limit": "limiet",
       "change-limit-button": "Limiet wijzigen"
     },
     "cancel-modal": {
-      "title": "Abonnement opzeggen",
-      "confirm-question": "Weet u zeker dat u uw abonnement wilt opzeggen?",
-      "confirm-description": "Als u uw abonnement opzegt, wordt de toegang tot alle betaalde functies ingetrokken en kunt u de resterende betaalde periode niet meer gebruiken.",
-      "cancel-button": "Abonnement opzeggen",
+      "title": "Abonnement annuleren",
+      "confirm-question": "Weet u zeker dat u uw abonnement wilt annuleren?",
+      "confirm-description": "Door het abonnement te annuleren verliest u de toegang tot premiumfuncties, ook voor de resterende periode.",
+      "cancel-button": "Abonnement annuleren",
       "keep-button": "Abonnement behouden",
-      "success-message": "Abonnement succesvol opgezegd",
-      "error-message": "Opzeggen van abonnement mislukt"
+      "success-message": "Abonnement succesvol geannuleerd",
+      "error-message": "Annuleren mislukt"
     },
     "status": {
       "active": "Actief",
       "cancelled": "Geannuleerd",
-      "declined": "Geweigerd",
-      "pending": "In afwachting",
+      "declined": "Afgewezen",
+      "pending": "In behandeling",
       "expired": "Verlopen",
       "frozen": "Bevroren"
     }
@@ -148,47 +149,47 @@
     "login-button": "Inloggen"
   },
   "home-page": {
-    "heading": "Een korte kop over FastEditor",
-    "tagline": "Een slogan over FastEditor die uw waardepropositie beschrijft.",
+    "heading": "Korte introductie over FastEditor",
+    "tagline": "Een korte beschrijving van de waarde die FastEditor biedt.",
     "shop-domain-label": "Winkeldomein",
-    "shop-domain-example": "bijv: mijn-winkel-domein.myshopify.com",
+    "shop-domain-example": "bijv.: mijnwinkel.myshopify.com",
     "login-button": "Inloggen",
     "product-feature-title": "Productfunctie",
-    "product-feature-description": "Enkele details over uw functie en het voordeel voor uw klant."
+    "product-feature-description": "Beschrijving van de functie en de voordelen voor uw klanten."
   },
   "no-subscription-page": {
     "heading": "Activeer uw abonnement om door te gaan",
     "activate-button": "Abonnement activeren",
-    "description": "Om FastEditor te blijven gebruiken, activeert u alstublieft uw maandelijkse plan. U wordt doorgestuurd naar de factureringspagina om uw abonnement te bevestigen.",
+    "description": "Activeer uw maandabonnement om FastEditor te blijven gebruiken. U wordt doorgestuurd naar de betaalpagina.",
     "error-message": "Kan abonnement niet aanmaken"
   },
   "usage-limit-banner": {
     "title": "Gebruikslimiet overschreden",
-    "description": "Uw huidige gebruik heeft de toegestane limiet voor deze factureringscyclus overschreden. Als gevolg hiervan is de applicatie tijdelijk niet beschikbaar.",
-    "list-item-1": "Toegang tot alle app-functies is geblokkeerd totdat de gebruikslimiet wordt verhoogd of de factureringscyclus wordt gereset.",
-    "list-item-2": "Om de toegang te herstellen, controleer alstublieft uw abonnementsplan of verhoog uw gebruikslimiet in de instellingen.",
-    "go-to-subscription-button": "Ga naar Abonnement",
+    "description": "Uw huidige gebruik overschrijdt de toegestane limiet voor deze factureringsperiode. De app is tijdelijk niet beschikbaar.",
+    "list-item-1": "Toegang tot alle appfuncties is geblokkeerd totdat de limiet wordt verhoogd of de factureringsperiode wordt vernieuwd.",
+    "list-item-2": "Controleer uw abonnement of verhoog de limiet om toegang te herstellen.",
+    "go-to-subscription-button": "Bekijk abonnement",
     "change-limit-button": "Limiet wijzigen"
   },
   "errors": {
     "login": {
       "missing-shop": "Voer uw winkeldomein in om in te loggen",
-      "invalid-shop": "Voer een geldig winkeldomein in om in te loggen"
+      "invalid-shop": "Voer een geldig winkeldomein in"
     },
     "subscription": {
-      "unable-to-fetch-shop-settings": "Kan winkelinstellingen niet ophalen",
-      "unable-to-fetch-subscriptions": "Kan abonnementen niet ophalen",
-      "unable-to-fetch-current-subscription": "Kan huidig abonnement niet ophalen"
+      "unable-to-fetch-shop-settings": "Kan winkelinstellingen niet laden",
+      "unable-to-fetch-subscriptions": "Kan abonnementen niet laden",
+      "unable-to-fetch-current-subscription": "Kan huidig abonnement niet laden"
     }
   },
   "navigation": {
     "home": "Startpagina",
-    "dashboard": "Dashboard",
+    "dashboard": "Overzicht",
     "settings": "Instellingen",
     "subscription": "Abonnement"
   },
   "footer": {
-    "support-text": "Hulp nodig? Neem contact op met ons ondersteuningsteam op"
+    "support-text": "Hulp nodig? Neem contact op met ons ondersteuningsteam via"
   },
   "language-switcher": {
     "label": "Taal",
@@ -206,4 +207,3 @@
     }
   }
 }
-
