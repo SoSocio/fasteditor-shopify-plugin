@@ -10,7 +10,7 @@
   width: 100vw;
   max-width: 100vw;
   gap: 10px;
-  padding: 8px 15px;
+  padding: 8px 0;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   box-sizing: border-box;
@@ -20,7 +20,7 @@
   line-height: 1.4;
   background-color: var(--fasteditor-bar-background, #ffffff);
   color: var(--fasteditor-bar-text, #111111);
-  box-shadow: 4px 0 10px rgba(0, 0, 0, .4);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .4);
   opacity: 1;
   visibility: visible;
 }
@@ -37,11 +37,22 @@
   transform: translateY(-100%);
 }
 
+.fasteditor-sticky-bar--desktop-top {
+  top: var(--fasteditor-top-offset, 0);
+  bottom: auto;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 1px 10px -6px;
+}
+
+.fasteditor-sticky-bar--desktop-bottom {
+  bottom: 0;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px -1px 10px -6px;
+}
+
 .fasteditor-sticky-bar__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: calc(100% - 60px);
+  width: 100%;
   gap: 20px;
 }
 
@@ -186,7 +197,6 @@
     gap: 8px;
     flex-wrap: wrap;
     width: 100%;
-    padding: 0;
   }
 
   .fasteditor-sticky-bar__media {
@@ -214,16 +224,6 @@
 @media (min-width: 750px) {
   .fasteditor-sticky-bar[data-add-to-cart-visibility="mobile"] .fasteditor-sticky-bar__button--add {
     display: none !important;
-  }
-
-  .fasteditor-sticky-bar--desktop-top {
-    top: var(--fasteditor-top-offset, 0);
-    bottom: auto;
-    box-shadow: 0 2px 18px rgba(17, 17, 17, 0.12);
-  }
-
-  .fasteditor-sticky-bar--desktop-bottom {
-    bottom: 0;
   }
 
   .fasteditor-sticky-bar--desktop-hide {

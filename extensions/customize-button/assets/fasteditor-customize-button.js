@@ -454,6 +454,8 @@
         }
 
         // Success - redirect to FastEditor customization page
+        setButtonLoadingIcon(this.button, false);
+        setButtonState(this.button, this.originalText, false);
         window.location.href = responseData.data.url;
       } catch (error) {
         console.error('[FastEditor] Redirect error:', error);
