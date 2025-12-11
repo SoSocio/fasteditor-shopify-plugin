@@ -83,8 +83,8 @@
     },
     "sort": {
       "product-label": "Product",
-      "direction-az": "A-Z",
-      "direction-za": "Z-A"
+      "direction-az": "Ascending",
+      "direction-za": "Descending"
     }
   },
   "settings-page": {
@@ -112,6 +112,7 @@
     "title": "Subscription",
     "cancel-button": "Cancel",
     "current-subscription": {
+      "monthly-plan": "Monthly subscription",
       "per-month": "/ month",
       "started-on": "Started on:",
       "ends-on": "Ends on:"
