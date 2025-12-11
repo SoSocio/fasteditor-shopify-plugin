@@ -511,8 +511,9 @@
 
       const calculateThreshold = () => {
         const rect = header.getBoundingClientRect();
-        const headerBottom = rect.bottom;
-        scrollThreshold = window.scrollY + headerBottom;
+        const headerHeight = rect.height || header.offsetHeight || 0;
+        const headerOffsetTop = header.offsetTop ?? 0;
+        scrollThreshold = Math.max(0, headerOffsetTop + headerHeight);
       };
 
       const checkScrollPosition = () => {
