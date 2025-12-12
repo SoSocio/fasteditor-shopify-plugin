@@ -52,8 +52,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
       if (merchant?.language) {
         locale = mapLocaleToSupported(merchant.language);
         console.log("App Root Loader - Using merchant language:", merchant.language, "->", locale);
+      } else if (session.onlineAccessInfo?.associated_user.locale) {
+        locale = mapLocaleToSupported(session.onlineAccessInfo?.associated_user.locale);
+        console.log("App Root Loader - Using session locale:", session.onlineAccessInfo?.associated_user.locale, "->", locale);
       } else {
-        // Priority 2: Fallback to i18next detection
+        // Priority 3: Fallback to i18next detection
         locale = await i18next.getLocale(request);
         console.log("App Root Loader - Using detected locale (fallback):", locale);
       }
