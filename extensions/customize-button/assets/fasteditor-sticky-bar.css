@@ -23,6 +23,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, .4);
   opacity: 1;
   visibility: visible;
+  height: fit-content;
 }
 
 .fasteditor-sticky-bar[data-state="hidden"] {
@@ -37,6 +38,11 @@
   transform: translateY(-100%);
 }
 
+.fasteditor-sticky-bar[data-state="hidden"].fasteditor-sticky-bar--mobile-bottom,
+.fasteditor-sticky-bar[data-state="hidden"].fasteditor-sticky-bar--desktop-bottom {
+  transform: translateY(100%);
+}
+
 .fasteditor-sticky-bar--desktop-top {
   top: var(--fasteditor-top-offset, 0);
   bottom: auto;
@@ -45,6 +51,7 @@
 
 .fasteditor-sticky-bar--desktop-bottom {
   bottom: 0;
+  top: auto;
   box-shadow: rgba(0, 0, 0, 0.4) 0px -1px 10px -6px;
 }
 
@@ -177,6 +184,7 @@
 }
 
 .fasteditor-sticky-bar--mobile-bottom {
+  top: auto;
   bottom: 0;
 }
 
