@@ -2,7 +2,7 @@ import {useLoaderData} from "@remix-run/react";
 import type {LoaderFunctionArgs} from "@remix-run/node";
 
 import {
-  Layout,
+  InlineGrid,
   Card,
   BlockStack,
   Box,
@@ -25,6 +25,7 @@ const ENDPOINT = "/app/_index";
 
 interface GettingStartedLoader {
   shopName: string;
+  apiKey: string;
   appAvailability: string;
 }
 
@@ -40,12 +41,13 @@ export const loader = async (
 
   return {
     shopName: session.shop.replace(".myshopify.com", ""),
-    appAvailability: appAvailability?.value
+    appAvailability: appAvailability?.value,
+    apiKey: process.env.SHOPIFY_API_KEY || "",
   }
 };
 
 const Index = () => {
-  const {shopName, appAvailability} = useLoaderData<typeof loader>()
+  const {shopName, appAvailability, apiKey} = useLoaderData<typeof loader>()
 
   const { t } = useTranslation();
 
@@ -54,10 +56,10 @@ const Index = () => {
   }
 
   return (
-    <PageLayout title={t("getting-started-page.title")}>
+    <PageLayout title={t("getting-started-page.title")} fullWidth>
       <Box paddingBlockEnd="500">
-        <Layout>
-          <Layout.Section>
+        <InlineGrid columns={{sm: 1, md: 2}} gap="400">
+          <BlockStack gap="200">
             <Card>
               <BlockStack gap="200">
                 <Text as="h2" variant="headingMd">
@@ -71,30 +73,6 @@ const Index = () => {
                 </Text>
               </BlockStack>
             </Card>
-          </Layout.Section>
-
-          <Layout.Section>
-            <Card>
-              <BlockStack gap="200">
-                <Text as="h2" variant="headingMd">
-                  {t("getting-started-page.customization-button.title")}
-                </Text>
-                <Text as="p" variant="bodyMd">
-                  {t("getting-started-page.customization-button.description")}
-                </Text>
-                <Text as="span">
-                  <Button
-                    url={`https://admin.shopify.com/store/${shopName}/themes/current/editor`}
-                    target="_blank"
-                  >
-                    {t("getting-started-page.customization-button.button")}
-                  </Button>
-                </Text>
-              </BlockStack>
-            </Card>
-          </Layout.Section>
-
-          <Layout.Section>
             <Card>
               <BlockStack gap="200">
                 <Text as="h2" variant="headingMd">
@@ -152,8 +130,53 @@ const Index = () => {
                 </Text>
               </BlockStack>
             </Card>
-          </Layout.Section>
-        </Layout>
+          </BlockStack>
+
+          <BlockStack gap="200">
+            <Card>
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingMd">
+                  {t("getting-started-page.customization-button.title")}
+                </Text>
+                <video style={{ width: "100%", height: "100%", borderRadius: "6px" }} muted loop poster="customize-button.png">
+                  <source src="customize-button.mp4" type="video/mp4"/>
+                </video>
+                <Text as="p" variant="bodyMd">
+                  {t("getting-started-page.customization-button.description")}
+                </Text>
+                <Text as="span">
+                  <Button
+                    url={`https://admin.shopify.com/store/${shopName}/themes/current/editor?template=product&addAppBlockId=${apiKey}/product-customize-block&target=mainSection`}
+                    target="_blank"
+                  >
+                    {t("getting-started-page.customization-button.button")}
+                  </Button>
+                </Text>
+              </BlockStack>
+            </Card>
+            <Card>
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingMd">
+                  Sticky Bar with Customize Button
+                </Text>
+                <video style={{ width: "100%", height: "100%", borderRadius: "6px" }}  muted loop>
+                  <source src="sticky-bar.mp4" type="video/mp4"/>
+                </video>
+                <Text as="p" variant="bodyMd">
+                  Click the button below to enable the sticky bar. The sticky bar will be displayed on product pages that have the fasteditor tag. You can also customize the sticky bar styles according to your needs.
+                </Text>
+                <Text as="span">
+                  <Button
+                    url={`https://admin.shopify.com/store/${shopName}/admin/themes/current/editor?context=apps&template=product&activateAppId=${apiKey}/sticky-bar`}
+                    target="_blank"
+                  >
+                    Add Sticky Bar
+                  </Button>
+                </Text>
+              </BlockStack>
+            </Card>
+          </BlockStack>
+        </InlineGrid>
       </Box>
     </PageLayout>
   );

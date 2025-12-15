@@ -7,9 +7,9 @@
       "button": "Go to Settings"
     },
     "customization-button": {
-      "title": "Customization Button",
-      "description": "Add a customization button to your product page template and style it to match your theme.",
-      "button": "Customize Appearance"
+      "title": "Customize Button",
+      "description": "Add a customize button to your product page template and style it to match your theme.",
+      "button": "Add Customize Button"
     },
     "product-setup": {
       "title": "Product Setup",
