@@ -223,7 +223,7 @@ export async function getAllAppSubscriptions(admin: authenticateAdmin): Promise<
     #graphql
     query ActiveSubscriptions {
       currentAppInstallation {
-        allSubscriptions(first: 50) {
+        allSubscriptions(first: 150) {
           nodes {
             createdAt
             currentPeriodEnd
