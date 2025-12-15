@@ -38,9 +38,11 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
     const cartUrl = `https://${data.shop}/products/${data.productHandle}`;
     const fastEditorParams = buildFastEditorPayload({
       ...shopSettings,
-      ...data,
+      variantId: data.variantId,
+      quantity: data.quantity,
       variantSKU,
       cartUrl,
+      userId: data.userId,
     });
 
     const fastEditor = new FastEditorAPI(shopSettings.fastEditorApiKey, shopSettings.fastEditorDomain);

@@ -12,6 +12,9 @@ async function handleFastEditorRedirect(button, originalText) {
   const quantityInput = document.querySelector('input[name="quantity"]');
   const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
 
+  // Get or create userId from cookie
+  const userId = window.getOrCreateUserId ? window.getOrCreateUserId() : null;
+
   try {
     setButtonState(button, "Loading...");
     const response = await fetch("/apps/embedded/app/smartlink", {
@@ -20,7 +23,7 @@ async function handleFastEditorRedirect(button, originalText) {
         "Content-Type": "application/json",
         "ngrok-skip-browser-warning": "69420"
       },
-      body: JSON.stringify({shop, variantId, quantity, productHandle}),
+      body: JSON.stringify({ shop, variantId, quantity, productHandle, userId }),
     });
 
     const responseData = await response.json();
