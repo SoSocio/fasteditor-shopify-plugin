@@ -11,6 +11,11 @@
       "description": "Add a customize button to your product page template and style it to match your theme.",
       "button": "Add Customize Button"
     },
+    "sticky-bar": {
+      "title": "Sticky Bar with Customize Button",
+      "description": "Click the button below to enable the sticky bar. The sticky bar will be displayed on product pages that have the fasteditor tag. You can also customize the sticky bar styles according to your needs.",
+      "button": "Add Sticky Bar"
+    },
     "product-setup": {
       "title": "Product Setup",
       "description": "To link a Shopify product with FastEditor, follow these steps:",

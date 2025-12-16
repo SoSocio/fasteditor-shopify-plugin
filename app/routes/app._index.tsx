@@ -157,20 +157,20 @@ const Index = () => {
             <Card>
               <BlockStack gap="200">
                 <Text as="h2" variant="headingMd">
-                  Sticky Bar with Customize Button
+                  {t("getting-started-page.sticky-bar.title")}
                 </Text>
                 <video style={{ width: "100%", height: "100%", borderRadius: "6px" }} autoPlay muted loop poster="sticky-bar.png">
                   <source src="sticky-bar.mp4" type="video/mp4"/>
                 </video>
                 <Text as="p" variant="bodyMd">
-                  Click the button below to enable the sticky bar. The sticky bar will be displayed on product pages that have the fasteditor tag. You can also customize the sticky bar styles according to your needs.
+                  {t("getting-started-page.sticky-bar.description")}
                 </Text>
                 <Text as="span">
                   <Button
-                    url={`https://admin.shopify.com/store/${shopName}/admin/themes/current/editor?context=apps&template=product&activateAppId=${apiKey}/sticky-bar`}
+                    url={`https://admin.shopify.com/store/${shopName}/admin/themes/current/editor?context=apps&template=product`}
                     target="_blank"
                   >
-                    Add Sticky Bar
+                    {t("getting-started-page.sticky-bar.button")}
                   </Button>
                 </Text>
               </BlockStack>
