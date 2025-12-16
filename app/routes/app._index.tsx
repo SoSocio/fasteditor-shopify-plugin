@@ -138,7 +138,7 @@ const Index = () => {
                 <Text as="h2" variant="headingMd">
                   {t("getting-started-page.customization-button.title")}
                 </Text>
-                <video style={{ width: "100%", height: "100%", borderRadius: "6px" }} muted loop poster="customize-button.png">
+                <video style={{ width: "100%", height: "100%", borderRadius: "6px" }} autoPlay muted loop poster="customize-button.png">
                   <source src="customize-button.mp4" type="video/mp4"/>
                 </video>
                 <Text as="p" variant="bodyMd">
@@ -159,7 +159,7 @@ const Index = () => {
                 <Text as="h2" variant="headingMd">
                   Sticky Bar with Customize Button
                 </Text>
-                <video style={{ width: "100%", height: "100%", borderRadius: "6px" }}  muted loop>
+                <video style={{ width: "100%", height: "100%", borderRadius: "6px" }} autoPlay muted loop poster="sticky-bar.png">
                   <source src="sticky-bar.mp4" type="video/mp4"/>
                 </video>
                 <Text as="p" variant="bodyMd">
