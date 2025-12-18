@@ -9,7 +9,12 @@
     "customization-button": {
       "title": "Przycisk personalizacji",
       "description": "Dodaj przycisk personalizacji do szablonu strony produktu i dopasuj wygląd do motywu.",
-      "button": "Dostosuj wygląd"
+      "button": "Dodaj przycisk personalizacji"
+    },
+    "sticky-bar": {
+      "title": "Przyklejony pasek z przyciskiem personalizacji",
+      "description": "Kliknij przycisk poniżej, aby włączyć przyklejony pasek. Przyklejony pasek będzie wyświetlany na stronach produktów, które mają tag fasteditor. Możesz także dostosować style przyklejonego paska zgodnie z potrzebami.",
+      "button": "Dodaj przyklejony pasek"
     },
     "product-setup": {
       "title": "Konfiguracja produktu",

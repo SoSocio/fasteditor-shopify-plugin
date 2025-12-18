@@ -9,7 +9,12 @@
     "customization-button": {
       "title": "Bouton de personnalisation",
       "description": "Ajoutez un bouton de personnalisation à votre modèle de page produit et adaptez son style à votre thème.",
-      "button": "Personnaliser l’apparence"
+      "button": "Ajouter le bouton de personnalisation"
+    },
+    "sticky-bar": {
+      "title": "Barre fixe avec bouton de personnalisation",
+      "description": "Cliquez sur le bouton ci-dessous pour activer la barre fixe. La barre fixe sera affichée sur les pages produit qui ont le tag fasteditor. Vous pouvez également personnaliser les styles de la barre fixe selon vos besoins.",
+      "button": "Ajouter la barre fixe"
     },
     "product-setup": {
       "title": "Configuration du produit",

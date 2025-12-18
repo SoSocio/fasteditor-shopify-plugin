@@ -9,7 +9,12 @@
     "customization-button": {
       "title": "Tilpasningsknap",
       "description": "Tilføj en tilpasningsknap til produktets sideskabelon og tilpas den til dit tema.",
-      "button": "Tilpas udseende"
+      "button": "Tilføj tilpasningsknap"
+    },
+    "sticky-bar": {
+      "title": "Klæbende bar med tilpasningsknap",
+      "description": "Klik på knappen nedenfor for at aktivere den klæbende bar. Den klæbende bar vises på produktsider, der har fasteditor-tagget. Du kan også tilpasse stilene for den klæbende bar efter dine behov.",
+      "button": "Tilføj klæbende bar"
     },
     "product-setup": {
       "title": "Produktopsætning",

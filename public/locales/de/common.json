@@ -7,9 +7,14 @@
       "button": "Zu den Einstellungen"
     },
     "customization-button": {
-      "title": "Schaltfläche zur Anpassung",
-      "description": "Fügen Sie Ihrem Produktseitentemplate eine Schaltfläche zur Anpassung hinzu und passen Sie deren Erscheinungsbild an Ihr Theme an.",
-      "button": "Erscheinungsbild anpassen"
+      "title": "Anpassungsschaltfläche",
+      "description": "Fügen Sie Ihrem Produktseitentemplate eine Anpassungsschaltfläche hinzu und passen Sie deren Erscheinungsbild an Ihr Theme an.",
+      "button": "Anpassungsschaltfläche hinzufügen"
+    },
+    "sticky-bar": {
+      "title": "Sticky Bar mit Anpassungsschaltfläche",
+      "description": "Klicken Sie auf die Schaltfläche unten, um die Sticky Bar zu aktivieren. Die Sticky Bar wird auf Produktseiten angezeigt, die das fasteditor-Tag haben. Sie können auch die Stile der Sticky Bar nach Ihren Bedürfnissen anpassen.",
+      "button": "Sticky Bar hinzufügen"
     },
     "product-setup": {
       "title": "Produkteinrichtung",

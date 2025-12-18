@@ -9,7 +9,12 @@
     "customization-button": {
       "title": "Pulsante di personalizzazione",
       "description": "Aggiungi un pulsante di personalizzazione al modello della pagina prodotto e adatta lo stile al tema del tuo negozio.",
-      "button": "Personalizza Aspetto"
+      "button": "Aggiungi pulsante di personalizzazione"
+    },
+    "sticky-bar": {
+      "title": "Barra fissa con pulsante di personalizzazione",
+      "description": "Clicca sul pulsante qui sotto per abilitare la barra fissa. La barra fissa sarà visualizzata nelle pagine prodotto che hanno il tag fasteditor. Puoi anche personalizzare gli stili della barra fissa secondo le tue esigenze.",
+      "button": "Aggiungi barra fissa"
     },
     "product-setup": {
       "title": "Configurazione del prodotto",

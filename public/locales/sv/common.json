@@ -9,7 +9,12 @@
     "customization-button": {
       "title": "Anpassningsknapp",
       "description": "Lägg till en anpassningsknapp på din produktsida och anpassa utseendet till ditt tema.",
-      "button": "Anpassa utseende"
+      "button": "Lägg till anpassningsknapp"
+    },
+    "sticky-bar": {
+      "title": "Klistrad fält med anpassningsknapp",
+      "description": "Klicka på knappen nedan för att aktivera det klistrade fältet. Det klistrade fältet kommer att visas på produktsidor som har fasteditor-taggen. Du kan också anpassa stilen för det klistrade fältet efter dina behov.",
+      "button": "Lägg till klistrat fält"
     },
     "product-setup": {
       "title": "Produktinställning",

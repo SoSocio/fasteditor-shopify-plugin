@@ -9,7 +9,12 @@
     "customization-button": {
       "title": "Aanpassingsknop",
       "description": "Voeg een aanpassingsknop toe aan uw productpagina en pas de stijl aan uw thema aan.",
-      "button": "Uiterlijk aanpassen"
+      "button": "Aanpassingsknop toevoegen"
+    },
+    "sticky-bar": {
+      "title": "Klevende balk met aanpassingsknop",
+      "description": "Klik op de knop hieronder om de klevende balk in te schakelen. De klevende balk wordt weergegeven op productpagina's die de fasteditor-tag hebben. U kunt ook de stijlen van de klevende balk aanpassen naar uw behoeften.",
+      "button": "Klevende balk toevoegen"
     },
     "product-setup": {
       "title": "Productinstelling",
