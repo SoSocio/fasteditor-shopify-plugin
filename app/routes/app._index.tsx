@@ -138,7 +138,19 @@ const Index = () => {
                 <Text as="h2" variant="headingMd">
                   {t("getting-started-page.customization-button.title")}
                 </Text>
-                <video style={{ width: "100%", height: "100%", borderRadius: "6px" }} muted loop poster="customize-button.png">
+                <video
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "6px",
+                    objectFit: "cover",
+                    aspectRatio: "16 / 9"
+                  }}
+                  autoPlay
+                  muted
+                  loop
+                  poster="customize-button.png"
+                >
                   <source src="customize-button.mp4" type="video/mp4"/>
                 </video>
                 <Text as="p" variant="bodyMd">
@@ -157,20 +169,31 @@ const Index = () => {
             <Card>
               <BlockStack gap="200">
                 <Text as="h2" variant="headingMd">
-                  Sticky Bar with Customize Button
+                  {t("getting-started-page.sticky-bar.title")}
                 </Text>
-                <video style={{ width: "100%", height: "100%", borderRadius: "6px" }}  muted loop>
+                <video
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "6px",
+                    objectFit: "cover",
+                    aspectRatio: "16 / 9"
+                  }}
+                  autoPlay
+                  muted
+                  loop poster="sticky-bar.png"
+                >
                   <source src="sticky-bar.mp4" type="video/mp4"/>
                 </video>
                 <Text as="p" variant="bodyMd">
-                  Click the button below to enable the sticky bar. The sticky bar will be displayed on product pages that have the fasteditor tag. You can also customize the sticky bar styles according to your needs.
+                  {t("getting-started-page.sticky-bar.description")}
                 </Text>
                 <Text as="span">
                   <Button
-                    url={`https://admin.shopify.com/store/${shopName}/admin/themes/current/editor?context=apps&template=product&activateAppId=${apiKey}/sticky-bar`}
+                    url={`https://admin.shopify.com/store/${shopName}/admin/themes/current/editor?context=apps&template=product`}
                     target="_blank"
                   >
-                    Add Sticky Bar
+                    {t("getting-started-page.sticky-bar.button")}
                   </Button>
                 </Text>
               </BlockStack>
