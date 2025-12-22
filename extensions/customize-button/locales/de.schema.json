@@ -1,0 +1,130 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "Personalisierungs-Button",
+      "settings": {
+        "button_text": {
+          "header": "Button-Text",
+          "text": "Button-Text",
+          "text_font": "Textschrift",
+          "text_size": "Schriftgröße",
+          "text_color": "Textfarbe"
+        },
+        "button_appearance": {
+          "header": "Button-Erscheinungsbild",
+          "bg_color": "Button-Hintergrundfarbe",
+          "border_width": "Rahmenbreite",
+          "border_color": "Rahmenfarbe",
+          "border_radius": "Rahmenradius"
+        },
+        "icon_settings": {
+          "header": "Symbol-Einstellungen",
+          "icon_type": {
+            "label": "Symboltyp",
+            "options": {
+              "none": "Keine",
+              "pen": "Stift",
+              "brush": "Pinsel",
+              "image": "Bild",
+              "images": "Bilder",
+              "link": "Link",
+              "settings": "Einstellungen",
+              "custom": "Benutzerdefiniert"
+            }
+          },
+          "custom_icon_image": "Benutzerdefiniertes Symbolbild",
+          "custom_icon_image_info": "Gilt nur bei Symboltyp 'Benutzerdefiniert'",
+          "icon_color": "Symbolfarbe",
+          "icon_color_info": "Gilt nur für integrierte Symbole",
+          "icon_size": "Symbolgröße",
+          "icon_size_info": "Gilt nur, wenn ein Symbol ausgewählt ist",
+          "icon_gap": "Symbolabstand",
+          "icon_gap_info": "Abstand zwischen Symbol und Text",
+          "icon_position": {
+            "label": "Symbolposition",
+            "options": {
+              "left": "Links",
+              "right": "Rechts"
+            },
+            "info": "Gilt nur, wenn ein Symbol ausgewählt ist"
+          }
+        },
+        "button_state_texts": {
+          "header": "Button-Status-Texte",
+          "loading_text": "Ladetext",
+          "loading_text_info": "Text, der angezeigt wird, wenn der Button lädt",
+          "adding_to_cart_text": "Text beim Hinzufügen zum Warenkorb",
+          "adding_to_cart_text_info": "Text beim Hinzufügen zum Warenkorb",
+          "added_to_cart_text": "Text nach dem Hinzufügen zum Warenkorb",
+          "added_to_cart_text_info": "Text nach Hinzufügen zum Warenkorb",
+          "error_text": "Fehlertext",
+          "error_text_info": "Text, der bei einem Fehler angezeigt wird"
+        },
+        "button_behavior": {
+          "header": "Button-Verhalten",
+          "enable_cart_redirect": "Nach Hinzufügen zum Warenkorb weiterleiten"
+        }
+      }
+    },
+    "sticky-bar": {
+      "name": "FastEditor Sticky Bar",
+      "settings": {
+        "layout": {
+          "header": "Layout",
+          "desktop_position": {
+            "label": "Desktop-Position",
+            "options": {
+              "top": "Oben",
+              "bottom": "Unten",
+              "hide": "Ausblenden"
+            }
+          },
+          "button_radius": "Button-Randradius",
+          "mobile_position": {
+            "label": "Mobile Position",
+            "options": {
+              "top": "Oben",
+              "bottom": "Unten",
+              "hide": "Ausblenden"
+            }
+          },
+          "show_product_details": {
+            "label": "Produktdetails auf Mobil anzeigen"
+          }
+        },
+        "colors": {
+          "header": "Farben",
+          "background_color": "Leistenhintergrund",
+          "text_color": "Leistentext",
+          "customize_button_background": "Hintergrund des Anpassungs-Buttons",
+          "customize_button_text_color": "Text des Anpassungs-Buttons",
+          "add_button_background": "Hintergrund des In-den-Warenkorb-Buttons",
+          "add_button_text": "Text des In-den-Warenkorb-Buttons"
+        },
+        "buttons": {
+          "header": "Buttons",
+          "customize_button_text": "Text des Anpassungs-Buttons",
+          "customize_loading_text": "Lade-Text für Anpassung",
+          "add_to_cart_added_text": "Text nach Hinzufügen zum Warenkorb",
+          "add_to_cart_button_text": "Text des In-den-Warenkorb-Buttons",
+          "add_to_cart_adding_text": "Text beim Hinzufügen zum Warenkorb",
+          "add_to_cart_error_text": "Fehlermeldung",
+          "add_to_cart_sold_out_text": "Text bei Ausverkauft"
+        },
+        "visibility": {
+          "header": "Sichtbarkeit",
+          "add_to_cart_visibility": {
+            "label": "Sichtbarkeit des Warenkorb-Buttons",
+            "options": {
+              "both": "Mobil + Desktop",
+              "mobile": "Mobil",
+              "desktop": "Desktop",
+              "none": "Ausblenden"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,129 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "Customize Button",
+      "settings": {
+        "button_text": {
+          "header": "Button Text",
+          "text": "Button text",
+          "text_font": "Text font",
+          "text_size": "Font size",
+          "text_color": "Text color"
+        },
+        "button_appearance": {
+          "header": "Button Appearance",
+          "bg_color": "Button background color",
+          "border_width": "Border width",
+          "border_color": "Border color",
+          "border_radius": "Border radius"
+        },
+        "icon_settings": {
+          "header": "Icon Settings",
+          "icon_type": {
+            "label": "Icon type",
+            "options": {
+              "none": "None",
+              "pen": "Pen",
+              "brush": "Brush",
+              "image": "Image",
+              "images": "Images",
+              "link": "Link",
+              "settings": "Settings",
+              "custom": "Custom"
+            }
+          },
+          "custom_icon_image": "Custom icon image",
+          "custom_icon_image_info": "Only applies when 'Custom' icon type is selected",
+          "icon_color": "Icon color",
+          "icon_color_info": "Only applies to built-in icons",
+          "icon_size": "Icon size",
+          "icon_size_info": "Only applies when icon is selected",
+          "icon_gap": "Icon gap",
+          "icon_gap_info": "Distance between icon and text",
+          "icon_position": {
+            "label": "Icon position",
+            "options": {
+              "left": "Left",
+              "right": "Right"
+            },
+            "info": "Only applies when icon is selected"
+          }
+        },
+        "button_state_texts": {
+          "header": "Button State Texts",
+          "loading_text": "Loading text",
+          "loading_text_info": "Text shown when button is loading",
+          "adding_to_cart_text": "Adding to cart text",
+          "adding_to_cart_text_info": "Text shown when adding item to cart",
+          "added_to_cart_text": "Added to cart text",
+          "added_to_cart_text_info": "Text shown after item is added to cart",
+          "error_text": "Error text",
+          "error_text_info": "Text shown when an error occurs"
+        },
+        "button_behavior": {
+          "header": "Button Behavior",
+          "enable_cart_redirect": "Redirect to cart page after adding to cart"
+        }
+      }
+    },
+    "sticky-bar": {
+      "name": "FastEditor Sticky Bar",
+      "settings": {
+        "layout": {
+          "header": "Layout",
+          "desktop_position": {
+            "label": "Desktop position",
+            "options": {
+              "top": "Top",
+              "bottom": "Bottom",
+              "hide": "Hide"
+            }
+          },
+          "button_radius": "Button border radius",
+          "mobile_position": {
+            "label": "Mobile position",
+            "options": {
+              "top": "Top",
+              "bottom": "Bottom",
+              "hide": "Hide"
+            }
+          },
+          "show_product_details": {
+            "label": "Show product details on mobile"
+          }
+        },
+        "colors": {
+          "header": "Colors",
+          "background_color": "Bar background",
+          "text_color": "Bar text",
+          "customize_button_background": "Customize button background",
+          "customize_button_text_color": "Customize button text",
+          "add_button_background": "Add to cart button background",
+          "add_button_text": "Add to cart button text"
+        },
+        "buttons": {
+          "header": "Buttons",
+          "customize_button_text": "Customize button text",
+          "customize_loading_text": "Customize loading text",
+          "add_to_cart_added_text": "Added to cart text",
+          "add_to_cart_button_text": "Add to cart button text",
+          "add_to_cart_adding_text": "Adding to cart text",
+          "add_to_cart_error_text": "Error text",
+          "add_to_cart_sold_out_text": "Sold out text"
+        },
+        "visibility": {
+          "header": "Visibility",
+          "add_to_cart_visibility": {
+            "label": "Add to cart visibility",
+            "options": {
+              "both": "Mobile + desktop",
+              "mobile": "Mobile",
+              "desktop": "Desktop",
+              "none": "Hidden"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,21 +1,21 @@
 import React from 'react';
 import {BlockStack, List, Text} from "@shopify/polaris";
+import { useTranslation } from "react-i18next";
 
 export const UsageLimitBannerContent = () => {
+  const { t } = useTranslation();
+
   return (
     <BlockStack gap="200">
       <Text as="p">
-        Your current usage has exceeded the allowed limit for this billing cycle. As a result,
-        the application is temporarily unavailable.
+        {t("usage-limit-banner.description")}
       </Text>
       <List>
         <List.Item>
-          Access to all app features is blocked until the usage limit is increased or the
-          billing cycle resets.
+          {t("usage-limit-banner.list-item-1")}
         </List.Item>
         <List.Item>
-          To restore access, please review your subscription plan or increase your usage limit
-          in the settings.
+          {t("usage-limit-banner.list-item-2")}
         </List.Item>
       </List>
     </BlockStack>

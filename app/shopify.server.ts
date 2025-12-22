@@ -30,6 +30,7 @@ const shopify = shopifyApp({
   authPathPrefix: "/auth",
   sessionStorage: new PrismaSessionStorage(prisma),
   distribution: AppDistribution.AppStore,
+  useOnlineTokens: true,
   billing: {
     [MONTHLY_PLAN]: {
       trialDays: TRIAL_PERIOD_DAYS,

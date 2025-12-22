@@ -1,0 +1,214 @@
+{
+  "getting-started-page": {
+    "title": "Premiers pas",
+    "integration": {
+      "title": "Intégration de FastEditor",
+      "description": "Avant d’utiliser FastEditor, connectez votre boutique à la plateforme via la page Paramètres.",
+      "button": "Aller aux paramètres"
+    },
+    "customization-button": {
+      "title": "Bouton de personnalisation",
+      "description": "Ajoutez un bouton de personnalisation à votre modèle de page produit et adaptez son style à votre thème.",
+      "button": "Ajouter le bouton de personnalisation"
+    },
+    "sticky-bar": {
+      "title": "Barre fixe avec bouton de personnalisation",
+      "description": "Cliquez sur le bouton ci-dessous pour activer la barre fixe. La barre fixe sera affichée sur les pages produit qui ont le tag fasteditor. Vous pouvez également personnaliser les styles de la barre fixe selon vos besoins.",
+      "button": "Ajouter la barre fixe"
+    },
+    "product-setup": {
+      "title": "Configuration du produit",
+      "description": "Pour lier un produit Shopify à FastEditor, suivez ces étapes :",
+      "steps": {
+        "item-1": "Créez ou sélectionnez un produit dans Shopify.",
+        "item-2": "Accédez à la plateforme FastEditor.",
+        "item-3": "Trouvez le produit correspondant.",
+        "item-4": "Cliquez sur <b>Configurations</b>.",
+        "item-5": "Vous arriverez sur la page de détails du produit.",
+        "item-6": "Sélectionnez les filtres que vous souhaitez utiliser.",
+        "item-7": "Cliquez sur <b>SmartLink payload</b>.",
+        "item-8": "Copiez la <b>SKU</b>.",
+        "item-9": "Revenez aux paramètres du produit dans Shopify.",
+        "item-10": "<b>Si le produit n’a pas de variantes :</b> collez la SKU dans le champ <i>SKU (Stock Keeping Unit)</i> de la section Inventaire et enregistrez.",
+        "item-11": "<b>Si le produit comporte des variantes :</b> ouvrez la variante concernée, collez la SKU dans le champ <i>SKU (Stock Keeping Unit)</i> et enregistrez."
+      },
+      "display-button-description": "Pour afficher le bouton de personnalisation sur la page produit :",
+      "display-steps": {
+        "item-1": "Ouvrez le produit que vous souhaitez personnaliser.",
+        "item-2": "Accédez à la section <b>Tags</b>.",
+        "item-3": "Ajoutez le tag <code>fasteditor</code>."
+      },
+      "button": "Voir les produits"
+    }
+  },
+  "dashboard-page": {
+    "title": "Tableau de bord",
+    "products-table-info": {
+      "title": "Produits avec le tag FastEditor",
+      "description": "Le tableau ci-dessous affiche les produits portant le tag <code>fasteditor</code>.",
+      "tag-instructions-title": "Pour ajouter un tag à un produit :",
+      "steps": {
+        "item-1": "Accédez à <strong>Produits</strong>",
+        "item-2": "Sélectionnez un produit",
+        "item-3": "Dans la section Tags, saisissez <strong>fasteditor</strong> puis appuyez sur <strong>Entrée</strong>",
+        "item-4": "Cliquez sur <strong>Enregistrer</strong>"
+      }
+    },
+    "products-table": {
+      "resource-name": {
+        "singular": "produit",
+        "plural": "produits"
+      },
+      "empty-state": {
+        "title": "Aucun produit pour le moment",
+        "description": "Assurez-vous que vos produits possèdent le tag fasteditor."
+      },
+      "search-placeholder": "Rechercher par titre ou SKU",
+      "headings": {
+        "product": "Produit",
+        "sku": "SKU",
+        "price": "Prix",
+        "quantity": "Quantité"
+      },
+      "default-variant-title": "Titre par défaut"
+    },
+    "error-banner": {
+      "title": "Impossible de charger les données du tableau de bord",
+      "return-button": "Retour",
+      "messages": {
+        "item-1": "Aucune donnée disponible avec les filtres actuels.",
+        "item-2": "Si le problème persiste, actualisez la page ou contactez notre support."
+      }
+    },
+    "tabs": {
+      "all": "Tous",
+      "active": "Actifs",
+      "draft": "Brouillons",
+      "archived": "Archivés"
+    },
+    "sort": {
+      "product-label": "Produit",
+      "direction-az": "Croissant",
+      "direction-za": "Décroissant"
+    }
+  },
+  "settings-page": {
+    "title": "Paramètres",
+    "integration-card": {
+      "connected-badge": "Connecté",
+      "not-connected-badge": "Non connecté",
+      "title": "Connecter votre boutique à FastEditor",
+      "description": "Pour connecter votre boutique, saisissez ci-dessous votre clé API FastEditor et votre domaine, puis cliquez sur <strong>Connecter</strong>. En cas de réussite, un message de confirmation s’affichera. Si vous rencontrez un problème, contactez notre support."
+    },
+    "integration-form": {
+      "api-key-label": "Clé API",
+      "api-domain-label": "Domaine API",
+      "connect-button": "Connecter",
+      "connection-failed-error": "Échec de connexion à FastEditor. Vérifiez la clé API et le domaine.",
+      "validation-errors": {
+        "api-key-required": "La clé API est obligatoire",
+        "api-domain-required": "Le domaine API est obligatoire"
+      },
+      "success-message": "Intégration FastEditor réussie.",
+      "validation-errors-title": "Erreurs de validation"
+    }
+  },
+  "subscription-page": {
+    "title": "Abonnement",
+    "cancel-button": "Annuler",
+    "current-subscription": {
+      "monthly-plan": "Abonnement mensuel",
+      "per-month": "/ mois",
+      "started-on": "Début le :",
+      "ends-on": "Se termine le :"
+    },
+    "usage-subscription": {
+      "title": "Limite actuelle de dépenses",
+      "remaining-amount": "Montant restant :",
+      "spent": "utilisé",
+      "limit": "limite",
+      "change-limit-button": "Modifier la limite"
+    },
+    "cancel-modal": {
+      "title": "Annuler l’abonnement",
+      "confirm-question": "Voulez-vous vraiment annuler votre abonnement ?",
+      "confirm-description": "En annulant l’abonnement, vous perdez l’accès aux fonctionnalités payantes, même pour la période restante.",
+      "cancel-button": "Annuler l’abonnement",
+      "keep-button": "Conserver l’abonnement",
+      "success-message": "Abonnement annulé avec succès",
+      "error-message": "Échec de l’annulation"
+    },
+    "status": {
+      "active": "Actif",
+      "cancelled": "Annulé",
+      "declined": "Refusé",
+      "pending": "En attente",
+      "expired": "Expiré",
+      "frozen": "Suspendu"
+    }
+  },
+  "auth-page": {
+    "title": "Connexion",
+    "shop-domain-label": "Domaine de la boutique",
+    "shop-domain-help": "exemple.myshopify.com",
+    "login-button": "Se connecter"
+  },
+  "home-page": {
+    "heading": "Un court titre de présentation de FastEditor",
+    "tagline": "Une phrase d’accroche présentant la valeur offerte par FastEditor.",
+    "shop-domain-label": "Domaine de la boutique",
+    "shop-domain-example": "ex. : ma-boutique.myshopify.com",
+    "login-button": "Se connecter",
+    "product-feature-title": "Fonctionnalité produit",
+    "product-feature-description": "Description de la fonctionnalité et du bénéfice pour vos clients."
+  },
+  "no-subscription-page": {
+    "heading": "Activez votre abonnement pour continuer",
+    "activate-button": "Activer l’abonnement",
+    "description": "Pour continuer à utiliser FastEditor, veuillez activer votre abonnement mensuel. Vous serez redirigé vers la page de facturation.",
+    "error-message": "Impossible de créer l’abonnement"
+  },
+  "usage-limit-banner": {
+    "title": "Limite d’utilisation dépassée",
+    "description": "Votre utilisation actuelle dépasse la limite autorisée pour cette période de facturation. L’application est temporairement indisponible.",
+    "list-item-1": "L’accès est bloqué jusqu’à augmentation de la limite ou réinitialisation de la période de facturation.",
+    "list-item-2": "Pour rétablir l’accès, vérifiez votre abonnement ou ajustez votre limite dans les paramètres.",
+    "go-to-subscription-button": "Voir l’abonnement",
+    "change-limit-button": "Modifier la limite"
+  },
+  "errors": {
+    "login": {
+      "missing-shop": "Veuillez saisir votre domaine de boutique pour vous connecter",
+      "invalid-shop": "Veuillez saisir un domaine de boutique valide"
+    },
+    "subscription": {
+      "unable-to-fetch-shop-settings": "Impossible de charger les paramètres de la boutique",
+      "unable-to-fetch-subscriptions": "Impossible de charger les abonnements",
+      "unable-to-fetch-current-subscription": "Impossible de charger l’abonnement actuel"
+    }
+  },
+  "navigation": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "settings": "Paramètres",
+    "subscription": "Abonnement"
+  },
+  "footer": {
+    "support-text": "Besoin d’aide ? Contactez notre équipe d’assistance à"
+  },
+  "language-switcher": {
+    "label": "Langue",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "nl": "Nederlands",
+      "sv": "Svenska",
+      "es": "Español",
+      "pt": "Português",
+      "pl": "Polski",
+      "it": "Italiano",
+      "da": "Dansk"
+    }
+  }
+}

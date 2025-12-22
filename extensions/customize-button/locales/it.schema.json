@@ -1,0 +1,130 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "Pulsante di personalizzazione",
+      "settings": {
+        "button_text": {
+          "header": "Testo del pulsante",
+          "text": "Testo del pulsante",
+          "text_font": "Carattere del testo",
+          "text_size": "Dimensione del carattere",
+          "text_color": "Colore del testo"
+        },
+        "button_appearance": {
+          "header": "Aspetto del pulsante",
+          "bg_color": "Colore di sfondo del pulsante",
+          "border_width": "Larghezza del bordo",
+          "border_color": "Colore del bordo",
+          "border_radius": "Raggio del bordo"
+        },
+        "icon_settings": {
+          "header": "Impostazioni icona",
+          "icon_type": {
+            "label": "Tipo di icona",
+            "options": {
+              "none": "Nessuno",
+              "pen": "Penna",
+              "brush": "Pennello",
+              "image": "Immagine",
+              "images": "Immagini",
+              "link": "Collegamento",
+              "settings": "Impostazioni",
+              "custom": "Personalizzato"
+            }
+          },
+          "custom_icon_image": "Immagine icona personalizzata",
+          "custom_icon_image_info": "Si applica solo quando il tipo di icona 'Personalizzato' è selezionato",
+          "icon_color": "Colore dell'icona",
+          "icon_color_info": "Si applica solo alle icone integrate",
+          "icon_size": "Dimensione dell'icona",
+          "icon_size_info": "Si applica solo quando un'icona è selezionata",
+          "icon_gap": "Spaziatura icona",
+          "icon_gap_info": "Distanza tra icona e testo",
+          "icon_position": {
+            "label": "Posizione dell'icona",
+            "options": {
+              "left": "Sinistra",
+              "right": "Destra"
+            },
+            "info": "Si applica solo quando un'icona è selezionata"
+          }
+        },
+        "button_state_texts": {
+          "header": "Testi di stato del pulsante",
+          "loading_text": "Testo di caricamento",
+          "loading_text_info": "Testo mostrato quando il pulsante è in caricamento",
+          "adding_to_cart_text": "Testo durante l'aggiunta al carrello",
+          "adding_to_cart_text_info": "Testo mostrato durante l'aggiunta di un articolo al carrello",
+          "added_to_cart_text": "Testo dopo l'aggiunta al carrello",
+          "added_to_cart_text_info": "Testo mostrato dopo che un articolo è stato aggiunto al carrello",
+          "error_text": "Testo di errore",
+          "error_text_info": "Testo mostrato quando si verifica un errore"
+        },
+        "button_behavior": {
+          "header": "Comportamento del pulsante",
+          "enable_cart_redirect": "Reindirizza alla pagina del carrello dopo l'aggiunta al carrello"
+        }
+      }
+    },
+    "sticky-bar": {
+      "name": "Barra fissa FastEditor",
+      "settings": {
+        "layout": {
+          "header": "Layout",
+          "desktop_position": {
+            "label": "Posizione desktop",
+            "options": {
+              "top": "In alto",
+              "bottom": "In basso",
+              "hide": "Nascondi"
+            }
+          },
+          "button_radius": "Raggio bordo pulsante",
+          "mobile_position": {
+            "label": "Posizione mobile",
+            "options": {
+              "top": "In alto",
+              "bottom": "In basso",
+              "hide": "Nascondi"
+            }
+          },
+          "show_product_details": {
+            "label": "Mostra dettagli prodotto su mobile"
+          }
+        },
+        "colors": {
+          "header": "Colori",
+          "background_color": "Sfondo barra",
+          "text_color": "Testo barra",
+          "customize_button_background": "Sfondo pulsante personalizza",
+          "customize_button_text_color": "Testo pulsante personalizza",
+          "add_button_background": "Sfondo pulsante aggiungi al carrello",
+          "add_button_text": "Testo pulsante aggiungi al carrello"
+        },
+        "buttons": {
+          "header": "Pulsanti",
+          "customize_button_text": "Testo pulsante personalizza",
+          "customize_loading_text": "Testo di caricamento personalizzazione",
+          "add_to_cart_added_text": "Testo dopo aggiunta al carrello",
+          "add_to_cart_button_text": "Testo pulsante aggiungi al carrello",
+          "add_to_cart_adding_text": "Testo durante aggiunta al carrello",
+          "add_to_cart_error_text": "Testo errore",
+          "add_to_cart_sold_out_text": "Testo esaurito"
+        },
+        "visibility": {
+          "header": "Visibilità",
+          "add_to_cart_visibility": {
+            "label": "Visibilità del pulsante di acquisto",
+            "options": {
+              "both": "Mobile + desktop",
+              "mobile": "Mobile",
+              "desktop": "Desktop",
+              "none": "Nascosto"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

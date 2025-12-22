@@ -1,0 +1,130 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "Przycisk personalizacji",
+      "settings": {
+        "button_text": {
+          "header": "Tekst przycisku",
+          "text": "Tekst przycisku",
+          "text_font": "Czcionka tekstu",
+          "text_size": "Rozmiar czcionki",
+          "text_color": "Kolor tekstu"
+        },
+        "button_appearance": {
+          "header": "Wygląd przycisku",
+          "bg_color": "Kolor tła przycisku",
+          "border_width": "Szerokość obramowania",
+          "border_color": "Kolor obramowania",
+          "border_radius": "Promień obramowania"
+        },
+        "icon_settings": {
+          "header": "Ustawienia ikony",
+          "icon_type": {
+            "label": "Typ ikony",
+            "options": {
+              "none": "Brak",
+              "pen": "Długopis",
+              "brush": "Pędzel",
+              "image": "Obraz",
+              "images": "Obrazy",
+              "link": "Link",
+              "settings": "Ustawienia",
+              "custom": "Niestandardowa"
+            }
+          },
+          "custom_icon_image": "Niestandardowy obraz ikony",
+          "custom_icon_image_info": "Dotyczy tylko wybranego typu ikony 'Niestandardowa'",
+          "icon_color": "Kolor ikony",
+          "icon_color_info": "Dotyczy tylko wbudowanych ikon",
+          "icon_size": "Rozmiar ikony",
+          "icon_size_info": "Dotyczy tylko wybranej ikony",
+          "icon_gap": "Odstęp ikony",
+          "icon_gap_info": "Odległość między ikoną a tekstem",
+          "icon_position": {
+            "label": "Pozycja ikony",
+            "options": {
+              "left": "Lewo",
+              "right": "Prawo"
+            },
+            "info": "Dotyczy tylko wybranej ikony"
+          }
+        },
+        "button_state_texts": {
+          "header": "Teksty stanu przycisku",
+          "loading_text": "Tekst ładowania",
+          "loading_text_info": "Tekst wyświetlany podczas ładowania przycisku",
+          "adding_to_cart_text": "Tekst podczas dodawania do koszyka",
+          "adding_to_cart_text_info": "Tekst wyświetlany podczas dodawania produktu do koszyka",
+          "added_to_cart_text": "Tekst po dodaniu do koszyka",
+          "added_to_cart_text_info": "Tekst wyświetlany po dodaniu produktu do koszyka",
+          "error_text": "Tekst błędu",
+          "error_text_info": "Tekst wyświetlany w przypadku wystąpienia błędu"
+        },
+        "button_behavior": {
+          "header": "Zachowanie przycisku",
+          "enable_cart_redirect": "Przekieruj do strony koszyka po dodaniu do koszyka"
+        }
+      }
+    },
+    "sticky-bar": {
+      "name": "Pasek sticky FastEditor",
+      "settings": {
+        "layout": {
+          "header": "Układ",
+          "desktop_position": {
+            "label": "Pozycja na desktopie",
+            "options": {
+              "top": "Góra",
+              "bottom": "Dół",
+              "hide": "Ukryj"
+            }
+          },
+          "button_radius": "Promień obramowania przycisku",
+          "mobile_position": {
+            "label": "Pozycja na urządzeniu mobilnym",
+            "options": {
+              "top": "Góra",
+              "bottom": "Dół",
+              "hide": "Ukryj"
+            }
+          },
+          "show_product_details": {
+            "label": "Pokaż szczegóły produktu na mobile"
+          }
+        },
+        "colors": {
+          "header": "Kolory",
+          "background_color": "Tło paska",
+          "text_color": "Tekst paska",
+          "customize_button_background": "Tło przycisku personalizacji",
+          "customize_button_text_color": "Tekst przycisku personalizacji",
+          "add_button_background": "Tło przycisku dodaj do koszyka",
+          "add_button_text": "Tekst przycisku dodaj do koszyka"
+        },
+        "buttons": {
+          "header": "Przyciski",
+          "customize_button_text": "Tekst przycisku personalizacji",
+          "customize_loading_text": "Tekst ładowania personalizacji",
+          "add_to_cart_added_text": "Tekst po dodaniu do koszyka",
+          "add_to_cart_button_text": "Tekst przycisku dodaj do koszyka",
+          "add_to_cart_adding_text": "Tekst podczas dodawania do koszyka",
+          "add_to_cart_error_text": "Tekst błędu",
+          "add_to_cart_sold_out_text": "Tekst wyprzedane"
+        },
+        "visibility": {
+          "header": "Widoczność",
+          "add_to_cart_visibility": {
+            "label": "Widoczność przycisku koszyka",
+            "options": {
+              "both": "Mobile + desktop",
+              "mobile": "Mobile",
+              "desktop": "Desktop",
+              "none": "Ukryty"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

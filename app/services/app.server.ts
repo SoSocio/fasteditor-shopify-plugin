@@ -10,6 +10,7 @@ import {APP_INSTALLATION_ID_FRAGMENT} from "../graphql/app/fragments/appInstalla
 import {GET_APP_METAFIELD} from "../graphql/app/getAppMetafield";
 import {setMetafield} from "./metafield.server";
 import type {AppSubscription} from "@shopify/shopify-api";
+import {checkUsageBillingLimitReached} from "./billing.server";
 
 /**
  * Executes a Shopify Admin API GraphQL query with error handling.
@@ -265,4 +266,24 @@ export async function getAllAppSubscriptions(admin: authenticateAdmin): Promise<
   `)
 
   return response.currentAppInstallation.allSubscriptions.nodes
+}
+
+/**
+ * Initializes the app availability metafield based on usage billing limit.
+ * Checks if the usage billing limit is reached and sets availability accordingly.
+ *
+ * @param admin - Shopify Admin API client
+ * @returns void
+ */
+export async function initializeAppAvailability(
+  admin: authenticateAdmin
+): Promise<void> {
+  const isLimitReached = await checkUsageBillingLimitReached(admin);
+  const availabilityValue = isLimitReached ? "false" : "true";
+  
+  await setAppAvailabilityMetafield(admin, availabilityValue);
+  
+  console.info(
+    `[initializeAppAvailability] Set availability to ${availabilityValue} (limit reached: ${isLimitReached})`
+  );
 }

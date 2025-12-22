@@ -1,0 +1,214 @@
+{
+  "getting-started-page": {
+    "title": "Pierwsze kroki",
+    "integration": {
+      "title": "Integracja FastEditor",
+      "description": "Przed użyciem FastEditor połącz swój sklep przez stronę ustawień.",
+      "button": "Przejdź do ustawień"
+    },
+    "customization-button": {
+      "title": "Przycisk personalizacji",
+      "description": "Dodaj przycisk personalizacji do szablonu strony produktu i dopasuj wygląd do motywu.",
+      "button": "Dodaj przycisk personalizacji"
+    },
+    "sticky-bar": {
+      "title": "Przyklejony pasek z przyciskiem personalizacji",
+      "description": "Kliknij przycisk poniżej, aby włączyć przyklejony pasek. Przyklejony pasek będzie wyświetlany na stronach produktów, które mają tag fasteditor. Możesz także dostosować style przyklejonego paska zgodnie z potrzebami.",
+      "button": "Dodaj przyklejony pasek"
+    },
+    "product-setup": {
+      "title": "Konfiguracja produktu",
+      "description": "Aby powiązać produkt Shopify z FastEditor, wykonaj następujące kroki:",
+      "steps": {
+        "item-1": "Utwórz lub wybierz produkt w Shopify.",
+        "item-2": "Przejdź do platformy FastEditor.",
+        "item-3": "Znajdź odpowiadający produkt.",
+        "item-4": "Kliknij <b>Konfiguracje</b>.",
+        "item-5": "Zostaniesz przeniesiony na stronę szczegółów produktu.",
+        "item-6": "Wybierz filtry, które chcesz użyć.",
+        "item-7": "Kliknij <b>SmartLink payload</b>.",
+        "item-8": "Skopiuj <b>SKU</b>.",
+        "item-9": "Wróć do ustawień produktu w Shopify.",
+        "item-10": "<b>Jeśli produkt nie ma wariantów:</b> wklej SKU w pole <i>SKU (jednostka magazynowa)</i> w sekcji magazyn i zapisz zmiany.",
+        "item-11": "<b>Jeśli produkt ma warianty:</b> otwórz odpowiedni wariant, wklej SKU w pole <i>SKU (jednostka magazynowa)</i> i zapisz zmiany."
+      },
+      "display-button-description": "Aby wyświetlić przycisk personalizacji na stronie produktu:",
+      "display-steps": {
+        "item-1": "Otwórz produkt, który chcesz spersonalizować.",
+        "item-2": "Przewiń do sekcji <b>Tagi</b>.",
+        "item-3": "Dodaj tag <code>fasteditor</code>."
+      },
+      "button": "Pokaż produkty"
+    }
+  },
+  "dashboard-page": {
+    "title": "Podsumowanie",
+    "products-table-info": {
+      "title": "Produkty z tagiem FastEditor",
+      "description": "Poniższa tabela pokazuje produkty oznaczone tagiem <code>fasteditor</code>.",
+      "tag-instructions-title": "Aby oznaczyć produkt:",
+      "steps": {
+        "item-1": "Przejdź do <strong>Produkty</strong>",
+        "item-2": "Wybierz produkt",
+        "item-3": "W sekcji Tagi wpisz <strong>fasteditor</strong> i naciśnij <strong>Enter</strong>",
+        "item-4": "Kliknij <strong>Zapisz</strong>"
+      }
+    },
+    "products-table": {
+      "resource-name": {
+        "singular": "produkt",
+        "plural": "produkty"
+      },
+      "empty-state": {
+        "title": "Brak produktów",
+        "description": "Upewnij się, że Twoje produkty mają tag fasteditor."
+      },
+      "search-placeholder": "Szukaj po nazwie produktu lub SKU",
+      "headings": {
+        "product": "Produkt",
+        "sku": "SKU",
+        "price": "Cena",
+        "quantity": "Ilość"
+      },
+      "default-variant-title": "Domyślny tytuł"
+    },
+    "error-banner": {
+      "title": "Nie udało się załadować danych podsumowania",
+      "return-button": "Powrót",
+      "messages": {
+        "item-1": "Nie znaleziono danych dla wybranych filtrów.",
+        "item-2": "Jeśli problem nadal występuje, odśwież stronę lub skontaktuj się z pomocą techniczną."
+      }
+    },
+    "tabs": {
+      "all": "Wszystkie",
+      "active": "Aktywne",
+      "draft": "Szkice",
+      "archived": "Archiwalne"
+    },
+    "sort": {
+      "product-label": "Produkt",
+      "direction-az": "Rosnąco",
+      "direction-za": "Malejąco"
+    }
+  },
+  "settings-page": {
+    "title": "Ustawienia",
+    "integration-card": {
+      "connected-badge": "Połączono",
+      "not-connected-badge": "Niepołączono",
+      "title": "Połącz swój sklep z FastEditor",
+      "description": "Wprowadź swój klucz API i domenę FastEditor poniżej i kliknij <strong>Połącz</strong>. Jeśli połączenie się powiedzie, zobaczysz potwierdzenie. W razie problemów skontaktuj się z pomocą techniczną."
+    },
+    "integration-form": {
+      "api-key-label": "Klucz API",
+      "api-domain-label": "Domena API",
+      "connect-button": "Połącz",
+      "connection-failed-error": "Nie udało się połączyć z FastEditor. Sprawdź klucz API i domenę.",
+      "validation-errors": {
+        "api-key-required": "Klucz API jest wymagany",
+        "api-domain-required": "Domena API jest wymagana"
+      },
+      "success-message": "Integracja FastEditor zakończona sukcesem.",
+      "validation-errors-title": "Błędy walidacji"
+    }
+  },
+  "subscription-page": {
+    "title": "Subskrypcja",
+    "cancel-button": "Anuluj",
+    "current-subscription": {
+      "monthly-plan": "Abonament miesięczny",
+      "per-month": "/ miesiąc",
+      "started-on": "Rozpoczęto:",
+      "ends-on": "Kończy się:"
+    },
+    "usage-subscription": {
+      "title": "Aktualny limit wydatków",
+      "remaining-amount": "Pozostała kwota:",
+      "spent": "wydane",
+      "limit": "limit",
+      "change-limit-button": "Zmień limit"
+    },
+    "cancel-modal": {
+      "title": "Anuluj subskrypcję",
+      "confirm-question": "Czy na pewno chcesz anulować subskrypcję?",
+      "confirm-description": "Anulowanie subskrypcji spowoduje utratę dostępu do wszystkich funkcji płatnych, również w pozostałym okresie.",
+      "cancel-button": "Anuluj subskrypcję",
+      "keep-button": "Zachowaj subskrypcję",
+      "success-message": "Subskrypcja została anulowana",
+      "error-message": "Nie udało się anulować subskrypcji"
+    },
+    "status": {
+      "active": "Aktywna",
+      "cancelled": "Anulowana",
+      "declined": "Odrzucona",
+      "pending": "Oczekująca",
+      "expired": "Wygasła",
+      "frozen": "Zamrożona"
+    }
+  },
+  "auth-page": {
+    "title": "Zaloguj się",
+    "shop-domain-label": "Domena sklepu",
+    "shop-domain-help": "przykład.myshopify.com",
+    "login-button": "Zaloguj się"
+  },
+  "home-page": {
+    "heading": "Krótka prezentacja FastEditor",
+    "tagline": "Krótki opis wartości, jaką FastEditor oferuje.",
+    "shop-domain-label": "Domena sklepu",
+    "shop-domain-example": "np.: moj-sklep.myshopify.com",
+    "login-button": "Zaloguj się",
+    "product-feature-title": "Funkcja produktu",
+    "product-feature-description": "Opis funkcji i jej korzyści dla klienta."
+  },
+  "no-subscription-page": {
+    "heading": "Aktywuj subskrypcję, aby kontynuować",
+    "activate-button": "Aktywuj subskrypcję",
+    "description": "Aby kontynuować korzystanie z FastEditor, aktywuj swój plan miesięczny. Zostaniesz przekierowany do strony płatności.",
+    "error-message": "Nie można utworzyć subskrypcji"
+  },
+  "usage-limit-banner": {
+    "title": "Przekroczono limit użycia",
+    "description": "Twoje obecne użycie przekroczyło dozwolony limit dla tego cyklu rozliczeniowego. Aplikacja jest tymczasowo niedostępna.",
+    "list-item-1": "Dostęp do wszystkich funkcji aplikacji jest zablokowany, dopóki limit nie zostanie zwiększony lub cykl rozliczeniowy nie zostanie zresetowany.",
+    "list-item-2": "Aby przywrócić dostęp, sprawdź swój plan subskrypcji lub zwiększ limit w ustawieniach.",
+    "go-to-subscription-button": "Zobacz subskrypcję",
+    "change-limit-button": "Zmień limit"
+  },
+  "errors": {
+    "login": {
+      "missing-shop": "Wprowadź domenę sklepu, aby się zalogować",
+      "invalid-shop": "Wprowadź prawidłową domenę sklepu"
+    },
+    "subscription": {
+      "unable-to-fetch-shop-settings": "Nie można pobrać ustawień sklepu",
+      "unable-to-fetch-subscriptions": "Nie można pobrać subskrypcji",
+      "unable-to-fetch-current-subscription": "Nie można pobrać aktualnej subskrypcji"
+    }
+  },
+  "navigation": {
+    "home": "Strona główna",
+    "dashboard": "Podsumowanie",
+    "settings": "Ustawienia",
+    "subscription": "Subskrypcja"
+  },
+  "footer": {
+    "support-text": "Potrzebujesz pomocy? Skontaktuj się z naszym wsparciem przez"
+  },
+  "language-switcher": {
+    "label": "Język",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "nl": "Nederlands",
+      "sv": "Svenska",
+      "es": "Español",
+      "pt": "Português",
+      "pl": "Polski",
+      "it": "Italiano",
+      "da": "Dansk"
+    }
+  }
+}

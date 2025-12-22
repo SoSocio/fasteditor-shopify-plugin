@@ -1,0 +1,91 @@
+{% comment %}
+  Renders the FastEditor customize button for a product
+
+  Displays a customizable button with optional icon state, text, and data attributes.
+
+  Accepts:
+  - button_text: {String} Text to display on the button (optional, default: '')
+  - button_attributes: {String} Extra HTML/data attributes to add to the button element (optional)
+  - is_disabled: {Boolean} Whether the button is disabled (optional, default: false)
+  - icon_type: {String} Icon type: none | pen | brush | image | images | link | settings | custom (optional, default: none)
+  - icon_position: {String} Icon position: left | right (optional, default: left)
+  - icon_color: {String} Icon color value (optional)
+  - icon_size: {String} Icon size value (optional)
+  - icon_custom_image: {String} Custom icon image URL/path when icon_type is custom (optional)
+  - block_id: {String} Block id for data-block-id (optional, default: block.id or '')
+
+  Usage:
+  {% render 'button-customize' %}
+  {% render 'button-customize',
+    button_text: 'Customize',
+    button_attributes: 'data-shop="myshop.myshopify.com" data-handle="product-handle"',
+    is_disabled: false,
+    icon_type: 'pen',
+    icon_position: 'left',
+    icon_color: '#000000',
+    icon_size: '20px'
+  %}
+{% endcomment %}
+
+{%- liquid
+  # Button appearance
+  assign button_text = button_text | default: ''
+  assign button_attributes = button_attributes | default: ''
+  assign is_disabled = is_disabled | default: false
+
+  # Icon settings
+  assign icon_type = icon_type | default: 'none'
+  assign icon_position = icon_position | default: 'left'
+  assign icon_color = icon_color | default: ''
+  assign icon_size = icon_size | default: ''
+  assign icon_custom_image = icon_custom_image | default: ''
+
+  # Determine if icon should be shown
+  assign has_icon = false
+  if icon_type and icon_type != 'none'
+    assign has_icon = true
+  endif
+-%}
+
+<link rel="stylesheet" href="{{ 'fasteditor-customize-button.css' | asset_url }}">
+<script src="{{ 'fasteditor-customize-button.js' | asset_url }}" defer></script>
+<script src="{{ 'fasteditor-shared-utils.js' | asset_url }}" defer></script>
+<script src="{{ 'cookie-user-id.js' | asset_url }}" defer></script>
+
+<fasteditor-customize-button data-block-id="{{ block_id }}">
+  <button
+    id="fasteditor-customize-button-{{ block.id }}"
+    class="fasteditor-customize-button fasteditor-customize-button-{{ block.id }}{% if icon_position == 'right' %} fasteditor-customize-button--icon-right{% endif %}"
+    type="button"
+    aria-label="{{ button_text | escape }}"
+    {{ button_attributes | strip }}
+    {%- if is_disabled -%}disabled aria-disabled="true"{%- endif -%}
+  >
+    <span
+      class="fasteditor-customize-button__icon"
+      {%- unless has_icon -%}style="display: none;"{%- endunless -%}
+      aria-hidden="true"
+    >
+      {%- if has_icon -%}
+        <span class="fasteditor-customize-button__icon-main" aria-hidden="true">
+          {%- render 'icon-button',
+            icon: icon_type,
+            icon_color: icon_color,
+            icon_size: icon_size,
+            icon_custom_image: icon_custom_image
+          -%}
+        </span>
+      {%- endif -%}
+      <span class="fasteditor-customize-button__icon-loading" style="display: none;" aria-hidden="true">
+        {%- render 'icon-loading',
+          color: icon_color,
+          size: icon_size
+        -%}
+      </span>
+    </span>
+
+    <span class="fasteditor-customize-button__text">
+      {{ button_text | escape }}
+    </span>
+  </button>
+</fasteditor-customize-button>

@@ -1,0 +1,130 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "Bouton de personnalisation",
+      "settings": {
+        "button_text": {
+          "header": "Texte du bouton",
+          "text": "Texte du bouton",
+          "text_font": "Police du texte",
+          "text_size": "Taille de la police",
+          "text_color": "Couleur du texte"
+        },
+        "button_appearance": {
+          "header": "Apparence du bouton",
+          "bg_color": "Couleur de fond du bouton",
+          "border_width": "Largeur de la bordure",
+          "border_color": "Couleur de la bordure",
+          "border_radius": "Rayon de la bordure"
+        },
+        "icon_settings": {
+          "header": "Paramètres de l'icône",
+          "icon_type": {
+            "label": "Type d'icône",
+            "options": {
+              "none": "Aucun",
+              "pen": "Stylo",
+              "brush": "Pinceau",
+              "image": "Image",
+              "images": "Images",
+              "link": "Lien",
+              "settings": "Paramètres",
+              "custom": "Personnalisé"
+            }
+          },
+          "custom_icon_image": "Image d'icône personnalisée",
+          "custom_icon_image_info": "S'applique si type 'Personnalisé' sélectionné",
+          "icon_color": "Couleur de l'icône",
+          "icon_color_info": "S'applique uniquement aux icônes intégrées",
+          "icon_size": "Taille de l'icône",
+          "icon_size_info": "S'applique si icône sélectionnée",
+          "icon_gap": "Espacement de l'icône",
+          "icon_gap_info": "Distance entre l'icône et le texte",
+          "icon_position": {
+            "label": "Position de l'icône",
+            "options": {
+              "left": "Gauche",
+              "right": "Droite"
+            },
+            "info": "S'applique si icône sélectionnée"
+          }
+        },
+        "button_state_texts": {
+          "header": "Textes d'état du bouton",
+          "loading_text": "Texte de chargement",
+          "loading_text_info": "Texte affiché lorsque le bouton est en chargement",
+          "adding_to_cart_text": "Texte d'ajout au panier",
+          "adding_to_cart_text_info": "Texte lors de l'ajout au panier",
+          "added_to_cart_text": "Texte ajouté au panier",
+          "added_to_cart_text_info": "Texte après ajout au panier",
+          "error_text": "Texte d'erreur",
+          "error_text_info": "Texte affiché lorsqu'une erreur se produit"
+        },
+        "button_behavior": {
+          "header": "Comportement du bouton",
+          "enable_cart_redirect": "Rediriger vers le panier après ajout"
+        }
+      }
+    },
+    "sticky-bar": {
+      "name": "Barre fixe FastEditor",
+      "settings": {
+        "layout": {
+          "header": "Mise en page",
+          "desktop_position": {
+            "label": "Position sur ordinateur",
+            "options": {
+              "top": "Haut",
+              "bottom": "Bas",
+              "hide": "Masquer"
+            }
+          },
+          "button_radius": "Rayon de bord du bouton",
+          "mobile_position": {
+            "label": "Position sur mobile",
+            "options": {
+              "top": "Haut",
+              "bottom": "Bas",
+              "hide": "Masquer"
+            }
+          },
+          "show_product_details": {
+            "label": "Afficher les détails produit sur mobile"
+          }
+        },
+        "colors": {
+          "header": "Couleurs",
+          "background_color": "Arrière-plan de la barre",
+          "text_color": "Texte de la barre",
+          "customize_button_background": "Arrière-plan du bouton de personnalisation",
+          "customize_button_text_color": "Texte du bouton de personnalisation",
+          "add_button_background": "Arrière-plan du bouton Ajouter au panier",
+          "add_button_text": "Texte du bouton Ajouter au panier"
+        },
+        "buttons": {
+          "header": "Boutons",
+          "customize_button_text": "Texte du bouton de personnalisation",
+          "customize_loading_text": "Texte de chargement de personnalisation",
+          "add_to_cart_added_text": "Texte après ajout au panier",
+          "add_to_cart_button_text": "Texte du bouton Ajouter au panier",
+          "add_to_cart_adding_text": "Texte lors de l’ajout au panier",
+          "add_to_cart_error_text": "Texte d’erreur",
+          "add_to_cart_sold_out_text": "Texte rupture de stock"
+        },
+        "visibility": {
+          "header": "Visibilité",
+          "add_to_cart_visibility": {
+            "label": "Visibilité du bouton d’achat",
+            "options": {
+              "both": "Mobile + ordinateur",
+              "mobile": "Mobile",
+              "desktop": "Ordinateur",
+              "none": "Masqué"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

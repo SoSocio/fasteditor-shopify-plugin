@@ -1,0 +1,130 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "Aanpassingsknop",
+      "settings": {
+        "button_text": {
+          "header": "Knoptekst",
+          "text": "Knoptekst",
+          "text_font": "Tekstlettertype",
+          "text_size": "Lettergrootte",
+          "text_color": "Tekstkleur"
+        },
+        "button_appearance": {
+          "header": "Knopweergave",
+          "bg_color": "Knopachtergrondkleur",
+          "border_width": "Randbreedte",
+          "border_color": "Randkleur",
+          "border_radius": "Randradius"
+        },
+        "icon_settings": {
+          "header": "Pictograminstellingen",
+          "icon_type": {
+            "label": "Pictogramtype",
+            "options": {
+              "none": "Geen",
+              "pen": "Pen",
+              "brush": "Penseel",
+              "image": "Afbeelding",
+              "images": "Afbeeldingen",
+              "link": "Link",
+              "settings": "Instellingen",
+              "custom": "Aangepast"
+            }
+          },
+          "custom_icon_image": "Aangepast pictogramafbeelding",
+          "custom_icon_image_info": "Geldt alleen wanneer pictogramtype 'Aangepast' is geselecteerd",
+          "icon_color": "Pictogramkleur",
+          "icon_color_info": "Geldt alleen voor ingebouwde pictogrammen",
+          "icon_size": "Pictogramgrootte",
+          "icon_size_info": "Geldt alleen wanneer een pictogram is geselecteerd",
+          "icon_gap": "Pictogramafstand",
+          "icon_gap_info": "Afstand tussen pictogram en tekst",
+          "icon_position": {
+            "label": "Pictogrampositie",
+            "options": {
+              "left": "Links",
+              "right": "Rechts"
+            },
+            "info": "Geldt alleen wanneer een pictogram is geselecteerd"
+          }
+        },
+        "button_state_texts": {
+          "header": "Knopstatusteksten",
+          "loading_text": "Laadtekst",
+          "loading_text_info": "Tekst die wordt weergegeven wanneer de knop laadt",
+          "adding_to_cart_text": "Tekst bij toevoegen aan winkelwagen",
+          "adding_to_cart_text_info": "Tekst die wordt weergegeven bij het toevoegen van een item aan de winkelwagen",
+          "added_to_cart_text": "Tekst na toevoegen aan winkelwagen",
+          "added_to_cart_text_info": "Tekst die wordt weergegeven nadat een item aan de winkelwagen is toegevoegd",
+          "error_text": "Fouttekst",
+          "error_text_info": "Tekst die wordt weergegeven wanneer een fout optreedt"
+        },
+        "button_behavior": {
+          "header": "Knopgedrag",
+          "enable_cart_redirect": "Doorverwijzen naar winkelwagenpagina na toevoegen aan winkelwagen"
+        }
+      }
+    },
+    "sticky-bar": {
+      "name": "FastEditor stickybalk",
+      "settings": {
+        "layout": {
+          "header": "Lay-out",
+          "desktop_position": {
+            "label": "Desktop-positie",
+            "options": {
+              "top": "Boven",
+              "bottom": "Onder",
+              "hide": "Verbergen"
+            }
+          },
+          "button_radius": "Knoprand-radius",
+          "mobile_position": {
+            "label": "Mobiele positie",
+            "options": {
+              "top": "Boven",
+              "bottom": "Onder",
+              "hide": "Verbergen"
+            }
+          },
+          "show_product_details": {
+            "label": "Productdetails tonen op mobiel"
+          }
+        },
+        "colors": {
+          "header": "Kleuren",
+          "background_color": "Balkachtergrond",
+          "text_color": "Balktekst",
+          "customize_button_background": "Achtergrond van de aanpassingsknop",
+          "customize_button_text_color": "Tekst van de aanpassingsknop",
+          "add_button_background": "Achtergrond van de winkelwagenknop",
+          "add_button_text": "Tekst van de winkelwagenknop"
+        },
+        "buttons": {
+          "header": "Knoppen",
+          "customize_button_text": "Tekst van de aanpassingsknop",
+          "customize_loading_text": "Laadtekst voor aanpassen",
+          "add_to_cart_added_text": "Tekst na toevoegen aan winkelwagen",
+          "add_to_cart_button_text": "Tekst van de winkelwagenknop",
+          "add_to_cart_adding_text": "Tekst tijdens toevoegen aan winkelwagen",
+          "add_to_cart_error_text": "Fouttekst",
+          "add_to_cart_sold_out_text": "Uitverkocht-tekst"
+        },
+        "visibility": {
+          "header": "Zichtbaarheid",
+          "add_to_cart_visibility": {
+            "label": "Zichtbaarheid van de winkelwagenknop",
+            "options": {
+              "both": "Mobiel + desktop",
+              "mobile": "Mobiel",
+              "desktop": "Desktop",
+              "none": "Verborgen"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

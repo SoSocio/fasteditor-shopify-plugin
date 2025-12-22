@@ -1,0 +1,214 @@
+{
+  "getting-started-page": {
+    "title": "Kom igång",
+    "integration": {
+      "title": "FastEditor-integrering",
+      "description": "Innan du använder FastEditor, koppla din butik via inställningssidan.",
+      "button": "Gå till inställningar"
+    },
+    "customization-button": {
+      "title": "Anpassningsknapp",
+      "description": "Lägg till en anpassningsknapp på din produktsida och anpassa utseendet till ditt tema.",
+      "button": "Lägg till anpassningsknapp"
+    },
+    "sticky-bar": {
+      "title": "Klistrad fält med anpassningsknapp",
+      "description": "Klicka på knappen nedan för att aktivera det klistrade fältet. Det klistrade fältet kommer att visas på produktsidor som har fasteditor-taggen. Du kan också anpassa stilen för det klistrade fältet efter dina behov.",
+      "button": "Lägg till klistrat fält"
+    },
+    "product-setup": {
+      "title": "Produktinställning",
+      "description": "Följ dessa steg för att koppla en Shopify-produkt till FastEditor:",
+      "steps": {
+        "item-1": "Skapa eller välj en produkt i Shopify.",
+        "item-2": "Gå till FastEditor-plattformen.",
+        "item-3": "Hitta motsvarande produkt.",
+        "item-4": "Klicka på <b>Konfigurationer</b>.",
+        "item-5": "Du hamnar på produktsidan.",
+        "item-6": "Välj de filter du vill använda.",
+        "item-7": "Klicka på <b>SmartLink-payload</b>.",
+        "item-8": "Kopiera <b>SKU</b>.",
+        "item-9": "Gå tillbaka till produktinställningarna i Shopify.",
+        "item-10": "<b>Om produkten inte har några varianter:</b> klistra in SKU i fältet <i>SKU (lagerenhet)</i> under Lager och spara.",
+        "item-11": "<b>Om produkten har varianter:</b> öppna varianten, klistra in SKU i fältet <i>SKU (lagerenhet)</i> och spara."
+      },
+      "display-button-description": "För att visa anpassningsknappen på produktsidan:",
+      "display-steps": {
+        "item-1": "Öppna produkten du vill anpassa.",
+        "item-2": "Scrolla till avsnittet <b>Taggar</b>.",
+        "item-3": "Lägg till taggen <code>fasteditor</code>."
+      },
+      "button": "Visa produkter"
+    }
+  },
+  "dashboard-page": {
+    "title": "Översikt",
+    "products-table-info": {
+      "title": "Produkter med FastEditor-taggen",
+      "description": "Tabellen nedan visar produkter märkta med <code>fasteditor</code>.",
+      "tag-instructions-title": "För att märka en produkt:",
+      "steps": {
+        "item-1": "Gå till <strong>Produkter</strong>",
+        "item-2": "Välj en produkt",
+        "item-3": "I avsnittet Taggar, skriv <strong>fasteditor</strong> och tryck på <strong>Enter</strong>",
+        "item-4": "Klicka på <strong>Spara</strong>"
+      }
+    },
+    "products-table": {
+      "resource-name": {
+        "singular": "produkt",
+        "plural": "produkter"
+      },
+      "empty-state": {
+        "title": "Inga produkter ännu",
+        "description": "Se till att dina produkter har taggen fasteditor."
+      },
+      "search-placeholder": "Sök på produktnamn eller SKU",
+      "headings": {
+        "product": "Produkt",
+        "sku": "SKU",
+        "price": "Pris",
+        "quantity": "Antal"
+      },
+      "default-variant-title": "Standardtitel"
+    },
+    "error-banner": {
+      "title": "Kunde inte hämta översiktsdata",
+      "return-button": "Tillbaka",
+      "messages": {
+        "item-1": "Data kunde inte hittas med de valda filtren.",
+        "item-2": "Om problemet kvarstår, uppdatera sidan eller kontakta kundtjänst."
+      }
+    },
+    "tabs": {
+      "all": "Alla",
+      "active": "Aktiva",
+      "draft": "Utkast",
+      "archived": "Arkiverade"
+    },
+    "sort": {
+      "product-label": "Produkt",
+      "direction-az": "Stigande",
+      "direction-za": "Fallande"
+    }
+  },
+  "settings-page": {
+    "title": "Inställningar",
+    "integration-card": {
+      "connected-badge": "Ansluten",
+      "not-connected-badge": "Ej ansluten",
+      "title": "Koppla din butik till FastEditor",
+      "description": "Ange din FastEditor API-nyckel och domän nedan och klicka på <strong>Anslut</strong>. Vid lyckad anslutning visas en bekräftelse. Kontakta kundtjänst vid problem."
+    },
+    "integration-form": {
+      "api-key-label": "API-nyckel",
+      "api-domain-label": "API-domän",
+      "connect-button": "Anslut",
+      "connection-failed-error": "Kan inte ansluta till FastEditor. Kontrollera API-nyckel och domän.",
+      "validation-errors": {
+        "api-key-required": "API-nyckel krävs",
+        "api-domain-required": "API-domän krävs"
+      },
+      "success-message": "FastEditor-integrationen lyckades.",
+      "validation-errors-title": "Valideringsfel"
+    }
+  },
+  "subscription-page": {
+    "title": "Prenumeration",
+    "cancel-button": "Avbryt",
+    "current-subscription": {
+      "monthly-plan": "Månadsabonnemang",
+      "per-month": "/ månad",
+      "started-on": "Startade:",
+      "ends-on": "Slutar:"
+    },
+    "usage-subscription": {
+      "title": "Nuvarande utgiftsgräns",
+      "remaining-amount": "Återstående belopp:",
+      "spent": "använt",
+      "limit": "gräns",
+      "change-limit-button": "Ändra gräns"
+    },
+    "cancel-modal": {
+      "title": "Avsluta prenumeration",
+      "confirm-question": "Är du säker på att du vill avsluta prenumerationen?",
+      "confirm-description": "Om du avslutar prenumerationen förlorar du åtkomst till alla betalfunktioner, även för återstående period.",
+      "cancel-button": "Avsluta prenumeration",
+      "keep-button": "Behåll prenumeration",
+      "success-message": "Prenumerationen avslutad",
+      "error-message": "Misslyckades med att avsluta prenumeration"
+    },
+    "status": {
+      "active": "Aktiv",
+      "cancelled": "Avslutad",
+      "declined": "Avvisad",
+      "pending": "Pågående",
+      "expired": "Utgången",
+      "frozen": "Fryst"
+    }
+  },
+  "auth-page": {
+    "title": "Logga in",
+    "shop-domain-label": "Butiksdomän",
+    "shop-domain-help": "exempel.myshopify.com",
+    "login-button": "Logga in"
+  },
+  "home-page": {
+    "heading": "Kort introduktion till FastEditor",
+    "tagline": "En kort beskrivning av värdet FastEditor ger.",
+    "shop-domain-label": "Butiksdomän",
+    "shop-domain-example": "t.ex.: min-butik.myshopify.com",
+    "login-button": "Logga in",
+    "product-feature-title": "Produktfunktion",
+    "product-feature-description": "Beskrivning av funktionen och dess fördelar för kunderna."
+  },
+  "no-subscription-page": {
+    "heading": "Aktivera prenumerationen för att fortsätta",
+    "activate-button": "Aktivera prenumeration",
+    "description": "För att fortsätta använda FastEditor, aktivera din månadsplan. Du kommer att skickas till faktureringssidan.",
+    "error-message": "Kan inte skapa prenumeration"
+  },
+  "usage-limit-banner": {
+    "title": "Användningsgräns överskriden",
+    "description": "Ditt nuvarande användande har överskridit den tillåtna gränsen för denna faktureringsperiod. Applikationen är tillfälligt otillgänglig.",
+    "list-item-1": "Åtkomst till alla funktioner är blockerad tills gränsen höjs eller faktureringsperioden återställs.",
+    "list-item-2": "För att återställa åtkomst, granska din prenumerationsplan eller höj gränsen i inställningarna.",
+    "go-to-subscription-button": "Visa prenumeration",
+    "change-limit-button": "Ändra gräns"
+  },
+  "errors": {
+    "login": {
+      "missing-shop": "Ange butiksdomän för att logga in",
+      "invalid-shop": "Ange en giltig butiksdomän"
+    },
+    "subscription": {
+      "unable-to-fetch-shop-settings": "Kunde inte hämta butikens inställningar",
+      "unable-to-fetch-subscriptions": "Kunde inte hämta prenumerationer",
+      "unable-to-fetch-current-subscription": "Kunde inte hämta aktuell prenumeration"
+    }
+  },
+  "navigation": {
+    "home": "Start",
+    "dashboard": "Översikt",
+    "settings": "Inställningar",
+    "subscription": "Prenumeration"
+  },
+  "footer": {
+    "support-text": "Behöver du hjälp? Kontakta vår kundtjänst via"
+  },
+  "language-switcher": {
+    "label": "Språk",
+    "languages": {
+      "en": "English",
+      "de": "Deutsch",
+      "fr": "Français",
+      "nl": "Nederlands",
+      "sv": "Svenska",
+      "es": "Español",
+      "pt": "Português",
+      "pl": "Polski",
+      "it": "Italiano",
+      "da": "Dansk"
+    }
+  }
+}

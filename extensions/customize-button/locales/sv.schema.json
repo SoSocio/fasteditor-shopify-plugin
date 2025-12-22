@@ -1,0 +1,130 @@
+{
+  "blocks": {
+    "customize-button": {
+      "name": "Anpassningsknapp",
+      "settings": {
+        "button_text": {
+          "header": "Knapptext",
+          "text": "Knapptext",
+          "text_font": "Texttypsnitt",
+          "text_size": "Teckenstorlek",
+          "text_color": "Textfärg"
+        },
+        "button_appearance": {
+          "header": "Knapputseende",
+          "bg_color": "Knappbakgrundsfärg",
+          "border_width": "Kantbredd",
+          "border_color": "Kantfärg",
+          "border_radius": "Kantradie"
+        },
+        "icon_settings": {
+          "header": "Ikoninställningar",
+          "icon_type": {
+            "label": "Ikontyp",
+            "options": {
+              "none": "Ingen",
+              "pen": "Penna",
+              "brush": "Pensel",
+              "image": "Bild",
+              "images": "Bilder",
+              "link": "Länk",
+              "settings": "Inställningar",
+              "custom": "Anpassad"
+            }
+          },
+          "custom_icon_image": "Anpassad ikonbild",
+          "custom_icon_image_info": "Gäller endast när ikontyp 'Anpassad' är vald",
+          "icon_color": "Ikonfärg",
+          "icon_color_info": "Gäller endast för inbyggda ikoner",
+          "icon_size": "Ikonstorlek",
+          "icon_size_info": "Gäller endast när en ikon är vald",
+          "icon_gap": "Ikonavstånd",
+          "icon_gap_info": "Avstånd mellan ikon och text",
+          "icon_position": {
+            "label": "Ikonposition",
+            "options": {
+              "left": "Vänster",
+              "right": "Höger"
+            },
+            "info": "Gäller endast när en ikon är vald"
+          }
+        },
+        "button_state_texts": {
+          "header": "Knappstatustexter",
+          "loading_text": "Laddningstext",
+          "loading_text_info": "Text som visas när knappen laddas",
+          "adding_to_cart_text": "Text vid tillägg i varukorg",
+          "adding_to_cart_text_info": "Text som visas när en artikel läggs till i varukorgen",
+          "added_to_cart_text": "Text efter tillägg i varukorg",
+          "added_to_cart_text_info": "Text som visas efter att en artikel har lagts till i varukorgen",
+          "error_text": "Feltext",
+          "error_text_info": "Text som visas när ett fel uppstår"
+        },
+        "button_behavior": {
+          "header": "Knappbeteende",
+          "enable_cart_redirect": "Omdirigera till varukorgssidan efter tillägg i varukorg"
+        }
+      }
+    },
+    "sticky-bar": {
+      "name": "FastEditor sticky-fält",
+      "settings": {
+        "layout": {
+          "header": "Layout",
+          "desktop_position": {
+            "label": "Position på dator",
+            "options": {
+              "top": "Överst",
+              "bottom": "Nederst",
+              "hide": "Dölj"
+            }
+          },
+          "button_radius": "Knappens hörnradie",
+          "mobile_position": {
+            "label": "Position på mobil",
+            "options": {
+              "top": "Överst",
+              "bottom": "Nederst",
+              "hide": "Dölj"
+            }
+          },
+          "show_product_details": {
+            "label": "Visa produktdetaljer på mobil"
+          }
+        },
+        "colors": {
+          "header": "Färger",
+          "background_color": "Fältets bakgrund",
+          "text_color": "Fältets text",
+          "customize_button_background": "Bakgrund för anpassningsknapp",
+          "customize_button_text_color": "Text för anpassningsknapp",
+          "add_button_background": "Bakgrund för lägg i varukorg-knapp",
+          "add_button_text": "Text för lägg i varukorg-knapp"
+        },
+        "buttons": {
+          "header": "Knappar",
+          "customize_button_text": "Text för anpassningsknapp",
+          "customize_loading_text": "Text vid laddning av anpassning",
+          "add_to_cart_added_text": "Text efter tillagd i varukorg",
+          "add_to_cart_button_text": "Text för lägg i varukorg-knapp",
+          "add_to_cart_adding_text": "Text vid tillägg till varukorg",
+          "add_to_cart_error_text": "Feltext",
+          "add_to_cart_sold_out_text": "Text vid slutsåld"
+        },
+        "visibility": {
+          "header": "Synlighet",
+          "add_to_cart_visibility": {
+            "label": "Synlighet för köpknappen",
+            "options": {
+              "both": "Mobil + dator",
+              "mobile": "Mobil",
+              "desktop": "Dator",
+              "none": "Dold"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

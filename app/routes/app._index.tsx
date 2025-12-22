@@ -1,10 +1,8 @@
-import React from "react";
 import {useLoaderData} from "@remix-run/react";
 import type {LoaderFunctionArgs} from "@remix-run/node";
 
 import {
-  Page,
-  Layout,
+  InlineGrid,
   Card,
   BlockStack,
   Box,
@@ -19,11 +17,15 @@ import {getAppMetafield} from "../services/app.server";
 import {
   UsageLimitBannerWithAction
 } from "../components/banners/UsageLimit/UsageLimitBannerWithAction";
+import { useTranslation } from "react-i18next";
+import { PageLayout } from "../components/layout/PageLayout";
+
 
 const ENDPOINT = "/app/_index";
 
 interface GettingStartedLoader {
   shopName: string;
+  apiKey: string;
   appAvailability: string;
 }
 
@@ -39,97 +41,83 @@ export const loader = async (
 
   return {
     shopName: session.shop.replace(".myshopify.com", ""),
-    appAvailability: appAvailability?.value
+    appAvailability: appAvailability?.value,
+    apiKey: process.env.SHOPIFY_API_KEY || "",
   }
 };
 
 const Index = () => {
-  const {shopName, appAvailability} = useLoaderData<typeof loader>()
+  const {shopName, appAvailability, apiKey} = useLoaderData<typeof loader>()
+
+  const { t } = useTranslation();
 
   if (appAvailability === "false") {
     return <UsageLimitBannerWithAction shopName={shopName}/>
   }
 
   return (
-    <Page title="Getting Started">
+    <PageLayout title={t("getting-started-page.title")} fullWidth>
       <Box paddingBlockEnd="500">
-        <Layout>
-          <Layout.Section>
+        <InlineGrid columns={{sm: 1, md: 2}} gap="400">
+          <BlockStack gap="200">
             <Card>
               <BlockStack gap="200">
                 <Text as="h2" variant="headingMd">
-                  FastEditor Integration
+                  {t("getting-started-page.integration.title")}
                 </Text>
                 <Text as="p" variant="bodyMd">
-                  Before using FastEditor, connect your store to the platform via the Settings page.
+                  {t("getting-started-page.integration.description")}
                 </Text>
                 <Text as="span">
-                  <Button url="/app/settings">Go to Settings</Button>
+                  <Button url="/app/settings">{t("getting-started-page.integration.button")}</Button>
                 </Text>
               </BlockStack>
             </Card>
-          </Layout.Section>
-
-          <Layout.Section>
             <Card>
               <BlockStack gap="200">
                 <Text as="h2" variant="headingMd">
-                  Customization Button
+                  {t("getting-started-page.product-setup.title")}
                 </Text>
                 <Text as="p" variant="bodyMd">
-                  Add a customization button to your product page template and style it to match
-                  your
-                  theme.
-                </Text>
-                <Text as="span">
-                  <Button
-                    url={`https://admin.shopify.com/store/${shopName}/themes/current/editor`}
-                    target="_blank"
-                  >
-                    Customize Appearance
-                  </Button>
-                </Text>
-              </BlockStack>
-            </Card>
-          </Layout.Section>
-
-          <Layout.Section>
-            <Card>
-              <BlockStack gap="200">
-                <Text as="h2" variant="headingMd">
-                  Product Setup
-                </Text>
-                <Text as="p" variant="bodyMd">
-                  To link a Shopify product with FastEditor, follow these steps:
+                  {t("getting-started-page.product-setup.description")}
                 </Text>
                 <List>
-                  <List.Item>Create or select a product in Shopify.</List.Item>
-                  <List.Item>Go to the FastEditor platform.</List.Item>
-                  <List.Item>Find the corresponding product.</List.Item>
-                  <List.Item>Click <b>Configurations</b>.</List.Item>
-                  <List.Item>You’ll land on the product details page.</List.Item>
-                  <List.Item>Select the filters you want to use.</List.Item>
-                  <List.Item>Click <b>SmartLink payload</b>.</List.Item>
-                  <List.Item>Copy the <b>SKU</b>.</List.Item>
-                  <List.Item>Return to the product settings in Shopify.</List.Item>
                   <List.Item>
-                    <b>If the product has no variants:</b> paste the SKU into the <i>SKU (Stock
-                    Keeping Unit)</i> field in the Inventory section and save your changes.
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.product-setup.steps.item-1") }} />
+                  </List.Item>
+                  <List.Item>{t("getting-started-page.product-setup.steps.item-2")}</List.Item>
+                  <List.Item>{t("getting-started-page.product-setup.steps.item-3")}</List.Item>
+                  <List.Item>
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.product-setup.steps.item-4") }} />
+                  </List.Item>
+                  <List.Item>{t("getting-started-page.product-setup.steps.item-5")}</List.Item>
+                  <List.Item>{t("getting-started-page.product-setup.steps.item-6")}</List.Item>
+                  <List.Item>
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.product-setup.steps.item-7") }} />
                   </List.Item>
                   <List.Item>
-                    <b>If the product has variants:</b> open the specific variant, paste the SKU
-                    into the <i>SKU (Stock Keeping Unit)</i> field in the Inventory section and
-                    save your changes.
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.product-setup.steps.item-8") }} />
+                  </List.Item>
+                  <List.Item>{t("getting-started-page.product-setup.steps.item-9")}</List.Item>
+                  <List.Item>
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.product-setup.steps.item-10") }} />
+                  </List.Item>
+                  <List.Item>
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.product-setup.steps.item-11") }} />
                   </List.Item>
                 </List>
 
                 <Text as="p" variant="bodyMd">
-                  To display the customization button on the product page:
+                  {t("getting-started-page.product-setup.display-button-description")}
                 </Text>
                 <List>
-                  <List.Item>Open the product you want to customize.</List.Item>
-                  <List.Item>Scroll to the <b>Tags</b> section.</List.Item>
-                  <List.Item>Add the <code>fasteditor</code> tag.</List.Item>
+                  <List.Item>{t("getting-started-page.product-setup.display-steps.item-1")}</List.Item>
+                  <List.Item>
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.product-setup.display-steps.item-2") }} />
+                  </List.Item>
+                  <List.Item>
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.product-setup.display-steps.item-3") }} />
+                  </List.Item>
                 </List>
 
                 <Text as="span">
@@ -137,15 +125,83 @@ const Index = () => {
                     url={`https://admin.shopify.com/store/${shopName}/products?selectedView=all`}
                     target="_top"
                   >
-                    Go to Products
+                    {t("getting-started-page.product-setup.button")}
                   </Button>
                 </Text>
               </BlockStack>
             </Card>
-          </Layout.Section>
-        </Layout>
+          </BlockStack>
+
+          <BlockStack gap="200">
+            <Card>
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingMd">
+                  {t("getting-started-page.customization-button.title")}
+                </Text>
+                <video
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "6px",
+                    objectFit: "cover",
+                    aspectRatio: "16 / 9"
+                  }}
+                  autoPlay
+                  muted
+                  loop
+                  poster="customize-button.png"
+                >
+                  <source src="customize-button.mp4" type="video/mp4"/>
+                </video>
+                <Text as="p" variant="bodyMd">
+                  {t("getting-started-page.customization-button.description")}
+                </Text>
+                <Text as="span">
+                  <Button
+                    url={`https://admin.shopify.com/store/${shopName}/themes/current/editor?template=product&addAppBlockId=${apiKey}/product-customize-block&target=mainSection`}
+                    target="_blank"
+                  >
+                    {t("getting-started-page.customization-button.button")}
+                  </Button>
+                </Text>
+              </BlockStack>
+            </Card>
+            <Card>
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingMd">
+                  {t("getting-started-page.sticky-bar.title")}
+                </Text>
+                <video
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "6px",
+                    objectFit: "cover",
+                    aspectRatio: "16 / 9"
+                  }}
+                  autoPlay
+                  muted
+                  loop poster="sticky-bar.png"
+                >
+                  <source src="sticky-bar.mp4" type="video/mp4"/>
+                </video>
+                <Text as="p" variant="bodyMd">
+                  {t("getting-started-page.sticky-bar.description")}
+                </Text>
+                <Text as="span">
+                  <Button
+                    url={`https://admin.shopify.com/store/${shopName}/admin/themes/current/editor?context=apps&template=product`}
+                    target="_blank"
+                  >
+                    {t("getting-started-page.sticky-bar.button")}
+                  </Button>
+                </Text>
+              </BlockStack>
+            </Card>
+          </BlockStack>
+        </InlineGrid>
       </Box>
-    </Page>
+    </PageLayout>
   );
 };
 

@@ -7,6 +7,7 @@ import {
   useSetIndexFiltersMode
 } from "@shopify/polaris";
 import {useLocation, useNavigation} from "@remix-run/react";
+import { useTranslation } from "react-i18next";
 
 interface PageInfo {
   hasPreviousPage: boolean;
@@ -40,17 +41,14 @@ export const useProductsTableControls = (
   const initialQuery = searchParams.get("query") || "";
   const initialSelectedView = searchParams.get("selectedView") || "all";
 
+  const { t } = useTranslation();
   const {mode, setMode} = useSetIndexFiltersMode(IndexFiltersMode.Default);
 
-  const tabItems = [
-    'All',
-    'Active',
-    'Draft',
-    'Archived'
-  ]
+  const tabKeys = ['all', 'active', 'draft', 'archived'];
+  const tabItems = tabKeys.map(key => t(`dashboard-page.tabs.${key}`));
 
   const [selectedTab, setSelectedTab] = useState(
-    tabItems.findIndex((tab) => tab.toLowerCase() === initialSelectedView.toLowerCase()) || 0
+    tabKeys.findIndex((key) => key.toLowerCase() === initialSelectedView.toLowerCase()) || 0
   );
 
   const onChangeTab = useCallback((item: string, index: number) => {
@@ -58,11 +56,11 @@ export const useProductsTableControls = (
     setSelectedTab(index);
 
     const params = new URLSearchParams(location.search);
-    params.set("selectedView", item.toLowerCase());
+    params.set("selectedView", tabKeys[index]);
     params.delete("rel");
     params.delete("cursor");
     navigate({search: params.toString()});
-  }, [location.search, navigate]);
+  }, [location.search, navigate, tabKeys]);
 
   const tabs: TabProps[] = tabItems.map((item, index) => ({
     content: item,
@@ -72,8 +70,8 @@ export const useProductsTableControls = (
   }));
 
   const sortOptions: IndexFiltersProps['sortOptions'] = [
-    {label: 'Product', value: 'title asc', directionLabel: 'A-Z'},
-    {label: 'Product', value: 'title desc', directionLabel: 'Z-A'},
+    {label: t("dashboard-page.sort.product-label"), value: 'title asc', directionLabel: t("dashboard-page.sort.direction-az")},
+    {label: t("dashboard-page.sort.product-label"), value: 'title desc', directionLabel: t("dashboard-page.sort.direction-za")},
   ];
 
   const [sortSelected, setSortSelected] = useState<string[]>([initialSort]);
@@ -143,7 +141,7 @@ export const useProductsTableControls = (
         cursor,
         order: sortSelected[0],
       });
-      const selectedView = tabItems[selectedTab].toLowerCase();
+      const selectedView = tabKeys[selectedTab];
       params.set("selectedView", selectedView);
 
       if (queryValue) {
@@ -152,7 +150,7 @@ export const useProductsTableControls = (
 
       return `${location.pathname}?${params.toString()}`;
     },
-    [sortSelected, queryValue, tabItems, selectedTab, location.pathname]
+    [sortSelected, queryValue, selectedTab, location.pathname, tabKeys]
   );
 
   /**
