@@ -230,7 +230,7 @@
 
   .fasteditor-sticky-bar fasteditor-customize-button,
   .fasteditor-sticky-bar__button {
-    flex: 1;
+    flex: 1 1 50%;
     width: 100%;
   }
 }
