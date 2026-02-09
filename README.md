@@ -186,7 +186,7 @@ See [Shopify deployment docs](https://shopify.dev/docs/apps/deployment/web) and 
 
 ## Documentation & resources
 
-- **App flows:** [flow.md](./flow.md)
+- **App flows:** [flow.md](docs/flow.md)
 - **Endpoints:** [docs/endpoints.md](./docs/endpoints.md) — public API (`/app/fasteditor/product`, `/app/smartlink`), app routes, webhooks, cron
 - **Theme extension:** [docs/extension.md](./docs/extension.md) — customize-button blocks, assets, snippets, settings
 - **API:** `app/graphql/` + [Shopify Admin API](https://shopify.dev/docs/api/admin)

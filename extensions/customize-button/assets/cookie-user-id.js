@@ -5,7 +5,7 @@ function getUserIdFromCookie() {
 }
 
 function setUserIdToCookie(userId) {
-  const expiration = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString(); // 30 днів
+  const expiration = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString(); // 30 days
   document.cookie = `fasteditor_userid=${userId}; expires=${expiration}; path=/`;
 }
 
