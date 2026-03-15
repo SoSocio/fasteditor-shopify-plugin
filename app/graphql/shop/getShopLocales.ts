@@ -1,6 +1,6 @@
 export const GET_SHOP_LOCALES = `
   #graphql
-  query {
+  query GetShopLocales {
     shopLocales {
       locale
       primary

@@ -3,12 +3,14 @@ import { LATEST_API_VERSION } from "@shopify/shopify-api";
 import { shopifyApiProject, ApiType } from "@shopify/api-codegen-preset";
 import type { IGraphQLConfig } from "graphql-config";
 
+const apiVersion = process.env.SHOPIFY_API_VERSION ?? LATEST_API_VERSION;
+
 function getConfig() {
   const config: IGraphQLConfig = {
     projects: {
       default: shopifyApiProject({
         apiType: ApiType.Admin,
-        apiVersion: LATEST_API_VERSION,
+        apiVersion,
         documents: ["./app/**/*.{js,ts,jsx,tsx}", "./app/.server/**/*.{js,ts,jsx,tsx}"],
         outputDir: "./app/types",
       }),
