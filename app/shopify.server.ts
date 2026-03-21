@@ -1,10 +1,10 @@
 import "@shopify/shopify-app-remix/adapters/node";
 import {
-  ApiVersion,
   AppDistribution,
   BillingInterval,
   shopifyApp,
 } from "@shopify/shopify-app-remix/server";
+import type {ApiVersion} from "@shopify/shopify-app-remix/server";
 import {PrismaSessionStorage} from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
 import * as process from "node:process";
@@ -17,7 +17,7 @@ export const MONTHLY_PLAN = "Monthly subscription";
 export const TRIAL_PERIOD_DAYS = Number(process.env.TRIAL_PERIOD_DAYS) || 90;
 export const MONTHLY_PLAN_PRICE = Number(process.env.MONTHLY_PLAN_PRICE) || 95;
 export const apiVersion = (process.env.SHOPIFY_API_VERSION ||
-  ApiVersion.January25) as ApiVersion;
+  "2026-04") as ApiVersion;
 
 /**
  * Shopify app instance configured for this project.

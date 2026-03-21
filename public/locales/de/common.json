@@ -113,6 +113,67 @@
       "validation-errors-title": "Validierungsfehler"
     }
   },
+  "pricing-rules-page": {
+    "title": "Pricing Rules",
+    "create-button": "Create rule",
+    "empty-state": {
+      "title": "No pricing rules yet",
+      "description": "Create a rule to start charging per extra page."
+    },
+    "table": {
+      "headings": {
+        "name": "Rule name",
+        "description": "Description",
+        "targets": "Linked items",
+        "price": "Price per extra product",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "pricing-rule-form": {
+    "title": {
+      "new": "Create Pricing Rule",
+      "edit": "Edit Pricing Rule"
+    },
+    "fields": {
+      "name": "Rule name",
+      "description": "Rule description",
+      "price": "Price per extra product",
+      "enabled": "Enable rule",
+      "target-type": "Apply to",
+      "target-search": "Search products or variants",
+      "target-selected": "Selected target"
+    },
+    "target-type": {
+      "product": "Product",
+      "variant": "Variant"
+    },
+    "buttons": {
+      "search": "Search",
+      "select": "Select",
+      "remove": "Remove",
+      "save": "Save",
+      "create": "Create",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "validation": {
+      "name-required": "Rule name is required",
+      "price-required": "Price is required",
+      "price-invalid": "Enter a valid price",
+      "target-required": "Select a product or variant"
+    },
+    "delete-confirm": "Delete this pricing rule?"
+  },
   "subscription-page": {
     "title": "Abonnement",
     "cancel-button": "Abbrechen",
@@ -190,6 +251,7 @@
   "navigation": {
     "home": "Startseite",
     "dashboard": "Übersicht",
+    "pricing-rules": "Pricing Rules",
     "settings": "Einstellungen",
     "subscription": "Abonnement"
   },
