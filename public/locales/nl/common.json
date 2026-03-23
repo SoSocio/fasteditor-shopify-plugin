@@ -16,6 +16,18 @@
       "description": "Klik op de knop hieronder om de klevende balk in te schakelen. De klevende balk wordt weergegeven op productpagina's die de fasteditor-tag hebben. U kunt ook de stijlen van de klevende balk aanpassen naar uw behoeften.",
       "button": "Klevende balk toevoegen"
     },
+    "app-embed": {
+      "title": "App-embed instellen",
+      "description": "Schakel de FastEditor app-embeds in je thema in om storefront-functies zoals de sticky bar en synchronisatie van de winkelwagen te gebruiken.",
+      "steps": {
+        "item-1": "Open de Shopify Theme Editor voor je huidige thema.",
+        "item-2": "Open het paneel <b>App embeds</b>.",
+        "item-3": "Schakel <b>FastEditor Sticky Bar</b> in als je de zwevende productbalk op productpagina's wilt tonen.",
+        "item-4": "Schakel <b>FastEditor Cart Sync</b> in als je winkel extra-line prijsregels gebruikt en je hoeveelheden in de winkelwagen wilt synchroniseren.",
+        "item-5": "Klik op <b>Opslaan</b> in de Theme Editor."
+      },
+      "button": "App Embeds openen"
+    },
     "product-setup": {
       "title": "Productinstelling",
       "description": "Volg deze stappen om een Shopify-product te koppelen aan FastEditor:",
@@ -113,6 +125,67 @@
       "validation-errors-title": "Validatiefouten"
     }
   },
+  "pricing-rules-page": {
+    "title": "Prijsregels",
+    "create-button": "Regel maken",
+    "empty-state": {
+      "title": "Nog geen prijsregels",
+      "description": "Maak een regel om kosten per extra pagina in rekening te brengen."
+    },
+    "table": {
+      "headings": {
+        "name": "Regelnaam",
+        "description": "Beschrijving",
+        "targets": "Gekoppelde items",
+        "price": "Prijs per extra product",
+        "status": "Status",
+        "actions": "Acties"
+      }
+    },
+    "status": {
+      "active": "Actief",
+      "inactive": "Inactief"
+    },
+    "actions": {
+      "edit": "Bewerken",
+      "delete": "Verwijderen"
+    }
+  },
+  "pricing-rule-form": {
+    "title": {
+      "new": "Prijsregel maken",
+      "edit": "Prijsregel bewerken"
+    },
+    "fields": {
+      "name": "Regelnaam",
+      "description": "Regelbeschrijving",
+      "price": "Prijs per extra product",
+      "enabled": "Regel inschakelen",
+      "target-type": "Toepassen op",
+      "target-search": "Producten of varianten zoeken",
+      "target-selected": "Geselecteerd doel"
+    },
+    "target-type": {
+      "product": "Product",
+      "variant": "Variant"
+    },
+    "buttons": {
+      "search": "Zoeken",
+      "select": "Selecteren",
+      "remove": "Verwijderen",
+      "save": "Opslaan",
+      "create": "Maken",
+      "cancel": "Annuleren",
+      "delete": "Verwijderen"
+    },
+    "validation": {
+      "name-required": "Regelnaam is verplicht",
+      "price-required": "Prijs is verplicht",
+      "price-invalid": "Voer een geldige prijs in",
+      "target-required": "Selecteer een product of variant"
+    },
+    "delete-confirm": "Deze prijsregel verwijderen?"
+  },
   "subscription-page": {
     "title": "Abonnement",
     "cancel-button": "Annuleren",
@@ -190,6 +263,7 @@
   "navigation": {
     "home": "Startpagina",
     "dashboard": "Overzicht",
+    "pricing-rules": "Pricing Rules",
     "settings": "Instellingen",
     "subscription": "Abonnement"
   },

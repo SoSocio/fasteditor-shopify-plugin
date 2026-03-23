@@ -16,6 +16,18 @@
       "description": "Click the button below to enable the sticky bar. The sticky bar will be displayed on product pages that have the fasteditor tag. You can also customize the sticky bar styles according to your needs.",
       "button": "Add Sticky Bar"
     },
+    "app-embed": {
+      "title": "App Embed Setup",
+      "description": "Enable the FastEditor app embeds in your theme to use storefront helpers such as the sticky bar and cart synchronization.",
+      "steps": {
+        "item-1": "Open the Shopify Theme Editor for your current theme.",
+        "item-2": "Open the <b>App embeds</b> panel.",
+        "item-3": "Enable <b>FastEditor Sticky Bar</b> if you want the floating product bar on product pages.",
+        "item-4": "Enable <b>FastEditor Cart Sync</b> if your store uses extra-line pricing rules and you need cart quantity synchronization.",
+        "item-5": "Click <b>Save</b> in the theme editor."
+      },
+      "button": "Open App Embeds"
+    },
     "product-setup": {
       "title": "Product Setup",
       "description": "To link a Shopify product with FastEditor, follow these steps:",
@@ -113,6 +125,67 @@
       "validation-errors-title": "Validation errors"
     }
   },
+  "pricing-rules-page": {
+    "title": "Pricing Rules",
+    "create-button": "Create rule",
+    "empty-state": {
+      "title": "No pricing rules yet",
+      "description": "Create a rule to start charging per extra page."
+    },
+    "table": {
+      "headings": {
+        "name": "Rule name",
+        "description": "Description",
+        "targets": "Linked items",
+        "price": "Price per extra product",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "pricing-rule-form": {
+    "title": {
+      "new": "Create Pricing Rule",
+      "edit": "Edit Pricing Rule"
+    },
+    "fields": {
+      "name": "Rule name",
+      "description": "Rule description",
+      "price": "Price per extra product",
+      "enabled": "Enable rule",
+      "target-type": "Apply to",
+      "target-search": "Search products or variants",
+      "target-selected": "Selected target"
+    },
+    "target-type": {
+      "product": "Product",
+      "variant": "Variant"
+    },
+    "buttons": {
+      "search": "Search",
+      "select": "Select",
+      "remove": "Remove",
+      "save": "Save",
+      "create": "Create",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "validation": {
+      "name-required": "Rule name is required",
+      "price-required": "Price is required",
+      "price-invalid": "Enter a valid price",
+      "target-required": "Select a product or variant"
+    },
+    "delete-confirm": "Delete this pricing rule?"
+  },
   "subscription-page": {
     "title": "Subscription",
     "cancel-button": "Cancel",
@@ -190,6 +263,7 @@
   "navigation": {
     "home": "Home",
     "dashboard": "Dashboard",
+    "pricing-rules": "Pricing Rules",
     "settings": "Settings",
     "subscription": "Subscription"
   },

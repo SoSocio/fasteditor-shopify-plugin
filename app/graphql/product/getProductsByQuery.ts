@@ -25,6 +25,8 @@ export const GET_PRODUCTS_BY_QUERY = `
           title
           legacyResourceId
           status
+          productType
+          tags
 
           featuredMedia {
             preview {

@@ -1,10 +1,10 @@
 import "@shopify/shopify-app-remix/adapters/node";
 import {
-  ApiVersion,
   AppDistribution,
   BillingInterval,
   shopifyApp,
 } from "@shopify/shopify-app-remix/server";
+import type {ApiVersion} from "@shopify/shopify-app-remix/server";
 import {PrismaSessionStorage} from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
 import * as process from "node:process";
@@ -16,6 +16,8 @@ export const MONTHLY_PLAN = "Monthly subscription";
  */
 export const TRIAL_PERIOD_DAYS = Number(process.env.TRIAL_PERIOD_DAYS) || 90;
 export const MONTHLY_PLAN_PRICE = Number(process.env.MONTHLY_PLAN_PRICE) || 95;
+export const apiVersion = (process.env.SHOPIFY_API_VERSION ||
+  "2026-04") as ApiVersion;
 
 /**
  * Shopify app instance configured for this project.
@@ -24,7 +26,7 @@ export const MONTHLY_PLAN_PRICE = Number(process.env.MONTHLY_PLAN_PRICE) || 95;
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
   apiSecretKey: process.env.SHOPIFY_API_SECRET || "",
-  apiVersion: ApiVersion.January25,
+  apiVersion,
   scopes: process.env.SCOPES?.split(","),
   appUrl: process.env.SHOPIFY_APP_URL || "",
   authPathPrefix: "/auth",
@@ -62,11 +64,6 @@ const shopify = shopifyApp({
  * The main Shopify app instance for use throughout the server.
  */
 export default shopify;
-
-/**
- * The current Shopify API version used by the app.
- */
-export const apiVersion = ApiVersion.January25;
 
 /**
  * Adds required document response headers for Shopify app.

@@ -16,6 +16,18 @@
       "description": "Klik på knappen nedenfor for at aktivere den klæbende bar. Den klæbende bar vises på produktsider, der har fasteditor-tagget. Du kan også tilpasse stilene for den klæbende bar efter dine behov.",
       "button": "Tilføj klæbende bar"
     },
+    "app-embed": {
+      "title": "Opsætning af app-embed",
+      "description": "Aktivér FastEditor app-embeds i dit theme for at bruge storefront-funktioner som sticky bar og synkronisering af kurven.",
+      "steps": {
+        "item-1": "Åbn Shopify Theme Editor for dit nuværende theme.",
+        "item-2": "Åbn panelet <b>App embeds</b>.",
+        "item-3": "Aktivér <b>FastEditor Sticky Bar</b>, hvis du vil vise den flydende produktlinje på produktsider.",
+        "item-4": "Aktivér <b>FastEditor Cart Sync</b>, hvis din butik bruger extra-line pricing rules, og du har brug for synkronisering af antal i kurven.",
+        "item-5": "Klik på <b>Gem</b> i theme editoren."
+      },
+      "button": "Åbn App embeds"
+    },
     "product-setup": {
       "title": "Produktopsætning",
       "description": "Følg disse trin for at forbinde et Shopify-produkt med FastEditor:",
@@ -113,6 +125,67 @@
       "validation-errors-title": "Valideringsfejl"
     }
   },
+  "pricing-rules-page": {
+    "title": "Prisregler",
+    "create-button": "Opret regel",
+    "empty-state": {
+      "title": "Ingen prisregler endnu",
+      "description": "Opret en regel for at begynde at opkræve pr. ekstra side."
+    },
+    "table": {
+      "headings": {
+        "name": "Reglenavn",
+        "description": "Beskrivelse",
+        "targets": "Knyttede elementer",
+        "price": "Pris pr. ekstra produkt",
+        "status": "Status",
+        "actions": "Handlinger"
+      }
+    },
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "actions": {
+      "edit": "Rediger",
+      "delete": "Slet"
+    }
+  },
+  "pricing-rule-form": {
+    "title": {
+      "new": "Opret prisregel",
+      "edit": "Rediger prisregel"
+    },
+    "fields": {
+      "name": "Reglenavn",
+      "description": "Regelbeskrivelse",
+      "price": "Pris pr. ekstra produkt",
+      "enabled": "Aktivér regel",
+      "target-type": "Anvend på",
+      "target-search": "Søg efter produkter eller varianter",
+      "target-selected": "Valgt mål"
+    },
+    "target-type": {
+      "product": "Produkt",
+      "variant": "Variant"
+    },
+    "buttons": {
+      "search": "Søg",
+      "select": "Vælg",
+      "remove": "Fjern",
+      "save": "Gem",
+      "create": "Opret",
+      "cancel": "Annuller",
+      "delete": "Slet"
+    },
+    "validation": {
+      "name-required": "Reglenavn er påkrævet",
+      "price-required": "Pris er påkrævet",
+      "price-invalid": "Indtast en gyldig pris",
+      "target-required": "Vælg et produkt eller en variant"
+    },
+    "delete-confirm": "Slet denne prisregel?"
+  },
   "subscription-page": {
     "title": "Abonnement",
     "cancel-button": "Annuller",
@@ -190,6 +263,7 @@
   "navigation": {
     "home": "Hjem",
     "dashboard": "Oversigt",
+    "pricing-rules": "Pricing Rules",
     "settings": "Indstillinger",
     "subscription": "Abonnement"
   },
