@@ -10,6 +10,9 @@ export interface PricingRule {
   targetType: PricingRuleTargetType;
   targetIds: string[];
   targetTitles: string[];
+  productVariantId: string;
+  productVariantLegacyResourceId: string;
+  productVariantPrice: string;
 }
 
 export interface PricingRuleFormValues {
@@ -38,4 +41,15 @@ export interface PricingRuleTargetOption {
   type: PricingRuleTargetType;
   title: string;
   label: string;
+}
+
+export interface PricingRuleExtraCharge {
+  ruleId: string;
+  ruleTitle: string;
+  variantId: string;
+  variantGid: string;
+  extraPages: number;
+  quantity: number;
+  pricePerExtraPage: string;
+  extraCost: string;
 }

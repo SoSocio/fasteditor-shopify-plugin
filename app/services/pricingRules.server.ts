@@ -1,6 +1,7 @@
 import type {authenticateAdmin} from "../types/app.types";
 import type {
   PricingRule,
+  PricingRuleExtraCharge,
   PricingRuleFormValues,
   PricingRuleTargetOption
 } from "../types/pricingRules.types";
@@ -13,6 +14,7 @@ import {DELETE_PRICING_RULE_PRODUCT} from "../graphql/pricingRules/deletePricing
 import {SEARCH_PRODUCT_TARGETS} from "../graphql/pricingRules/searchProductTargets";
 import {GET_PUBLICATIONS} from "../graphql/pricingRules/getPublications";
 import {PUBLISH_PRICING_RULE_PRODUCT} from "../graphql/pricingRules/publishPricingRuleProduct";
+import {UPDATE_PRICING_RULE_VARIANT} from "../graphql/pricingRules/updatePricingRuleVariant";
 
 export const PRICING_RULE_TAG = "fasteditor_pricing_rule";
 export const PRICING_RULE_PRODUCT_TYPE = "FastEditor Pricing Rule";
@@ -33,14 +35,32 @@ type ShopifyMetafield = {
   type?: string | null;
 };
 
+type ShopifyProductVariant = {
+  id: string;
+  legacyResourceId: string;
+  price?: string | null;
+};
+
 type ShopifyProduct = {
   id: string;
   legacyResourceId: string;
   title: string;
   status: string;
+  variants: {
+    nodes: ShopifyProductVariant[];
+  };
   metafields: {
     nodes: ShopifyMetafield[];
   };
+};
+
+type ShopifyProductMutation = {
+  id: string;
+  legacyResourceId: string;
+  status?: string | null;
+  variants?: {
+    nodes: ShopifyProductVariant[];
+  } | null;
 };
 
 type GraphqlProductsResponse = {
@@ -55,15 +75,22 @@ type GraphqlProductResponse = {
 
 type GraphqlProductMutationResponse = {
   productCreate?: {
-    product: { id: string; legacyResourceId: string; status?: string | null } | null;
+    product: ShopifyProductMutation | null;
     userErrors: { field?: string[]; message: string }[];
   };
   productUpdate?: {
-    product: { id: string; legacyResourceId: string; status?: string | null } | null;
+    product: ShopifyProductMutation | null;
     userErrors: { field?: string[]; message: string }[];
   };
   productDelete?: {
     deletedProductId: string | null;
+    userErrors: { field?: string[]; message: string }[];
+  };
+};
+
+type GraphqlVariantMutationResponse = {
+  productVariantsBulkUpdate?: {
+    productVariants?: ShopifyProductVariant[] | null;
     userErrors: { field?: string[]; message: string }[];
   };
 };
@@ -89,6 +116,24 @@ type GraphqlPublishMutationResponse = {
     userErrors: { field?: string[]; message: string }[];
   };
 };
+
+function normalizeMoneyValue(value: string | number) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return "0.00";
+  }
+
+  return parsed.toFixed(2);
+}
+
+function normalizePositiveInteger(value: number | string | null | undefined) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return 0;
+  }
+
+  return Math.floor(parsed);
+}
 
 async function updateProductStatus(
   admin: authenticateAdmin,
@@ -119,6 +164,39 @@ async function ensureProductUnlistedStatus(
   productId: string
 ) {
   await updateProductStatus(admin, productId, "UNLISTED");
+}
+
+async function syncPricingRuleVariant(
+  admin: authenticateAdmin,
+  productId: string,
+  variantId: string,
+  pricePerExtraPage: string
+) {
+  const data = await adminGraphqlRequest<GraphqlVariantMutationResponse>(
+    admin,
+    UPDATE_PRICING_RULE_VARIANT,
+    {
+      variables: {
+        productId,
+        variants: [
+          {
+            id: variantId,
+            price: normalizeMoneyValue(pricePerExtraPage),
+            taxable: false,
+            inventoryItem: {
+              tracked: false,
+              requiresShipping: false,
+            },
+          },
+        ],
+      },
+    }
+  );
+
+  const errors = data.productVariantsBulkUpdate?.userErrors || [];
+  if (errors.length > 0) {
+    throw new Error(errors.map((error) => error.message).join(", "));
+  }
 }
 
 async function getOnlineStorePublicationId(admin: authenticateAdmin) {
@@ -234,6 +312,7 @@ function mapPricingRule(product: ShopifyProduct): PricingRule {
   const meta = normalizeMetafields(product.metafields?.nodes || []);
   const targetIds = parseListValue(meta[RULE_KEYS.targetId]);
   const targetTitles = parseListValue(meta[RULE_KEYS.targetTitle]);
+  const defaultVariant = product.variants?.nodes?.[0];
 
   return {
     id: product.id,
@@ -245,6 +324,9 @@ function mapPricingRule(product: ShopifyProduct): PricingRule {
     targetType: (meta[RULE_KEYS.targetType] as PricingRule["targetType"]) || "",
     targetIds,
     targetTitles,
+    productVariantId: defaultVariant?.id || "",
+    productVariantLegacyResourceId: defaultVariant?.legacyResourceId || "",
+    productVariantPrice: defaultVariant?.price || "",
   };
 }
 
@@ -293,6 +375,12 @@ function getProductGidFromLegacyId(legacyId: string) {
   return `gid://shopify/Product/${legacyId}`;
 }
 
+function getProductVariantGidFromLegacyId(legacyId: string) {
+  return legacyId.startsWith("gid://shopify/ProductVariant/")
+    ? legacyId
+    : `gid://shopify/ProductVariant/${legacyId}`;
+}
+
 function buildSearchQuery(term: string) {
   const sanitized = term.replace(/"/g, "").trim();
   if (!sanitized) return null;
@@ -337,6 +425,66 @@ export async function getPricingRuleById(
   return mapPricingRule(data.product);
 }
 
+export async function findPricingRuleByTargetVariantId(
+  admin: authenticateAdmin,
+  variantLegacyId: string
+): Promise<PricingRule | null> {
+  const targetVariantId = getProductVariantGidFromLegacyId(variantLegacyId);
+  const rules = await getPricingRules(admin);
+
+  return (
+    rules.find((rule) =>
+      rule.enabled
+      && rule.targetType === "variant"
+      && Boolean(rule.productVariantLegacyResourceId)
+      && rule.targetIds.includes(targetVariantId)
+    ) || null
+  );
+}
+
+export async function resolvePricingRuleExtraCharge(
+  admin: authenticateAdmin,
+  variantLegacyId: string,
+  extraPages: number,
+  baseQuantity = 1
+): Promise<PricingRuleExtraCharge | null> {
+  const normalizedExtraPages = normalizePositiveInteger(extraPages);
+  if (normalizedExtraPages <= 0) {
+    return null;
+  }
+
+  const rule = await findPricingRuleByTargetVariantId(admin, variantLegacyId);
+  if (!rule?.productVariantLegacyResourceId) {
+    return null;
+  }
+
+  const pricePerExtraPage = normalizeMoneyValue(rule.pricePerExtraPage);
+  if (
+    rule.productVariantId
+    && normalizeMoneyValue(rule.productVariantPrice || "0") !== pricePerExtraPage
+  ) {
+    await syncPricingRuleVariant(
+      admin,
+      rule.id,
+      rule.productVariantId,
+      pricePerExtraPage
+    );
+  }
+
+  const quantity = normalizedExtraPages * Math.max(normalizePositiveInteger(baseQuantity), 1);
+
+  return {
+    ruleId: rule.id,
+    ruleTitle: rule.title,
+    variantId: rule.productVariantLegacyResourceId,
+    variantGid: rule.productVariantId,
+    extraPages: normalizedExtraPages,
+    quantity,
+    pricePerExtraPage,
+    extraCost: normalizeMoneyValue(Number(pricePerExtraPage) * quantity),
+  };
+}
+
 export async function createPricingRule(
   admin: authenticateAdmin,
   values: PricingRuleFormValues
@@ -365,6 +513,16 @@ export async function createPricingRule(
 
   const createdProduct = data.productCreate?.product;
   if (createdProduct?.id) {
+    const defaultVariant = createdProduct.variants?.nodes?.[0];
+    if (defaultVariant?.id) {
+      await syncPricingRuleVariant(
+        admin,
+        createdProduct.id,
+        defaultVariant.id,
+        values.pricePerExtraPage
+      );
+    }
+
     await publishProductToOnlineStore(admin, createdProduct.id, onlineStorePublicationId);
 
     if (createdProduct.status !== "UNLISTED") {
@@ -403,6 +561,16 @@ export async function updatePricingRule(
 
   const updatedProduct = data.productUpdate?.product;
   if (updatedProduct?.id) {
+    const defaultVariant = updatedProduct.variants?.nodes?.[0];
+    if (defaultVariant?.id) {
+      await syncPricingRuleVariant(
+        admin,
+        updatedProduct.id,
+        defaultVariant.id,
+        values.pricePerExtraPage
+      );
+    }
+
     await publishProductToOnlineStore(admin, updatedProduct.id, onlineStorePublicationId);
 
     if (updatedProduct.status !== "UNLISTED") {

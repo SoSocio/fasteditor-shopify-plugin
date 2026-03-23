@@ -28,6 +28,7 @@ interface PricingRuleTargetsTableProps {
     country: string;
     currency: string;
   };
+  blockedTargetIds: string[];
   selectedTargetIds: string[];
   onToggleTarget: (value: PricingRuleTargetSelection) => void;
 }
@@ -37,6 +38,7 @@ export const PricingRuleTargetsTable = ({
   pageInfo,
   shopName,
   shopSettings,
+  blockedTargetIds,
   selectedTargetIds,
   onToggleTarget,
 }: PricingRuleTargetsTableProps) => {
@@ -114,6 +116,7 @@ export const PricingRuleTargetsTable = ({
         {product.variants.nodes.map((variant, variantIndex) => {
           const variantUrl = `https://admin.shopify.com/store/${shopName}/products/${product.legacyResourceId}/variants/${variant.legacyResourceId}`;
           const variantSelected = selectedTargetIds.includes(variant.id);
+          const variantBlocked = blockedTargetIds.includes(variant.id);
           const variantTitle = `${product.title} — ${variant.title}`;
 
           return (
@@ -162,6 +165,7 @@ export const PricingRuleTargetsTable = ({
                   size="slim"
                   variant={variantSelected ? "secondary" : "primary"}
                   tone={variantSelected ? "critical" : undefined}
+                  disabled={!variantSelected && variantBlocked}
                   onClick={() =>
                     onToggleTarget({
                       targetId: variant.id,

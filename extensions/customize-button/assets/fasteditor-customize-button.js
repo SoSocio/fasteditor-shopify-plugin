@@ -67,6 +67,10 @@
     PROJECT_KEY: '_fasteditor_project_key',
     IMAGE_URL: '_fasteditor_image_url',
     CUSTOMIZED: 'Customized',
+    EXTRA_PAGES: '_fasteditor_extra_pages',
+    PRICING_RULE_ID: '_fasteditor_pricing_rule_id',
+    PRICING_RULE_TITLE: '_fasteditor_pricing_rule_title',
+    PARENT_VARIANT_ID: '_fasteditor_parent_variant_id',
   };
 
   /**
@@ -171,50 +175,78 @@
   }
 
   /**
-   * Adds customized item to cart
-   * Uses shared utility if available
-   * @param {string} variantId - Product variant ID
-   * @param {number} quantity - Item quantity
-   * @param {string} projectKey - FastEditor project key
-   * @param {string} imageUrl - Customized image URL
+   * Adds one or more items to cart.
+   * Uses shared utility when only one line item is present.
+   * @param {Array} items
    * @throws {Error} If cart addition fails
    */
-  async function addItemToCart(variantId, quantity, projectKey, imageUrl) {
-    const properties = {
-      [CART_PROPERTIES.PROJECT_KEY]: projectKey,
-      [CART_PROPERTIES.IMAGE_URL]: imageUrl,
-      [CART_PROPERTIES.CUSTOMIZED]: 'Yes',
-    };
-
-    // Use shared utility if available
-    if (window.FastEditorUtils && window.FastEditorUtils.addItemToCart) {
-      return window.FastEditorUtils.addItemToCart(variantId, quantity, properties);
+  async function addItemsToCart(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+      throw new Error('No cart items to add');
     }
 
-    // Fallback implementation
-    const formData = {
-      items: [{
-        id: variantId,
-        quantity,
-        properties,
-      }],
-    };
+    if (
+      items.length === 1
+      && window.FastEditorUtils
+      && window.FastEditorUtils.addItemToCart
+    ) {
+      const [item] = items;
+      return window.FastEditorUtils.addItemToCart(
+        item.id,
+        item.quantity,
+        item.properties || {}
+      );
+    }
 
     const response = await fetch(
       `${window.Shopify?.routes?.root || '/'}${ENDPOINTS.CART_ADD}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ items }),
       }
     );
 
     if (!response.ok) {
       const error = await response.text();
-      throw new Error(`Failed to add item to cart: ${error}`);
+      throw new Error(`Failed to add items to cart: ${error}`);
     }
 
     return response;
+  }
+
+  /**
+   * Builds cart items for the main customized product and optional extra pricing product.
+   * @param {object} data
+   * @returns {Array}
+   */
+  function buildCartItems(data) {
+    const items = [{
+      id: data.variantId,
+      quantity: data.quantity,
+      properties: {
+        [CART_PROPERTIES.PROJECT_KEY]: data.projectKey,
+        [CART_PROPERTIES.IMAGE_URL]: data.imageUrl,
+        [CART_PROPERTIES.CUSTOMIZED]: 'Yes',
+      },
+    }];
+
+    if (!data.extraPricing) {
+      return items;
+    }
+
+    items.push({
+      id: data.extraPricing.variantId,
+      quantity: data.extraPricing.quantity,
+      properties: {
+        [CART_PROPERTIES.EXTRA_PAGES]: String(data.extraPricing.extraPages),
+        [CART_PROPERTIES.PRICING_RULE_ID]: data.extraPricing.ruleId,
+        [CART_PROPERTIES.PRICING_RULE_TITLE]: data.extraPricing.ruleTitle,
+        [CART_PROPERTIES.PARENT_VARIANT_ID]: String(data.variantId),
+      },
+    });
+
+    return items;
   }
 
   /**
@@ -682,13 +714,23 @@
           throw new Error('Invalid response payload');
         }
 
-        // Add item to cart
-        await addItemToCart(
-          data.variantId, 
-          data.quantity, 
-          data.projectKey, 
-          data.imageUrl
-        );
+        console.info('[FastEditor] Resolved product payload:', data);
+        if (data.extraPricing) {
+          console.info('[FastEditor] Extra pricing payload:', data.extraPricing);
+        }
+
+        if (Number(data.extraPages || 0) > 0 && !data.extraPricing) {
+          console.error('[FastEditor] Extra pages detected but no pricing rule was resolved:', {
+            variantId: data.variantId,
+            extraPages: data.extraPages,
+          });
+          throw new Error('Missing pricing rule for extra pages');
+        }
+
+        const cartItems = buildCartItems(data);
+
+        // Add item(s) to cart
+        await addItemsToCart(cartItems);
 
         // Update buttons to success state
         guard.state = 'success';
@@ -733,4 +775,3 @@
     setButtonLoadingIcon,
   };
 })();
-

@@ -1,4 +1,10 @@
-import type {ProductDataFromFastEditor} from "../types/fastEditor.types";
+import {unauthenticated} from "../shopify.server";
+import {resolvePricingRuleExtraCharge} from "./pricingRules.server";
+import type {
+  FastEditorResolvedProductData,
+  ProductDataFromFastEditor
+} from "../types/fastEditor.types";
+import type {PricingRuleExtraCharge} from "../types/pricingRules.types";
 
 const ENDPOINT = "app/fasteditor/product";
 
@@ -40,6 +46,85 @@ export function extractFastEditorUrlFromRequest(request: Request): string {
   }
 
   return fastEditorUrl.trim();
+}
+
+/**
+ * Extracts shop domain from app proxy request.
+ *
+ * @param request - The incoming request object
+ * @returns Shop domain or null when not available
+ */
+export function extractShopFromRequest(request: Request): string | null {
+  const requestUrl = new URL(request.url);
+  const shop = requestUrl.searchParams.get("shop")?.trim();
+
+  return shop || null;
+}
+
+/**
+ * Resolves the number of extra pages returned by FastEditor.
+ *
+ * @param product - Product data returned from FastEditor
+ * @returns Non-negative integer count of extra pages
+ */
+export function getExtraPagesCount(product: ProductDataFromFastEditor): number {
+  const parsed = Number(product.addOnQuantity ?? 0);
+
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return 0;
+  }
+
+  return Math.floor(parsed);
+}
+
+/**
+ * Resolves pricing rule data for extra pages, if applicable.
+ *
+ * @param request - The incoming request object
+ * @param product - Product data returned from FastEditor
+ * @returns Extra pricing payload or null when no pricing rule applies
+ */
+export async function resolveExtraPricingForProduct(
+  request: Request,
+  product: ProductDataFromFastEditor
+): Promise<PricingRuleExtraCharge | null> {
+  const shop = extractShopFromRequest(request);
+  const variantId = String(product.customAttributes?.variantId || "").trim();
+  const extraPages = getExtraPagesCount(product);
+
+  if (!shop || !variantId || extraPages <= 0) {
+    return null;
+  }
+
+  const {admin} = await unauthenticated.admin(shop);
+
+  return resolvePricingRuleExtraCharge(admin, variantId, extraPages, product.quantity);
+}
+
+/**
+ * Maps FastEditor product data to the storefront response payload.
+ *
+ * @param product - Product data returned from FastEditor
+ * @param extraPricing - Resolved extra pricing payload
+ * @returns Response payload for storefront scripts
+ */
+export function buildResolvedFastEditorProductData(
+  product: ProductDataFromFastEditor,
+  extraPricing: PricingRuleExtraCharge | null
+): FastEditorResolvedProductData {
+  return {
+    variantId: String(product.customAttributes.variantId || ""),
+    quantity: product.quantity,
+    projectKey: product.projectKey,
+    imageUrl: product.imageUrl,
+    customAttributes: product.customAttributes,
+    pages: typeof product.pages === "number" ? product.pages : null,
+    extraPages: getExtraPagesCount(product),
+    addOnQuantity: typeof product.addOnQuantity === "number" ? product.addOnQuantity : null,
+    price: typeof product.price === "number" ? product.price : null,
+    currency: product.currency || null,
+    extraPricing,
+  };
 }
 
 /**

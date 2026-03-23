@@ -51,7 +51,7 @@ export { loader, action } from "./app.pricing-rules.$ruleId.server";
 
 export const PricingRuleFormPage = () => {
   const {t} = useTranslation();
-  const {rule, appAvailability, shopName, products, pageInfo, shopSettings} = useLoaderData<typeof loader>();
+  const {rule, appAvailability, shopName, products, pageInfo, blockedTargetIds, shopSettings} = useLoaderData<typeof loader>();
   const params = useParams();
   const actionData = useActionData<PricingRuleActionData>();
   const navigation = useNavigation();
@@ -172,6 +172,7 @@ export const PricingRuleFormPage = () => {
                   pageInfo={pageInfo}
                   shopName={shopName}
                   shopSettings={shopSettings}
+                  blockedTargetIds={blockedTargetIds}
                   selectedTargetIds={formValues.targetIds}
                   onToggleTarget={(value) =>
                     setFormValues((prev) => {

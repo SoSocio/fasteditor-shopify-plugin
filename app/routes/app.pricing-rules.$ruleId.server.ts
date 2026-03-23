@@ -7,6 +7,7 @@ import {
   createPricingRule,
   deletePricingRule,
   getPricingRuleById,
+  getPricingRules,
   updatePricingRule
 } from "../services/pricingRules.server";
 import type {PricingRule, PricingRuleActionData, PricingRuleFormValues} from "../types/pricingRules.types";
@@ -22,6 +23,7 @@ interface PricingRuleLoader {
   shopName: string;
   products: { node: Product }[];
   pageInfo: PageInfo;
+  blockedTargetIds: string[];
   shopSettings: {
     country: string;
     currency: string;
@@ -46,6 +48,7 @@ export const loader = async (
   try {
     const limit = 15;
     const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability");
+    const allRules = await getPricingRules(admin);
     const productsVariables = buildProductsVariables(
       request,
       limit,
@@ -57,6 +60,15 @@ export const loader = async (
     );
     const shopSettings = await getShopSettings(session.shop);
     const shopName = session.shop.replace(".myshopify.com", "");
+    const blockedTargetIds = allRules
+      .filter((existingRule) => {
+        if (!ruleId || ruleId === "new") {
+          return true;
+        }
+
+        return existingRule.legacyResourceId !== ruleId;
+      })
+      .flatMap((existingRule) => existingRule.targetIds);
 
     if (!ruleId || ruleId === "new") {
       return {
@@ -70,6 +82,7 @@ export const loader = async (
           startCursor: null,
           endCursor: null,
         },
+        blockedTargetIds,
         shopSettings: {
           country: shopSettings?.country || "US",
           currency: shopSettings?.currency || "USD",
@@ -90,6 +103,7 @@ export const loader = async (
         startCursor: null,
         endCursor: null,
       },
+      blockedTargetIds,
       shopSettings: {
         country: shopSettings?.country || "US",
         currency: shopSettings?.currency || "USD",
@@ -109,6 +123,7 @@ export const loader = async (
         startCursor: null,
         endCursor: null,
       },
+      blockedTargetIds: [],
       shopSettings: {
         country: "US",
         currency: "USD",

@@ -6,6 +6,13 @@ export const UPDATE_PRICING_RULE_PRODUCT = `
         id
         legacyResourceId
         status
+        variants(first: 1) {
+          nodes {
+            id
+            legacyResourceId
+            price
+          }
+        }
       }
       userErrors {
         field
