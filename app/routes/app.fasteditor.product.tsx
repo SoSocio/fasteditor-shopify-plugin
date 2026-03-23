@@ -21,13 +21,16 @@ export const loader = async ({request}: LoaderFunctionArgs): Promise<Response> =
     const paramUrl = extractFastEditorUrlFromRequest(request);
     const product = await fetchProductDataFromFastEditor(paramUrl);
     validateProductData(product);
-    const extraPricing = await resolveExtraPricingForProduct(request, product);
-    const resolvedData = buildResolvedFastEditorProductData(product, extraPricing);
+    const resolvedPricing = await resolveExtraPricingForProduct(request, product);
+    const resolvedData = buildResolvedFastEditorProductData(product, resolvedPricing);
     const extraPages = getExtraPagesCount(product);
 
     console.info(`[${ENDPOINT}] Product data fetched successfully.`, product);
-    if (extraPricing) {
-      console.info(`[${ENDPOINT}] Extra pricing resolved successfully.`, extraPricing);
+    if (resolvedPricing?.extraPricing) {
+      console.info(`[${ENDPOINT}] Extra pricing resolved successfully.`, {
+        pricingMode: resolvedPricing.pricingMode,
+        ...resolvedPricing.extraPricing,
+      });
     } else if (extraPages > 0) {
       console.warn(
         `[${ENDPOINT}] Extra pages detected but no pricing rule matched.`,

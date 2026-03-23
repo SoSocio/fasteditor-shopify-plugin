@@ -1,5 +1,12 @@
 import type {PricingRuleExtraCharge} from "./pricingRules.types";
 
+export type FastEditorPricingMode = "extra_line" | "line_update" | null;
+
+export interface FastEditorResolvedPricing {
+  extraPricing: PricingRuleExtraCharge;
+  pricingMode: Exclude<FastEditorPricingMode, null>;
+}
+
 export interface FastEditorIntegrationData {
   URL: string;
 }
@@ -42,5 +49,6 @@ export interface FastEditorResolvedProductData {
   addOnQuantity: number | null;
   price: number | null;
   currency: string | null;
+  pricingMode: FastEditorPricingMode;
   extraPricing: PricingRuleExtraCharge | null;
 }

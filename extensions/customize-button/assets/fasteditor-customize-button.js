@@ -67,7 +67,10 @@
     PROJECT_KEY: '_fasteditor_project_key',
     IMAGE_URL: '_fasteditor_image_url',
     CUSTOMIZED: 'Customized',
+    PRICING_MODE: '_fasteditor_pricing_mode',
     EXTRA_PAGES: '_fasteditor_extra_pages',
+    PRICE_PER_EXTRA_PAGE: '_fasteditor_price_per_extra_page',
+    EXTRA_UNIT_AMOUNT: '_fasteditor_extra_unit_amount',
     EXTRA_VARIANT_ID: '_fasteditor_extra_variant_id',
     PRICING_RULE_ID: '_fasteditor_pricing_rule_id',
     PRICING_RULE_TITLE: '_fasteditor_pricing_rule_title',
@@ -228,12 +231,19 @@
       [CART_PROPERTIES.IMAGE_URL]: data.imageUrl,
       [CART_PROPERTIES.CUSTOMIZED]: 'Yes',
     };
+    const pricingMode = data.pricingMode || 'extra_line';
 
     if (data.extraPricing) {
+      mainProperties[CART_PROPERTIES.PRICING_MODE] = pricingMode;
       mainProperties[CART_PROPERTIES.EXTRA_PAGES] = String(data.extraPricing.extraPages);
-      mainProperties[CART_PROPERTIES.EXTRA_VARIANT_ID] = String(data.extraPricing.variantId);
+      mainProperties[CART_PROPERTIES.PRICE_PER_EXTRA_PAGE] = String(data.extraPricing.pricePerExtraPage);
+      mainProperties[CART_PROPERTIES.EXTRA_UNIT_AMOUNT] = String(data.extraPricing.extraUnitAmount);
       mainProperties[CART_PROPERTIES.PRICING_RULE_ID] = data.extraPricing.ruleId;
       mainProperties[CART_PROPERTIES.PRICING_RULE_TITLE] = data.extraPricing.ruleTitle;
+
+      if (pricingMode === 'extra_line') {
+        mainProperties[CART_PROPERTIES.EXTRA_VARIANT_ID] = String(data.extraPricing.variantId);
+      }
     }
 
     const items = [{
@@ -242,7 +252,7 @@
       properties: mainProperties,
     }];
 
-    if (!data.extraPricing) {
+    if (!data.extraPricing || pricingMode === 'line_update') {
       return items;
     }
 
@@ -250,6 +260,7 @@
       id: data.extraPricing.variantId,
       quantity: data.extraPricing.quantity,
       properties: {
+        [CART_PROPERTIES.PRICING_MODE]: 'extra_line',
         [CART_PROPERTIES.EXTRA_PAGES]: String(data.extraPricing.extraPages),
         [CART_PROPERTIES.PARENT_PROJECT_KEY]: String(data.projectKey),
         [CART_PROPERTIES.PRICING_RULE_ID]: data.extraPricing.ruleId,

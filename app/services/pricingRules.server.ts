@@ -472,6 +472,7 @@ export async function resolvePricingRuleExtraCharge(
   }
 
   const quantity = normalizedExtraPages * Math.max(normalizePositiveInteger(baseQuantity), 1);
+  const extraUnitAmount = normalizeMoneyValue(Number(pricePerExtraPage) * normalizedExtraPages);
 
   return {
     ruleId: rule.id,
@@ -481,6 +482,7 @@ export async function resolvePricingRuleExtraCharge(
     extraPages: normalizedExtraPages,
     quantity,
     pricePerExtraPage,
+    extraUnitAmount,
     extraCost: normalizeMoneyValue(Number(pricePerExtraPage) * quantity),
   };
 }

@@ -1,12 +1,25 @@
 import {unauthenticated} from "../shopify.server";
 import {resolvePricingRuleExtraCharge} from "./pricingRules.server";
+import {ensureFastEditorCartTransformReady} from "./cartTransform.server";
 import type {
+  FastEditorPricingMode,
+  FastEditorResolvedPricing,
   FastEditorResolvedProductData,
   ProductDataFromFastEditor
 } from "../types/fastEditor.types";
-import type {PricingRuleExtraCharge} from "../types/pricingRules.types";
 
 const ENDPOINT = "app/fasteditor/product";
+const FASTEDITOR_PRICING_MODE_ENV = "FASTEDITOR_PRICING_MODE";
+
+function getForcedPricingMode(): Exclude<FastEditorPricingMode, null> | null {
+  const mode = String(process.env[FASTEDITOR_PRICING_MODE_ENV] || "").trim();
+
+  if (mode === "extra_line" || mode === "line_update") {
+    return mode;
+  }
+
+  return null;
+}
 
 /**
  * Creates a structured error response for extensions.
@@ -87,7 +100,7 @@ export function getExtraPagesCount(product: ProductDataFromFastEditor): number {
 export async function resolveExtraPricingForProduct(
   request: Request,
   product: ProductDataFromFastEditor
-): Promise<PricingRuleExtraCharge | null> {
+): Promise<FastEditorResolvedPricing | null> {
   const shop = extractShopFromRequest(request);
   const variantId = String(product.customAttributes?.variantId || "").trim();
   const extraPages = getExtraPagesCount(product);
@@ -98,7 +111,28 @@ export async function resolveExtraPricingForProduct(
 
   const {admin} = await unauthenticated.admin(shop);
 
-  return resolvePricingRuleExtraCharge(admin, variantId, extraPages, product.quantity);
+  const extraPricing = await resolvePricingRuleExtraCharge(
+    admin,
+    variantId,
+    extraPages,
+    product.quantity
+  );
+
+  if (!extraPricing) {
+    return null;
+  }
+
+  const forcedPricingMode = getForcedPricingMode();
+  const pricingMode = forcedPricingMode || (
+    await ensureFastEditorCartTransformReady(admin)
+      ? "line_update"
+      : "extra_line"
+  );
+
+  return {
+    extraPricing,
+    pricingMode,
+  };
 }
 
 /**
@@ -110,7 +144,7 @@ export async function resolveExtraPricingForProduct(
  */
 export function buildResolvedFastEditorProductData(
   product: ProductDataFromFastEditor,
-  extraPricing: PricingRuleExtraCharge | null
+  resolvedPricing: FastEditorResolvedPricing | null
 ): FastEditorResolvedProductData {
   return {
     variantId: String(product.customAttributes.variantId || ""),
@@ -123,7 +157,8 @@ export function buildResolvedFastEditorProductData(
     addOnQuantity: typeof product.addOnQuantity === "number" ? product.addOnQuantity : null,
     price: typeof product.price === "number" ? product.price : null,
     currency: product.currency || null,
-    extraPricing,
+    pricingMode: resolvedPricing?.pricingMode || null,
+    extraPricing: resolvedPricing?.extraPricing || null,
   };
 }
 

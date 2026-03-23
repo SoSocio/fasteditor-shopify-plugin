@@ -51,5 +51,6 @@ export interface PricingRuleExtraCharge {
   extraPages: number;
   quantity: number;
   pricePerExtraPage: string;
+  extraUnitAmount: string;
   extraCost: string;
 }

@@ -24,6 +24,7 @@
   };
   const CART_PROPERTIES = {
     PROJECT_KEY: '_fasteditor_project_key',
+    EXTRA_VARIANT_ID: '_fasteditor_extra_variant_id',
     EXTRA_PAGES: '_fasteditor_extra_pages',
     PARENT_PROJECT_KEY: '_fasteditor_parent_project_key',
   };
@@ -148,7 +149,8 @@
 
   function isMainFastEditorItem(item) {
     return getProperty(item, CART_PROPERTIES.PROJECT_KEY) !== ''
-      && getProperty(item, CART_PROPERTIES.PARENT_PROJECT_KEY) === '';
+      && getProperty(item, CART_PROPERTIES.PARENT_PROJECT_KEY) === ''
+      && getProperty(item, CART_PROPERTIES.EXTRA_VARIANT_ID) !== '';
   }
 
   function isExtraPricingItem(item) {
