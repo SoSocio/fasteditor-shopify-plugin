@@ -16,6 +16,18 @@
       "description": "Klicka på knappen nedan för att aktivera det klistrade fältet. Det klistrade fältet kommer att visas på produktsidor som har fasteditor-taggen. Du kan också anpassa stilen för det klistrade fältet efter dina behov.",
       "button": "Lägg till klistrat fält"
     },
+    "app-embed": {
+      "title": "Konfiguration av appinbäddning",
+      "description": "Aktivera FastEditors appinbäddningar i ditt tema för att använda storefront-funktioner som sticky bar och synkronisering av kundvagnen.",
+      "steps": {
+        "item-1": "Öppna Shopify Theme Editor för ditt aktuella tema.",
+        "item-2": "Öppna panelen <b>App embeds</b>.",
+        "item-3": "Aktivera <b>FastEditor Sticky Bar</b> om du vill visa den flytande produktlisten på produktsidor.",
+        "item-4": "Aktivera <b>FastEditor Cart Sync</b> om din butik använder extra-line-prisregler och du behöver synkronisering av antal i kundvagnen.",
+        "item-5": "Klicka på <b>Spara</b> i Theme Editor."
+      },
+      "button": "Öppna App Embeds"
+    },
     "product-setup": {
       "title": "Produktinställning",
       "description": "Följ dessa steg för att koppla en Shopify-produkt till FastEditor:",
@@ -113,6 +125,67 @@
       "validation-errors-title": "Valideringsfel"
     }
   },
+  "pricing-rules-page": {
+    "title": "Prisregler",
+    "create-button": "Skapa regel",
+    "empty-state": {
+      "title": "Inga prisregler ännu",
+      "description": "Skapa en regel för att börja ta betalt per extra sida."
+    },
+    "table": {
+      "headings": {
+        "name": "Regelnamn",
+        "description": "Beskrivning",
+        "targets": "Länkade objekt",
+        "price": "Pris per extra produkt",
+        "status": "Status",
+        "actions": "Åtgärder"
+      }
+    },
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "actions": {
+      "edit": "Redigera",
+      "delete": "Ta bort"
+    }
+  },
+  "pricing-rule-form": {
+    "title": {
+      "new": "Skapa prisregel",
+      "edit": "Redigera prisregel"
+    },
+    "fields": {
+      "name": "Regelnamn",
+      "description": "Regelbeskrivning",
+      "price": "Pris per extra produkt",
+      "enabled": "Aktivera regel",
+      "target-type": "Gäller för",
+      "target-search": "Sök produkter eller varianter",
+      "target-selected": "Valt mål"
+    },
+    "target-type": {
+      "product": "Produkt",
+      "variant": "Variant"
+    },
+    "buttons": {
+      "search": "Sök",
+      "select": "Välj",
+      "remove": "Ta bort",
+      "save": "Spara",
+      "create": "Skapa",
+      "cancel": "Avbryt",
+      "delete": "Ta bort"
+    },
+    "validation": {
+      "name-required": "Regelnamn krävs",
+      "price-required": "Pris krävs",
+      "price-invalid": "Ange ett giltigt pris",
+      "target-required": "Välj en produkt eller variant"
+    },
+    "delete-confirm": "Ta bort denna prisregel?"
+  },
   "subscription-page": {
     "title": "Prenumeration",
     "cancel-button": "Avbryt",
@@ -190,6 +263,7 @@
   "navigation": {
     "home": "Start",
     "dashboard": "Översikt",
+    "pricing-rules": "Pricing Rules",
     "settings": "Inställningar",
     "subscription": "Prenumeration"
   },

@@ -50,6 +50,13 @@ export function PageLayout({
   title,
   children,
   fullWidth,
+  subtitle,
+  backAction,
+  primaryAction,
+  secondaryActions,
+  actionGroups,
+  narrowWidth,
+  compactTitle,
 }: PageLayoutProps) {
   const { t, i18n: i18nInstance } = useTranslation();
   const fetcher = useFetcher<LanguageUpdateResponse>();
@@ -103,6 +110,7 @@ export function PageLayout({
    * Title shows current language with Polaris icon
    */
   const allActionGroups: PageProps["actionGroups"] = [
+    ...(actionGroups ?? []),
     {
       title: currentLanguageLabel,
       icon: LanguageFilledIcon,
@@ -113,11 +121,16 @@ export function PageLayout({
   return (
     <Page
       title={title}
+      subtitle={subtitle}
+      backAction={backAction}
+      primaryAction={primaryAction}
+      secondaryActions={secondaryActions}
       actionGroups={allActionGroups}
       fullWidth={fullWidth}
+      narrowWidth={narrowWidth}
+      compactTitle={compactTitle}
     >
       {children}
     </Page>
   );
 }
-

@@ -16,10 +16,7 @@ export async function getProductsByQuery(
   variables: ProductsVariables,
 ): Promise<Products> {
   const data = await adminGraphqlRequest(admin, GET_PRODUCTS_BY_QUERY, {
-    variables: {
-      query: "tag:fasteditor",
-      ...variables
-    },
+    variables,
   });
 
   return data.products;
@@ -51,6 +48,7 @@ export async function getProductVariantSku(admin: unauthenticatedAdmin, variantI
 export function buildProductsVariables(
   request: Request,
   limit: number,
+  baseQuery = "tag:fasteditor",
 ): ProductsVariables {
   const url = new URL(request.url);
   const searchParams = url.searchParams;
@@ -72,10 +70,16 @@ export function buildProductsVariables(
   const gqlSortKey = sortKeyMap[sortKey] || "TITLE";
   const reverse = sortDirection !== "asc";
 
+  const queryParts = [
+    baseQuery,
+    selectedView !== "all" ? "status:" + selectedView : "",
+    rawQuery,
+  ].filter(Boolean);
+
   const variables: ProductsVariables = {
     sortKey: gqlSortKey,
     reverse,
-    query: `tag:fasteditor ${selectedView !== "all" ? "status:" + selectedView : ""} ${rawQuery}`,
+    query: queryParts.join(" ").trim(),
   };
 
   switch (rel) {

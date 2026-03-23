@@ -1,7 +1,10 @@
 import type {ActionFunctionArgs, LoaderFunctionArgs} from "@remix-run/node";
 import {
+  buildResolvedFastEditorProductData,
   fetchProductDataFromFastEditor,
   extractFastEditorUrlFromRequest,
+  getExtraPagesCount,
+  resolveExtraPricingForProduct,
   validateProductData
 } from "../services/fasteditorProduct.server";
 import {actionMethodNotAllowed} from "../services/app.server";
@@ -18,18 +21,31 @@ export const loader = async ({request}: LoaderFunctionArgs): Promise<Response> =
     const paramUrl = extractFastEditorUrlFromRequest(request);
     const product = await fetchProductDataFromFastEditor(paramUrl);
     validateProductData(product);
+    const resolvedPricing = await resolveExtraPricingForProduct(request, product);
+    const resolvedData = buildResolvedFastEditorProductData(product, resolvedPricing);
+    const extraPages = getExtraPagesCount(product);
 
-    console.info(`[${ENDPOINT}] Product data fetched successfully.`);
+    console.info(`[${ENDPOINT}] Product data fetched successfully.`, product);
+    if (resolvedPricing?.extraPricing) {
+      console.info(`[${ENDPOINT}] Extra pricing resolved successfully.`, {
+        pricingMode: resolvedPricing.pricingMode,
+        ...resolvedPricing.extraPricing,
+      });
+    } else if (extraPages > 0) {
+      console.warn(
+        `[${ENDPOINT}] Extra pages detected but no pricing rule matched.`,
+        {
+          variantId: product.customAttributes.variantId,
+          extraPages,
+        }
+      );
+    }
+
     return new Response(
       JSON.stringify({
         statusCode: 200,
         statusText: "success",
-        data: {
-          variantId: product.customAttributes.variantId,
-          quantity: product.quantity,
-          projectKey: product.projectKey,
-          imageUrl: product.imageUrl
-        },
+        data: resolvedData,
         ok: true,
       }),
       {

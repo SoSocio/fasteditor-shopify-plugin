@@ -222,7 +222,7 @@ export async function setAppAvailabilityMetafield(
 export async function getAllAppSubscriptions(admin: authenticateAdmin): Promise<AppSubscription[]> {
   const response = await adminGraphqlRequest(admin, `
     #graphql
-    query ActiveSubscriptions {
+    query AllAppSubscriptions {
       currentAppInstallation {
         allSubscriptions(first: 150) {
           nodes {

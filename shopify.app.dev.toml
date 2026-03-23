@@ -11,7 +11,7 @@ automatically_update_urls_on_dev = true
 include_config_on_deploy = true
 
 [webhooks]
-api_version = "2025-04"
+api_version = "2026-04"
 
 [[webhooks.subscriptions]]
 topics = [ "app_subscriptions/update" ]
@@ -35,7 +35,7 @@ uri = "/webhooks/app/gdpr"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_locales,read_orders,read_products,write_orders"
+scopes = "read_locales,read_orders,read_products,read_publications,write_orders,write_products,write_publications"
 
 [auth]
 redirect_urls = [

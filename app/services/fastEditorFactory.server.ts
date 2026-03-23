@@ -44,7 +44,7 @@ export async function setupFastEditorIntegration(
   apiDomain: string
 ): Promise<FastEditorIntegrationData> {
   const fastEditor = new FastEditorAPI(apiKey, apiDomain);
-  const integrationData = await fastEditor.checkShopIntegration();
+  const integrationData = await checkShopIntegration();
 
   await upsertFastEditorShopSettings(shop, apiKey, apiDomain);
 
