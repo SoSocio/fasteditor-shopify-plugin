@@ -68,9 +68,11 @@
     IMAGE_URL: '_fasteditor_image_url',
     CUSTOMIZED: 'Customized',
     EXTRA_PAGES: '_fasteditor_extra_pages',
+    EXTRA_VARIANT_ID: '_fasteditor_extra_variant_id',
     PRICING_RULE_ID: '_fasteditor_pricing_rule_id',
     PRICING_RULE_TITLE: '_fasteditor_pricing_rule_title',
     PARENT_VARIANT_ID: '_fasteditor_parent_variant_id',
+    PARENT_PROJECT_KEY: '_fasteditor_parent_project_key',
   };
 
   /**
@@ -221,14 +223,23 @@
    * @returns {Array}
    */
   function buildCartItems(data) {
+    const mainProperties = {
+      [CART_PROPERTIES.PROJECT_KEY]: data.projectKey,
+      [CART_PROPERTIES.IMAGE_URL]: data.imageUrl,
+      [CART_PROPERTIES.CUSTOMIZED]: 'Yes',
+    };
+
+    if (data.extraPricing) {
+      mainProperties[CART_PROPERTIES.EXTRA_PAGES] = String(data.extraPricing.extraPages);
+      mainProperties[CART_PROPERTIES.EXTRA_VARIANT_ID] = String(data.extraPricing.variantId);
+      mainProperties[CART_PROPERTIES.PRICING_RULE_ID] = data.extraPricing.ruleId;
+      mainProperties[CART_PROPERTIES.PRICING_RULE_TITLE] = data.extraPricing.ruleTitle;
+    }
+
     const items = [{
       id: data.variantId,
       quantity: data.quantity,
-      properties: {
-        [CART_PROPERTIES.PROJECT_KEY]: data.projectKey,
-        [CART_PROPERTIES.IMAGE_URL]: data.imageUrl,
-        [CART_PROPERTIES.CUSTOMIZED]: 'Yes',
-      },
+      properties: mainProperties,
     }];
 
     if (!data.extraPricing) {
@@ -240,6 +251,7 @@
       quantity: data.extraPricing.quantity,
       properties: {
         [CART_PROPERTIES.EXTRA_PAGES]: String(data.extraPricing.extraPages),
+        [CART_PROPERTIES.PARENT_PROJECT_KEY]: String(data.projectKey),
         [CART_PROPERTIES.PRICING_RULE_ID]: data.extraPricing.ruleId,
         [CART_PROPERTIES.PRICING_RULE_TITLE]: data.extraPricing.ruleTitle,
         [CART_PROPERTIES.PARENT_VARIANT_ID]: String(data.variantId),

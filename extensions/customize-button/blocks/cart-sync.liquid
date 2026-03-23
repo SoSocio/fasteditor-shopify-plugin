@@ -1,0 +1,15 @@
+{%- comment -%}
+  FastEditor Cart Sync App Embed
+  Keeps extra pricing products synchronized with their parent customized product.
+{%- endcomment -%}
+
+<script src="{{ 'fasteditor-cart-sync.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "FastEditor Cart Sync",
+  "target": "body",
+  "available_if": "{{ app.metafields.fasteditor_app.paid }}",
+  "settings": []
+}
+{% endschema %}
