@@ -198,6 +198,39 @@ const Index = () => {
                 </Text>
               </BlockStack>
             </Card>
+            <Card>
+              <BlockStack gap="200">
+                <Text as="h2" variant="headingMd">
+                  {t("getting-started-page.app-embed.title")}
+                </Text>
+                <Text as="p" variant="bodyMd">
+                  {t("getting-started-page.app-embed.description")}
+                </Text>
+                <List>
+                  <List.Item>{t("getting-started-page.app-embed.steps.item-1")}</List.Item>
+                  <List.Item>
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.app-embed.steps.item-2") }} />
+                  </List.Item>
+                  <List.Item>
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.app-embed.steps.item-3") }} />
+                  </List.Item>
+                  <List.Item>
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.app-embed.steps.item-4") }} />
+                  </List.Item>
+                  <List.Item>
+                    <span dangerouslySetInnerHTML={{ __html: t("getting-started-page.app-embed.steps.item-5") }} />
+                  </List.Item>
+                </List>
+                <Text as="span">
+                  <Button
+                    url={`https://admin.shopify.com/store/${shopName}/admin/themes/current/editor?context=apps&template=product`}
+                    target="_blank"
+                  >
+                    {t("getting-started-page.app-embed.button")}
+                  </Button>
+                </Text>
+              </BlockStack>
+            </Card>
           </BlockStack>
         </InlineGrid>
       </Box>

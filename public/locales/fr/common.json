@@ -16,6 +16,18 @@
       "description": "Cliquez sur le bouton ci-dessous pour activer la barre fixe. La barre fixe sera affichée sur les pages produit qui ont le tag fasteditor. Vous pouvez également personnaliser les styles de la barre fixe selon vos besoins.",
       "button": "Ajouter la barre fixe"
     },
+    "app-embed": {
+      "title": "Configuration des App Embeds",
+      "description": "Activez les app embeds FastEditor dans votre thème pour utiliser des fonctionnalités storefront comme la barre flottante et la synchronisation du panier.",
+      "steps": {
+        "item-1": "Ouvrez l'éditeur de thème Shopify pour votre thème actuel.",
+        "item-2": "Ouvrez le panneau <b>App embeds</b>.",
+        "item-3": "Activez <b>FastEditor Sticky Bar</b> si vous souhaitez afficher la barre produit flottante sur les pages produit.",
+        "item-4": "Activez <b>FastEditor Cart Sync</b> si votre boutique utilise des règles tarifaires de type extra-line et que vous avez besoin de synchroniser les quantités du panier.",
+        "item-5": "Cliquez sur <b>Enregistrer</b> dans l'éditeur de thème."
+      },
+      "button": "Ouvrir les App Embeds"
+    },
     "product-setup": {
       "title": "Configuration du produit",
       "description": "Pour lier un produit Shopify à FastEditor, suivez ces étapes :",
@@ -114,65 +126,65 @@
     }
   },
   "pricing-rules-page": {
-    "title": "Pricing Rules",
-    "create-button": "Create rule",
+    "title": "Règles tarifaires",
+    "create-button": "Créer une règle",
     "empty-state": {
-      "title": "No pricing rules yet",
-      "description": "Create a rule to start charging per extra page."
+      "title": "Aucune règle tarifaire pour le moment",
+      "description": "Créez une règle pour commencer à facturer chaque page supplémentaire."
     },
     "table": {
       "headings": {
-        "name": "Rule name",
+        "name": "Nom de la règle",
         "description": "Description",
-        "targets": "Linked items",
-        "price": "Price per extra product",
-        "status": "Status",
+        "targets": "Éléments liés",
+        "price": "Prix par produit supplémentaire",
+        "status": "Statut",
         "actions": "Actions"
       }
     },
     "status": {
-      "active": "Active",
-      "inactive": "Inactive"
+      "active": "Actif",
+      "inactive": "Inactif"
     },
     "actions": {
-      "edit": "Edit",
-      "delete": "Delete"
+      "edit": "Modifier",
+      "delete": "Supprimer"
     }
   },
   "pricing-rule-form": {
     "title": {
-      "new": "Create Pricing Rule",
-      "edit": "Edit Pricing Rule"
+      "new": "Créer une règle tarifaire",
+      "edit": "Modifier la règle tarifaire"
     },
     "fields": {
-      "name": "Rule name",
-      "description": "Rule description",
-      "price": "Price per extra product",
-      "enabled": "Enable rule",
-      "target-type": "Apply to",
-      "target-search": "Search products or variants",
-      "target-selected": "Selected target"
+      "name": "Nom de la règle",
+      "description": "Description de la règle",
+      "price": "Prix par produit supplémentaire",
+      "enabled": "Activer la règle",
+      "target-type": "Appliquer à",
+      "target-search": "Rechercher des produits ou des variantes",
+      "target-selected": "Cible sélectionnée"
     },
     "target-type": {
-      "product": "Product",
-      "variant": "Variant"
+      "product": "Produit",
+      "variant": "Variante"
     },
     "buttons": {
-      "search": "Search",
-      "select": "Select",
-      "remove": "Remove",
-      "save": "Save",
-      "create": "Create",
-      "cancel": "Cancel",
-      "delete": "Delete"
+      "search": "Rechercher",
+      "select": "Sélectionner",
+      "remove": "Retirer",
+      "save": "Enregistrer",
+      "create": "Créer",
+      "cancel": "Annuler",
+      "delete": "Supprimer"
     },
     "validation": {
-      "name-required": "Rule name is required",
-      "price-required": "Price is required",
-      "price-invalid": "Enter a valid price",
-      "target-required": "Select a product or variant"
+      "name-required": "Le nom de la règle est requis",
+      "price-required": "Le prix est requis",
+      "price-invalid": "Saisissez un prix valide",
+      "target-required": "Sélectionnez un produit ou une variante"
     },
-    "delete-confirm": "Delete this pricing rule?"
+    "delete-confirm": "Supprimer cette règle tarifaire ?"
   },
   "subscription-page": {
     "title": "Abonnement",

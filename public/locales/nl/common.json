@@ -16,6 +16,18 @@
       "description": "Klik op de knop hieronder om de klevende balk in te schakelen. De klevende balk wordt weergegeven op productpagina's die de fasteditor-tag hebben. U kunt ook de stijlen van de klevende balk aanpassen naar uw behoeften.",
       "button": "Klevende balk toevoegen"
     },
+    "app-embed": {
+      "title": "App-embed instellen",
+      "description": "Schakel de FastEditor app-embeds in je thema in om storefront-functies zoals de sticky bar en synchronisatie van de winkelwagen te gebruiken.",
+      "steps": {
+        "item-1": "Open de Shopify Theme Editor voor je huidige thema.",
+        "item-2": "Open het paneel <b>App embeds</b>.",
+        "item-3": "Schakel <b>FastEditor Sticky Bar</b> in als je de zwevende productbalk op productpagina's wilt tonen.",
+        "item-4": "Schakel <b>FastEditor Cart Sync</b> in als je winkel extra-line prijsregels gebruikt en je hoeveelheden in de winkelwagen wilt synchroniseren.",
+        "item-5": "Klik op <b>Opslaan</b> in de Theme Editor."
+      },
+      "button": "App Embeds openen"
+    },
     "product-setup": {
       "title": "Productinstelling",
       "description": "Volg deze stappen om een Shopify-product te koppelen aan FastEditor:",
@@ -114,65 +126,65 @@
     }
   },
   "pricing-rules-page": {
-    "title": "Pricing Rules",
-    "create-button": "Create rule",
+    "title": "Prijsregels",
+    "create-button": "Regel maken",
     "empty-state": {
-      "title": "No pricing rules yet",
-      "description": "Create a rule to start charging per extra page."
+      "title": "Nog geen prijsregels",
+      "description": "Maak een regel om kosten per extra pagina in rekening te brengen."
     },
     "table": {
       "headings": {
-        "name": "Rule name",
-        "description": "Description",
-        "targets": "Linked items",
-        "price": "Price per extra product",
+        "name": "Regelnaam",
+        "description": "Beschrijving",
+        "targets": "Gekoppelde items",
+        "price": "Prijs per extra product",
         "status": "Status",
-        "actions": "Actions"
+        "actions": "Acties"
       }
     },
     "status": {
-      "active": "Active",
-      "inactive": "Inactive"
+      "active": "Actief",
+      "inactive": "Inactief"
     },
     "actions": {
-      "edit": "Edit",
-      "delete": "Delete"
+      "edit": "Bewerken",
+      "delete": "Verwijderen"
     }
   },
   "pricing-rule-form": {
     "title": {
-      "new": "Create Pricing Rule",
-      "edit": "Edit Pricing Rule"
+      "new": "Prijsregel maken",
+      "edit": "Prijsregel bewerken"
     },
     "fields": {
-      "name": "Rule name",
-      "description": "Rule description",
-      "price": "Price per extra product",
-      "enabled": "Enable rule",
-      "target-type": "Apply to",
-      "target-search": "Search products or variants",
-      "target-selected": "Selected target"
+      "name": "Regelnaam",
+      "description": "Regelbeschrijving",
+      "price": "Prijs per extra product",
+      "enabled": "Regel inschakelen",
+      "target-type": "Toepassen op",
+      "target-search": "Producten of varianten zoeken",
+      "target-selected": "Geselecteerd doel"
     },
     "target-type": {
       "product": "Product",
       "variant": "Variant"
     },
     "buttons": {
-      "search": "Search",
-      "select": "Select",
-      "remove": "Remove",
-      "save": "Save",
-      "create": "Create",
-      "cancel": "Cancel",
-      "delete": "Delete"
+      "search": "Zoeken",
+      "select": "Selecteren",
+      "remove": "Verwijderen",
+      "save": "Opslaan",
+      "create": "Maken",
+      "cancel": "Annuleren",
+      "delete": "Verwijderen"
     },
     "validation": {
-      "name-required": "Rule name is required",
-      "price-required": "Price is required",
-      "price-invalid": "Enter a valid price",
-      "target-required": "Select a product or variant"
+      "name-required": "Regelnaam is verplicht",
+      "price-required": "Prijs is verplicht",
+      "price-invalid": "Voer een geldige prijs in",
+      "target-required": "Selecteer een product of variant"
     },
-    "delete-confirm": "Delete this pricing rule?"
+    "delete-confirm": "Deze prijsregel verwijderen?"
   },
   "subscription-page": {
     "title": "Abonnement",

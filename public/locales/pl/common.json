@@ -16,6 +16,18 @@
       "description": "Kliknij przycisk poniżej, aby włączyć przyklejony pasek. Przyklejony pasek będzie wyświetlany na stronach produktów, które mają tag fasteditor. Możesz także dostosować style przyklejonego paska zgodnie z potrzebami.",
       "button": "Dodaj przyklejony pasek"
     },
+    "app-embed": {
+      "title": "Konfiguracja App Embed",
+      "description": "Włącz app embedy FastEditor w swoim motywie, aby korzystać z funkcji storefront, takich jak sticky bar i synchronizacja koszyka.",
+      "steps": {
+        "item-1": "Otwórz edytor motywu Shopify dla aktualnego motywu.",
+        "item-2": "Otwórz panel <b>App embeds</b>.",
+        "item-3": "Włącz <b>FastEditor Sticky Bar</b>, jeśli chcesz wyświetlać pływający pasek produktu na stronach produktów.",
+        "item-4": "Włącz <b>FastEditor Cart Sync</b>, jeśli Twój sklep używa reguł cenowych extra-line i potrzebujesz synchronizacji ilości w koszyku.",
+        "item-5": "Kliknij <b>Zapisz</b> w edytorze motywu."
+      },
+      "button": "Otwórz App Embeds"
+    },
     "product-setup": {
       "title": "Konfiguracja produktu",
       "description": "Aby powiązać produkt Shopify z FastEditor, wykonaj następujące kroki:",
@@ -114,65 +126,65 @@
     }
   },
   "pricing-rules-page": {
-    "title": "Pricing Rules",
-    "create-button": "Create rule",
+    "title": "Reguły cenowe",
+    "create-button": "Utwórz regułę",
     "empty-state": {
-      "title": "No pricing rules yet",
-      "description": "Create a rule to start charging per extra page."
+      "title": "Brak reguł cenowych",
+      "description": "Utwórz regułę, aby rozpocząć naliczanie opłaty za każdą dodatkową stronę."
     },
     "table": {
       "headings": {
-        "name": "Rule name",
-        "description": "Description",
-        "targets": "Linked items",
-        "price": "Price per extra product",
+        "name": "Nazwa reguły",
+        "description": "Opis",
+        "targets": "Powiązane elementy",
+        "price": "Cena za dodatkowy produkt",
         "status": "Status",
-        "actions": "Actions"
+        "actions": "Akcje"
       }
     },
     "status": {
-      "active": "Active",
-      "inactive": "Inactive"
+      "active": "Aktywna",
+      "inactive": "Nieaktywna"
     },
     "actions": {
-      "edit": "Edit",
-      "delete": "Delete"
+      "edit": "Edytuj",
+      "delete": "Usuń"
     }
   },
   "pricing-rule-form": {
     "title": {
-      "new": "Create Pricing Rule",
-      "edit": "Edit Pricing Rule"
+      "new": "Utwórz regułę cenową",
+      "edit": "Edytuj regułę cenową"
     },
     "fields": {
-      "name": "Rule name",
-      "description": "Rule description",
-      "price": "Price per extra product",
-      "enabled": "Enable rule",
-      "target-type": "Apply to",
-      "target-search": "Search products or variants",
-      "target-selected": "Selected target"
+      "name": "Nazwa reguły",
+      "description": "Opis reguły",
+      "price": "Cena za dodatkowy produkt",
+      "enabled": "Włącz regułę",
+      "target-type": "Zastosuj do",
+      "target-search": "Wyszukaj produkty lub warianty",
+      "target-selected": "Wybrany cel"
     },
     "target-type": {
-      "product": "Product",
-      "variant": "Variant"
+      "product": "Produkt",
+      "variant": "Wariant"
     },
     "buttons": {
-      "search": "Search",
-      "select": "Select",
-      "remove": "Remove",
-      "save": "Save",
-      "create": "Create",
-      "cancel": "Cancel",
-      "delete": "Delete"
+      "search": "Szukaj",
+      "select": "Wybierz",
+      "remove": "Usuń",
+      "save": "Zapisz",
+      "create": "Utwórz",
+      "cancel": "Anuluj",
+      "delete": "Usuń"
     },
     "validation": {
-      "name-required": "Rule name is required",
-      "price-required": "Price is required",
-      "price-invalid": "Enter a valid price",
-      "target-required": "Select a product or variant"
+      "name-required": "Nazwa reguły jest wymagana",
+      "price-required": "Cena jest wymagana",
+      "price-invalid": "Wprowadź prawidłową cenę",
+      "target-required": "Wybierz produkt lub wariant"
     },
-    "delete-confirm": "Delete this pricing rule?"
+    "delete-confirm": "Usunąć tę regułę cenową?"
   },
   "subscription-page": {
     "title": "Subskrypcja",
