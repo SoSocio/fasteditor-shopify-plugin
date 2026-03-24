@@ -5,6 +5,28 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 installGlobals({ nativeFetch: true });
 
+const ignoredRouteFiles = ["**/.*", "**/*.server.*"];
+
+function resolveHostname(appUrl?: string): string {
+  if (!appUrl) {
+    return "localhost";
+  }
+
+  const normalizedAppUrl =
+    appUrl.startsWith("http://") || appUrl.startsWith("https://")
+      ? appUrl
+      : `https://${appUrl}`;
+
+  try {
+    return new URL(normalizedAppUrl).hostname;
+  } catch {
+    console.warn(
+      `Invalid SHOPIFY_APP_URL/HOST value "${appUrl}" detected. Falling back to localhost for Vite.`,
+    );
+    return "localhost";
+  }
+} 
+
 // Related: https://github.com/remix-run/remix/issues/2835#issuecomment-1144102176
 // Replace the HOST env var with SHOPIFY_APP_URL so that it doesn't break the remix server. The CLI will eventually
 // stop passing in HOST, so we can remove this workaround after the next major release.
@@ -17,8 +39,7 @@ if (
   delete process.env.HOST;
 }
 
-const host = new URL(process.env.SHOPIFY_APP_URL || "http://localhost")
-  .hostname;
+const host = resolveHostname(process.env.SHOPIFY_APP_URL);
 
 let hmrConfig;
 if (host === "localhost") {
@@ -55,7 +76,7 @@ export default defineConfig({
   },
   plugins: [
     remix({
-      ignoredRouteFiles: ["**/.*"],
+      ignoredRouteFiles,
       future: {
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
