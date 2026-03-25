@@ -134,6 +134,8 @@ export const PricingRuleFormPage = () => {
                     suffix={shopSettings?.currency || "USD"}
                     value={formValues.pricePerExtraPage}
                     onChange={(value) => setFormValues((prev) => ({...prev, pricePerExtraPage: value}))}
+                    min={0}
+                    step={0.01}
                     autoComplete="off"
                   />
                   <InlineError

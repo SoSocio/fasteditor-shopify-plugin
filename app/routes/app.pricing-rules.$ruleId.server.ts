@@ -184,7 +184,7 @@ export const action = async ({request, params}: ActionFunctionArgs): Promise<Res
   }
   if (!pricePerExtraPage) {
     errors.pricePerExtraPage = "required";
-  } else if (Number.isNaN(Number(pricePerExtraPage))) {
+  } else if (Number.isNaN(Number(pricePerExtraPage)) || Number(pricePerExtraPage) < 0) {
     errors.pricePerExtraPage = "invalid";
   }
   if (!targetIds.length || !targetType) {
