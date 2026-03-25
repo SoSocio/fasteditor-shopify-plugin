@@ -1,5 +1,5 @@
 import type {PageInfo, Product} from "../../types/products.types";
-import {Fragment} from "react";
+import {Fragment, useMemo} from "react";
 import {
   Box,
   EmptySearchResult,
@@ -30,6 +30,7 @@ interface PricingRuleTargetsTableProps {
   };
   blockedTargetIds: string[];
   selectedTargetIds: string[];
+  selectedTargets: PricingRuleTargetSelection[];
   onToggleTarget: (value: PricingRuleTargetSelection) => void;
 }
 
@@ -40,6 +41,7 @@ export const PricingRuleTargetsTable = ({
   shopSettings,
   blockedTargetIds,
   selectedTargetIds,
+  selectedTargets,
   onToggleTarget,
 }: PricingRuleTargetsTableProps) => {
   const {t} = useTranslation();
@@ -73,9 +75,124 @@ export const PricingRuleTargetsTable = ({
     />
   );
 
-  const rows = products.map(({node: product}, productIndex) => {
+  const selectedTargetIdSet = useMemo(
+    () => new Set(selectedTargetIds),
+    [selectedTargetIds]
+  );
+
+  const currentVariantDetailsById = useMemo(() => {
+    const details = new Map<string, {
+      productTitle: string;
+      productLegacyResourceId: string;
+      variantTitle: string;
+      variantLegacyResourceId: string;
+      sku: string | null;
+      price: string;
+      inventoryQuantity: number | null;
+      imageUrl?: string;
+      imageAltText?: string;
+      productImageUrl?: string;
+      productImageAltText?: string;
+    }>();
+
+    products.forEach(({node: product}) => {
+      product.variants.nodes.forEach((variant) => {
+        details.set(variant.id, {
+          productTitle: product.title,
+          productLegacyResourceId: product.legacyResourceId,
+          variantTitle: variant.title,
+          variantLegacyResourceId: variant.legacyResourceId,
+          sku: variant.sku,
+          price: variant.price,
+          inventoryQuantity: variant.inventoryQuantity,
+          imageUrl: variant.image?.url,
+          imageAltText: variant.image?.altText,
+          productImageUrl: product.featuredMedia?.preview.image.url,
+          productImageAltText: product.featuredMedia?.preview.image.altText,
+        });
+      });
+    });
+
+    return details;
+  }, [products]);
+
+  const selectedRows = selectedTargets.map((target, index) => {
+    const details = currentVariantDetailsById.get(target.targetId);
+    const variantUrl = details
+      ? `https://admin.shopify.com/store/${shopName}/products/${details.productLegacyResourceId}/variants/${details.variantLegacyResourceId}`
+      : null;
+    const selectedTitle = details
+      ? details.variantTitle !== t("dashboard-page.products-table.default-variant-title")
+        ? `${details.productTitle} — ${details.variantTitle}`
+        : details.productTitle
+      : target.targetTitle.replace(/^Variant:\s*/, "");
+
+    return (
+      <IndexTable.Row
+        key={`selected-target-${target.targetId}-${index}`}
+        id={`SelectedTarget-${index}`}
+        position={index}
+        rowType="data"
+        selected
+      >
+        <IndexTable.Cell>
+          <InlineStack blockAlign="center" gap="200">
+            <Thumbnail
+              source={details?.imageUrl || details?.productImageUrl || ImageIcon}
+              alt={details?.imageAltText || details?.productImageAltText || selectedTitle}
+              size="small"
+            />
+            {variantUrl ? (
+              <Link removeUnderline url={variantUrl} target="_top">
+                {selectedTitle}
+              </Link>
+            ) : (
+              <Text as="span">{selectedTitle}</Text>
+            )}
+          </InlineStack>
+        </IndexTable.Cell>
+        <IndexTable.Cell>
+          <Text as="span">{details?.sku || "-"}</Text>
+        </IndexTable.Cell>
+        <IndexTable.Cell>
+          <Text as="span">
+            {details?.price
+              ? formatCurrency(
+                  parseFloat(details.price),
+                  shopSettings.currency,
+                  shopSettings.country
+                )
+              : "-"}
+          </Text>
+        </IndexTable.Cell>
+        <IndexTable.Cell>
+          <Text as="span" alignment="end" numeric>
+            {details?.inventoryQuantity ?? "-"}
+          </Text>
+        </IndexTable.Cell>
+        <IndexTable.Cell>
+          <Button
+            size="slim"
+            tone="critical"
+            variant="secondary"
+            onClick={() => onToggleTarget(target)}
+          >
+            {t("pricing-rule-form.buttons.remove")}
+          </Button>
+        </IndexTable.Cell>
+      </IndexTable.Row>
+    );
+  });
+
+  const productRows = products.map(({node: product}, productIndex) => {
     const productUrl = `https://admin.shopify.com/store/${shopName}/products/${product.legacyResourceId}`;
-    const productSelected = selectedTargetIds.includes(product.id);
+    const visibleVariants = product.variants.nodes.filter(
+      (variant) => !selectedTargetIdSet.has(variant.id)
+    );
+
+    if (!visibleVariants.length) {
+      return null;
+    }
 
     return (
       <Fragment key={product.id}>
@@ -83,7 +200,7 @@ export const PricingRuleTargetsTable = ({
           id={`Product-${productIndex}`}
           position={productIndex}
           rowType="data"
-          selected={productSelected}
+          selected={false}
         >
           <IndexTable.Cell>
             <InlineStack blockAlign="center" gap="200">
@@ -113,9 +230,8 @@ export const PricingRuleTargetsTable = ({
       </IndexTable.Cell>
         </IndexTable.Row>
 
-        {product.variants.nodes.map((variant, variantIndex) => {
+        {visibleVariants.map((variant, variantIndex) => {
           const variantUrl = `https://admin.shopify.com/store/${shopName}/products/${product.legacyResourceId}/variants/${variant.legacyResourceId}`;
-          const variantSelected = selectedTargetIds.includes(variant.id);
           const variantBlocked = blockedTargetIds.includes(variant.id);
           const variantTitle = `${product.title} — ${variant.title}`;
 
@@ -125,13 +241,13 @@ export const PricingRuleTargetsTable = ({
               id={`Variant-${variantIndex}`}
               position={variantIndex}
               rowType="child"
-              selected={variantSelected}
+              selected={false}
             >
               <IndexTable.Cell>
                 <InlineStack blockAlign="center" gap="200">
                   <Thumbnail
-                    source={variant.image?.url || ImageIcon}
-                    alt={variant.image?.altText || "default"}
+                    source={variant.image?.url || product.featuredMedia?.preview.image.url || ImageIcon}
+                    alt={variant.image?.altText || product.featuredMedia?.preview.image.altText || "default"}
                     size="small"
                   />
                   <Link removeUnderline url={variantUrl} target="_top">
@@ -163,9 +279,8 @@ export const PricingRuleTargetsTable = ({
               <IndexTable.Cell>
                 <Button
                   size="slim"
-                  variant={variantSelected ? "secondary" : "primary"}
-                  tone={variantSelected ? "critical" : undefined}
-                  disabled={!variantSelected && variantBlocked}
+                  variant="primary"
+                  disabled={variantBlocked}
                   onClick={() =>
                     onToggleTarget({
                       targetId: variant.id,
@@ -173,9 +288,7 @@ export const PricingRuleTargetsTable = ({
                     })
                   }
                 >
-                  {variantSelected
-                    ? t("pricing-rule-form.buttons.remove")
-                    : t("pricing-rule-form.buttons.select")}
+                  {t("pricing-rule-form.buttons.select")}
                 </Button>
               </IndexTable.Cell>
             </IndexTable.Row>
@@ -184,6 +297,8 @@ export const PricingRuleTargetsTable = ({
       </Fragment>
     );
   });
+
+  const rows = [...selectedRows, ...productRows.filter(Boolean)];
 
   return (
     <Box
@@ -218,7 +333,7 @@ export const PricingRuleTargetsTable = ({
       />
       <IndexTable
         resourceName={resourceName}
-        itemCount={products.length}
+        itemCount={rows.length}
         emptyState={emptyStateMarkup}
         headings={[
           {title: t("dashboard-page.products-table.headings.product")},
