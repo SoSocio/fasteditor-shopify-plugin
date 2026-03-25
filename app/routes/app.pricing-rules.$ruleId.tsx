@@ -177,40 +177,6 @@ export const PricingRuleFormPage = () => {
                     setFormValues((prev) => ({...prev, enabled: value}))
                   }
                 />
-                {selectedTargets.length > 0 ? (
-                  <BlockStack gap="200">
-                    <Text as="span" variant="bodySm">
-                      {t("pricing-rule-form.fields.target-selected")} ({selectedTargets.length})
-                    </Text>
-                    <BlockStack gap="100">
-                      {selectedTargets.map((target, index) => (
-                        <InlineStack
-                          key={`${target.targetId}-${index}`}
-                          align="space-between"
-                          blockAlign="center"
-                        >
-                          <Text as="span" variant="bodySm">
-                            {target.targetTitle}
-                          </Text>
-                          <Button
-                            size="slim"
-                            tone="critical"
-                            variant="secondary"
-                            onClick={() =>
-                              setFormValues((prev) => ({
-                                ...prev,
-                                targetIds: prev.targetIds.filter((_, targetIndex) => targetIndex !== index),
-                                targetTitles: prev.targetTitles.filter((_, targetIndex) => targetIndex !== index),
-                              }))
-                            }
-                          >
-                            {t("pricing-rule-form.buttons.remove")}
-                          </Button>
-                        </InlineStack>
-                      ))}
-                    </BlockStack>
-                  </BlockStack>
-                ) : null}
                 {actionData?.errors?.targetId ? (
                   <Text as="p" tone="critical" variant="bodySm">
                     {t("pricing-rule-form.validation.target-required")}
@@ -225,6 +191,7 @@ export const PricingRuleFormPage = () => {
                   shopSettings={shopSettings}
                   blockedTargetIds={blockedTargetIds}
                   selectedTargetIds={formValues.targetIds}
+                  selectedTargets={selectedTargets}
                   onToggleTarget={(value) =>
                     setFormValues((prev) => {
                       const existingIndex = prev.targetIds.indexOf(value.targetId);
