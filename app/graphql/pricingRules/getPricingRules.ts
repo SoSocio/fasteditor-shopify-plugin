@@ -1,7 +1,7 @@
 export const GET_PRICING_RULES = `
   #graphql
   query GetPricingRules($first: Int!, $query: String!) {
-    products(first: $first, query: $query, sortKey: TITLE) {
+    products(first: $first, query: $query, sortKey: UPDATED_AT, reverse: true) {
       edges {
         node {
           id
