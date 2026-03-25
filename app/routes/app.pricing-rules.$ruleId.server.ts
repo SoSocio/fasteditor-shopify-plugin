@@ -209,10 +209,17 @@ export const action = async ({request, params}: ActionFunctionArgs): Promise<Res
   };
 
   if (!ruleId || ruleId === "new") {
-    await createPricingRule(admin, values);
+    const createdRule = await createPricingRule(admin, values);
+    const createdRuleId = createdRule?.legacyResourceId;
+
+    return redirect(
+      createdRuleId
+        ? `${ENDPOINT}?focusRuleId=${encodeURIComponent(createdRuleId)}`
+        : ENDPOINT
+    );
   } else {
     await updatePricingRule(admin, ruleId, values);
-  }
 
-  return redirect(ENDPOINT);
+    return redirect(`${ENDPOINT}?focusRuleId=${encodeURIComponent(ruleId)}`);
+  }
 };

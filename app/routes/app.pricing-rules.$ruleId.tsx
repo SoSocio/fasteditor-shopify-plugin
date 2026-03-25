@@ -63,10 +63,17 @@ export const PricingRuleFormPage = () => {
   );
   const isEditMode = !!rule && params.ruleId !== "new";
   const isSubmitting = navigation.state === "submitting";
+  const formStateKey = rule?.id ?? params.ruleId ?? "new";
+  const previousFormStateKeyRef = useRef(formStateKey);
 
   useEffect(() => {
+    if (previousFormStateKeyRef.current === formStateKey) {
+      return;
+    }
+
+    previousFormStateKeyRef.current = formStateKey;
     setFormValues(buildDefaultValues(rule));
-  }, [rule]);
+  }, [formStateKey, rule]);
 
   if (appAvailability === "false") {
     return <UsageLimitBannerWithAction shopName={shopName}/>;

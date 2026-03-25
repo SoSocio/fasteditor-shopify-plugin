@@ -1,4 +1,5 @@
-import {useFetcher, useLoaderData, useNavigate} from "@remix-run/react";
+import {useFetcher, useLoaderData, useLocation, useNavigate} from "@remix-run/react";
+import {useEffect} from "react";
 import {
   Badge,
   BlockStack,
@@ -30,6 +31,24 @@ const PricingRulesList = () => {
   const fetcher = useFetcher();
   const deletingRuleId = fetcher.submission?.formData.get("ruleId");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const searchParams = new URLSearchParams(location.search);
+    if (!searchParams.has("focusRuleId")) {
+      return;
+    }
+
+    searchParams.delete("focusRuleId");
+    const nextSearch = searchParams.toString();
+    const nextUrl = nextSearch ? `${location.pathname}?${nextSearch}` : location.pathname;
+
+    window.history.replaceState(window.history.state, "", nextUrl);
+  }, [location.pathname, location.search]);
 
   if (appAvailability === "false") {
     return <UsageLimitBannerWithAction shopName={shopName}/>;
