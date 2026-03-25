@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {
   Form,
   useActionData,
@@ -65,6 +65,23 @@ export const PricingRuleFormPage = () => {
   const isSubmitting = navigation.state === "submitting";
   const formStateKey = rule?.id ?? params.ruleId ?? "new";
   const previousFormStateKeyRef = useRef(formStateKey);
+  const selectedTargets = useMemo(() => {
+    const currentTargetTitles = new Map<string, string>();
+
+    products.forEach(({node: product}) => {
+      product.variants.nodes.forEach((variant) => {
+        currentTargetTitles.set(
+          variant.id,
+          `Variant: ${product.title} — ${variant.title}`
+        );
+      });
+    });
+
+    return formValues.targetIds.map((targetId, index) => ({
+      targetId,
+      targetTitle: currentTargetTitles.get(targetId) || formValues.targetTitles[index] || targetId,
+    }));
+  }, [formValues.targetIds, formValues.targetTitles, products]);
 
   useEffect(() => {
     if (previousFormStateKeyRef.current === formStateKey) {
@@ -105,7 +122,7 @@ export const PricingRuleFormPage = () => {
         <input type="hidden" name="intent" value="save"/>
         <input type="hidden" name="targetType" value={formValues.targetType}/>
         <input type="hidden" name="targetIds" value={JSON.stringify(formValues.targetIds)}/>
-        <input type="hidden" name="targetTitles" value={JSON.stringify(formValues.targetTitles)}/>
+        <input type="hidden" name="targetTitles" value={JSON.stringify(selectedTargets.map((target) => target.targetTitle))}/>
         <input type="hidden" name="enabled" value={formValues.enabled ? "true" : "false"}/>
 
         <BlockStack gap="500">
@@ -160,11 +177,39 @@ export const PricingRuleFormPage = () => {
                     setFormValues((prev) => ({...prev, enabled: value}))
                   }
                 />
-                {formValues.targetTitles.length > 0 ? (
-                  <Text as="span" variant="bodySm">
-                    {t("pricing-rule-form.fields.target-selected")} ({formValues.targetTitles.length}):{" "}
-                    {formValues.targetTitles.join(", ")}
-                  </Text>
+                {selectedTargets.length > 0 ? (
+                  <BlockStack gap="200">
+                    <Text as="span" variant="bodySm">
+                      {t("pricing-rule-form.fields.target-selected")} ({selectedTargets.length})
+                    </Text>
+                    <BlockStack gap="100">
+                      {selectedTargets.map((target, index) => (
+                        <InlineStack
+                          key={`${target.targetId}-${index}`}
+                          align="space-between"
+                          blockAlign="center"
+                        >
+                          <Text as="span" variant="bodySm">
+                            {target.targetTitle}
+                          </Text>
+                          <Button
+                            size="slim"
+                            tone="critical"
+                            variant="secondary"
+                            onClick={() =>
+                              setFormValues((prev) => ({
+                                ...prev,
+                                targetIds: prev.targetIds.filter((_, targetIndex) => targetIndex !== index),
+                                targetTitles: prev.targetTitles.filter((_, targetIndex) => targetIndex !== index),
+                              }))
+                            }
+                          >
+                            {t("pricing-rule-form.buttons.remove")}
+                          </Button>
+                        </InlineStack>
+                      ))}
+                    </BlockStack>
+                  </BlockStack>
                 ) : null}
                 {actionData?.errors?.targetId ? (
                   <Text as="p" tone="critical" variant="bodySm">
