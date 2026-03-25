@@ -5,6 +5,7 @@ import {authenticate} from "../shopify.server";
 import {getAppMetafield} from "../services/app.server";
 import {
   deletePricingRule,
+  getPricingRuleById,
   getPricingRules,
 } from "../services/pricingRules.server";
 import {getShopSettings} from "../models/shopSettings.server";
@@ -26,11 +27,23 @@ export const loader = async (
   {request}: LoaderFunctionArgs
 ): Promise<PricingRulesLoader> => {
   const {admin, session} = await authenticate.admin(request);
+  const url = new URL(request.url);
+  const focusRuleId = url.searchParams.get("focusRuleId")?.trim();
 
   try {
-    const rules = await getPricingRules(admin);
+    let rules = await getPricingRules(admin);
     const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability");
     const shopSettings = await getShopSettings(session.shop);
+
+    if (focusRuleId) {
+      const focusedRule = await getPricingRuleById(admin, focusRuleId);
+      if (focusedRule) {
+        rules = [
+          focusedRule,
+          ...rules.filter((rule) => rule.legacyResourceId !== focusRuleId),
+        ];
+      }
+    }
 
     return {
       rules: rules ?? [],
