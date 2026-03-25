@@ -14,7 +14,6 @@ import {
   Button,
   Card,
   FormLayout,
-  InlineError,
   InlineStack,
   Text,
   TextField
@@ -137,15 +136,12 @@ export const PricingRuleFormPage = () => {
                     min={0}
                     step={0.01}
                     autoComplete="off"
-                  />
-                  <InlineError
-                    fieldID="pricePerExtraPage"
-                    message={
+                    error={
                       actionData?.errors?.pricePerExtraPage === "required"
                         ? t("pricing-rule-form.validation.price-required")
                         : actionData?.errors?.pricePerExtraPage === "invalid"
                           ? t("pricing-rule-form.validation.price-invalid")
-                          : ""
+                          : undefined
                     }
                   />
                 </BlockStack>
@@ -163,10 +159,11 @@ export const PricingRuleFormPage = () => {
                     {formValues.targetTitles.join(", ")}
                   </Text>
                 ) : null}
-                <InlineError
-                  fieldID="targetIds"
-                  message={actionData?.errors?.targetId ? t("pricing-rule-form.validation.target-required") : ""}
-                />
+                {actionData?.errors?.targetId ? (
+                  <Text as="p" tone="critical" variant="bodySm">
+                    {t("pricing-rule-form.validation.target-required")}
+                  </Text>
+                ) : null}
               </FormLayout>
               <BlockStack gap="300">
                 <PricingRuleTargetsTable
