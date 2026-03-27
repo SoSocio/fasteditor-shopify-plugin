@@ -6,6 +6,13 @@ export const GET_PRICING_RULE_BY_ID = `
       legacyResourceId
       title
       status
+      media(first: 1) {
+        nodes {
+          ... on MediaImage {
+            id
+          }
+        }
+      }
       variants(first: 1) {
         nodes {
           id

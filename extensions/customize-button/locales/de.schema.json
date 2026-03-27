@@ -58,7 +58,11 @@
           "added_to_cart_text": "Text nach dem Hinzufügen zum Warenkorb",
           "added_to_cart_text_info": "Text nach Hinzufügen zum Warenkorb",
           "error_text": "Fehlertext",
-          "error_text_info": "Text, der bei einem Fehler angezeigt wird"
+          "error_text_info": "Text, der bei einem Fehler angezeigt wird",
+          "auto_add_error_message": "Fehlermeldung bei automatischem Hinzufügen",
+          "auto_add_error_message_info": "Nachricht unter dem Button, wenn FastEditor zurückkehrt, das Produkt aber nicht zum Warenkorb hinzugefügt werden kann",
+          "auto_add_error_color": "Farbe der Fehlermeldung bei automatischem Hinzufügen",
+          "auto_add_error_color_info": "Farbe der Nachricht unter dem Button, wenn automatisches Hinzufügen zum Warenkorb fehlschlägt"
         },
         "button_behavior": {
           "header": "Button-Verhalten",
@@ -127,4 +131,3 @@
     }
   }
 }
-

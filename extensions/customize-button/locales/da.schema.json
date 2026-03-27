@@ -58,7 +58,11 @@
           "added_to_cart_text": "Tekst efter tilføjelse til kurv",
           "added_to_cart_text_info": "Tekst, der vises efter at en vare er tilføjet til kurven",
           "error_text": "Fejltekst",
-          "error_text_info": "Tekst, der vises, når der opstår en fejl"
+          "error_text_info": "Tekst, der vises, når der opstår en fejl",
+          "auto_add_error_message": "Fejlmeddelelse ved automatisk tilføjelse",
+          "auto_add_error_message_info": "Besked under knappen, når FastEditor vender tilbage, men produktet ikke kan tilføjes til kurven",
+          "auto_add_error_color": "Farve på fejlmeddelelse ved automatisk tilføjelse",
+          "auto_add_error_color_info": "Farve på beskeden under knappen, når automatisk tilføjelse til kurven mislykkes"
         },
         "button_behavior": {
           "header": "Knapadfærd",
@@ -127,4 +131,3 @@
     }
   }
 }
-

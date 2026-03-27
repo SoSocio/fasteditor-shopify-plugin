@@ -58,7 +58,11 @@
           "added_to_cart_text": "Tekst na toevoegen aan winkelwagen",
           "added_to_cart_text_info": "Tekst die wordt weergegeven nadat een item aan de winkelwagen is toegevoegd",
           "error_text": "Fouttekst",
-          "error_text_info": "Tekst die wordt weergegeven wanneer een fout optreedt"
+          "error_text_info": "Tekst die wordt weergegeven wanneer een fout optreedt",
+          "auto_add_error_message": "Foutmelding automatisch toevoegen",
+          "auto_add_error_message_info": "Bericht onder de knop wanneer FastEditor terugkeert maar het product niet aan de winkelwagen kan worden toegevoegd",
+          "auto_add_error_color": "Kleur foutmelding automatisch toevoegen",
+          "auto_add_error_color_info": "Kleur van het bericht onder de knop wanneer automatisch toevoegen aan de winkelwagen mislukt"
         },
         "button_behavior": {
           "header": "Knopgedrag",
@@ -127,4 +131,3 @@
     }
   }
 }
-

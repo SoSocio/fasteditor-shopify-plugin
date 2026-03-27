@@ -58,7 +58,11 @@
           "added_to_cart_text": "Tekst po dodaniu do koszyka",
           "added_to_cart_text_info": "Tekst wyświetlany po dodaniu produktu do koszyka",
           "error_text": "Tekst błędu",
-          "error_text_info": "Tekst wyświetlany w przypadku wystąpienia błędu"
+          "error_text_info": "Tekst wyświetlany w przypadku wystąpienia błędu",
+          "auto_add_error_message": "Komunikat błędu automatycznego dodawania",
+          "auto_add_error_message_info": "Komunikat wyświetlany pod przyciskiem, gdy FastEditor wraca, ale produktu nie można dodać do koszyka",
+          "auto_add_error_color": "Kolor błędu automatycznego dodawania",
+          "auto_add_error_color_info": "Kolor komunikatu wyświetlanego pod przyciskiem, gdy automatyczne dodanie do koszyka się nie powiedzie"
         },
         "button_behavior": {
           "header": "Zachowanie przycisku",
@@ -127,4 +131,3 @@
     }
   }
 }
-

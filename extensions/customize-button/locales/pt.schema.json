@@ -58,7 +58,11 @@
           "added_to_cart_text": "Texto após adicionar ao carrinho",
           "added_to_cart_text_info": "Texto exibido após um item ser adicionado ao carrinho",
           "error_text": "Texto de erro",
-          "error_text_info": "Texto exibido quando ocorre um erro"
+          "error_text_info": "Texto exibido quando ocorre um erro",
+          "auto_add_error_message": "Mensagem de erro de adição automática",
+          "auto_add_error_message_info": "Mensagem exibida abaixo do botão quando o FastEditor retorna, mas o produto não pode ser adicionado ao carrinho",
+          "auto_add_error_color": "Cor do erro de adição automática",
+          "auto_add_error_color_info": "Cor da mensagem exibida abaixo do botão quando a adição automática ao carrinho falha"
         },
         "button_behavior": {
           "header": "Comportamento do botão",
@@ -127,4 +131,3 @@
     }
   }
 }
-
