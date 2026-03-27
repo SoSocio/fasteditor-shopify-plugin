@@ -11,6 +11,10 @@
 }
 
 /* Base button styles */
+fasteditor-customize-button {
+  display: block;
+}
+
 .fasteditor-customize-button {
   /* Layout */
   display: flex;
@@ -91,6 +95,18 @@
 .fasteditor-customize-button__text {
   display: inline-block;
   white-space: nowrap;
+}
+
+.fasteditor-customize-button__notice {
+  display: none;
+  margin: 8px 0 0;
+  color: var(--fasteditor-customize-button-notice-color, #c9190b);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.fasteditor-customize-button__notice--visible {
+  display: block;
 }
 
 /* Hover state */

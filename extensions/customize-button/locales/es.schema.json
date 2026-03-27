@@ -58,7 +58,11 @@
           "added_to_cart_text": "Texto después de agregar al carrito",
           "added_to_cart_text_info": "Texto que se muestra después de que se agrega un artículo al carrito",
           "error_text": "Texto de error",
-          "error_text_info": "Texto que se muestra cuando ocurre un error"
+          "error_text_info": "Texto que se muestra cuando ocurre un error",
+          "auto_add_error_message": "Mensaje de error de autoagregado",
+          "auto_add_error_message_info": "Mensaje que se muestra debajo del botón cuando FastEditor regresa pero no se puede agregar el producto al carrito",
+          "auto_add_error_color": "Color del error de autoagregado",
+          "auto_add_error_color_info": "Color del mensaje que se muestra debajo del botón cuando falla el agregado automático al carrito"
         },
         "button_behavior": {
           "header": "Comportamiento del botón",
@@ -127,4 +131,3 @@
     }
   }
 }
-
