@@ -101,7 +101,7 @@ fasteditor-customize-button {
   display: none;
   margin: 8px 0 0;
   color: var(--fasteditor-customize-button-notice-color, #c9190b);
-  font-size: 0.875rem;
+  font-size: 1.25rem;
   line-height: 1.4;
 }
 

@@ -70,12 +70,13 @@ export type UpdateOrderTagsMutation = { orderUpdate?: AdminTypes.Maybe<{ order?:
 
 export type CreatePricingRuleProductMutationVariables = AdminTypes.Exact<{
   product: AdminTypes.ProductCreateInput;
+  media?: AdminTypes.InputMaybe<Array<AdminTypes.CreateMediaInput> | AdminTypes.CreateMediaInput>;
 }>;
 
 
 export type CreatePricingRuleProductMutation = { productCreate?: AdminTypes.Maybe<{ product?: AdminTypes.Maybe<(
       Pick<AdminTypes.Product, 'id' | 'legacyResourceId' | 'status'>
-      & { variants: { nodes: Array<Pick<AdminTypes.ProductVariant, 'id' | 'legacyResourceId' | 'price'>> } }
+      & { media: { nodes: Array<Pick<AdminTypes.MediaImage, 'id'>> }, variants: { nodes: Array<Pick<AdminTypes.ProductVariant, 'id' | 'legacyResourceId' | 'price'>> } }
     )>, userErrors: Array<Pick<AdminTypes.UserError, 'field' | 'message'>> }> };
 
 export type DeletePricingRuleProductMutationVariables = AdminTypes.Exact<{
@@ -95,7 +96,7 @@ export type GetPricingRuleByIdQueryVariables = AdminTypes.Exact<{
 
 export type GetPricingRuleByIdQuery = { product?: AdminTypes.Maybe<(
     Pick<AdminTypes.Product, 'id' | 'legacyResourceId' | 'title' | 'status'>
-    & { variants: { nodes: Array<Pick<AdminTypes.ProductVariant, 'id' | 'legacyResourceId' | 'price'>> }, metafields: { nodes: Array<Pick<AdminTypes.Metafield, 'key' | 'value' | 'type'>> } }
+    & { media: { nodes: Array<Pick<AdminTypes.MediaImage, 'id'>> }, variants: { nodes: Array<Pick<AdminTypes.ProductVariant, 'id' | 'legacyResourceId' | 'price'>> }, metafields: { nodes: Array<Pick<AdminTypes.Metafield, 'key' | 'value' | 'type'>> } }
   )> };
 
 export type GetPricingRulesQueryVariables = AdminTypes.Exact<{
@@ -141,12 +142,13 @@ export type SearchProductTargetsQuery = { products: { edges: Array<{ node: (
 
 export type UpdatePricingRuleProductMutationVariables = AdminTypes.Exact<{
   product: AdminTypes.ProductUpdateInput;
+  media?: AdminTypes.InputMaybe<Array<AdminTypes.CreateMediaInput> | AdminTypes.CreateMediaInput>;
 }>;
 
 
 export type UpdatePricingRuleProductMutation = { productUpdate?: AdminTypes.Maybe<{ product?: AdminTypes.Maybe<(
       Pick<AdminTypes.Product, 'id' | 'legacyResourceId' | 'status'>
-      & { variants: { nodes: Array<Pick<AdminTypes.ProductVariant, 'id' | 'legacyResourceId' | 'price'>> } }
+      & { media: { nodes: Array<Pick<AdminTypes.MediaImage, 'id'>> }, variants: { nodes: Array<Pick<AdminTypes.ProductVariant, 'id' | 'legacyResourceId' | 'price'>> } }
     )>, userErrors: Array<Pick<AdminTypes.UserError, 'field' | 'message'>> }> };
 
 export type UpdatePricingRuleVariantMutationVariables = AdminTypes.Exact<{
@@ -240,11 +242,28 @@ export type ActiveSubscriptionsQuery = { currentAppInstallation: { activeSubscri
       )> }
     )> } };
 
+export type GetCartTransformStatusQueryVariables = AdminTypes.Exact<{ [key: string]: never; }>;
+
+
+export type GetCartTransformStatusQuery = { shop: { features: { cartTransform: { eligibleOperations: Pick<AdminTypes.CartTransformEligibleOperations, 'updateOperation'> } } }, cartTransforms: { nodes: Array<(
+      Pick<AdminTypes.CartTransform, 'id' | 'functionId'>
+      & { metafield?: AdminTypes.Maybe<Pick<AdminTypes.Metafield, 'value'>> }
+    )> } };
+
+export type CreateCartTransformMutationVariables = AdminTypes.Exact<{
+  functionHandle: AdminTypes.Scalars['String']['input'];
+  blockOnFailure: AdminTypes.Scalars['Boolean']['input'];
+  metafields?: AdminTypes.InputMaybe<Array<AdminTypes.MetafieldInput> | AdminTypes.MetafieldInput>;
+}>;
+
+
+export type CreateCartTransformMutation = { cartTransformCreate?: AdminTypes.Maybe<{ cartTransform?: AdminTypes.Maybe<Pick<AdminTypes.CartTransform, 'id' | 'functionId'>>, userErrors: Array<Pick<AdminTypes.CartTransformCreateUserError, 'code' | 'field' | 'message'>> }> };
+
 interface GeneratedQueryTypes {
   "\n  #graphql\n  query getAppInfoByKey($clientId: String!) {\n    appByKey(apiKey: $clientId) {\n      title\n      handle\n    }\n  }\n": {return: GetAppInfoByKeyQuery, variables: GetAppInfoByKeyQueryVariables},
   "\n  #graphql\n  query GetAppMetafield($namespace: String!, $key: String!) {\n    currentAppInstallation {\n      metafield(namespace: $namespace, key: $key) {\n        value\n      }\n    }\n  }\n": {return: GetAppMetafieldQuery, variables: GetAppMetafieldQueryVariables},
-  "\n  #graphql\n  query GetPricingRuleById($id: ID!) {\n    product(id: $id) {\n      id\n      legacyResourceId\n      title\n      status\n      variants(first: 1) {\n        nodes {\n          id\n          legacyResourceId\n          price\n        }\n      }\n      metafields(first: 20, namespace: \"fasteditor_pricing_rule\") {\n        nodes {\n          key\n          value\n          type\n        }\n      }\n    }\n  }\n": {return: GetPricingRuleByIdQuery, variables: GetPricingRuleByIdQueryVariables},
-  "\n  #graphql\n  query GetPricingRules($first: Int!, $query: String!) {\n    products(first: $first, query: $query, sortKey: TITLE) {\n      edges {\n        node {\n          id\n          legacyResourceId\n          title\n          status\n          variants(first: 1) {\n            nodes {\n              id\n              legacyResourceId\n              price\n            }\n          }\n          metafields(first: 20, namespace: \"fasteditor_pricing_rule\") {\n            nodes {\n              key\n              value\n              type\n            }\n          }\n        }\n      }\n    }\n  }\n": {return: GetPricingRulesQuery, variables: GetPricingRulesQueryVariables},
+  "\n  #graphql\n  query GetPricingRuleById($id: ID!) {\n    product(id: $id) {\n      id\n      legacyResourceId\n      title\n      status\n      media(first: 1) {\n        nodes {\n          ... on MediaImage {\n            id\n          }\n        }\n      }\n      variants(first: 1) {\n        nodes {\n          id\n          legacyResourceId\n          price\n        }\n      }\n      metafields(first: 20, namespace: \"fasteditor_pricing_rule\") {\n        nodes {\n          key\n          value\n          type\n        }\n      }\n    }\n  }\n": {return: GetPricingRuleByIdQuery, variables: GetPricingRuleByIdQueryVariables},
+  "\n  #graphql\n  query GetPricingRules($first: Int!, $query: String!) {\n    products(first: $first, query: $query, sortKey: UPDATED_AT, reverse: true) {\n      edges {\n        node {\n          id\n          legacyResourceId\n          title\n          status\n          variants(first: 1) {\n            nodes {\n              id\n              legacyResourceId\n              price\n            }\n          }\n          metafields(first: 20, namespace: \"fasteditor_pricing_rule\") {\n            nodes {\n              key\n              value\n              type\n            }\n          }\n        }\n      }\n    }\n  }\n": {return: GetPricingRulesQuery, variables: GetPricingRulesQueryVariables},
   "\n  #graphql\n  query GetPublications($first: Int!) {\n    publications(first: $first) {\n      nodes {\n        id\n        name\n        catalog {\n          id\n          title\n        }\n      }\n    }\n  }\n": {return: GetPublicationsQuery, variables: GetPublicationsQueryVariables},
   "\n  #graphql\n  query SearchProductTargets($first: Int!, $query: String!) {\n    products(first: $first, query: $query, sortKey: TITLE) {\n      edges {\n        node {\n          id\n          legacyResourceId\n          title\n          variants(first: 30) {\n            nodes {\n              id\n              legacyResourceId\n              title\n            }\n          }\n        }\n      }\n    }\n  }\n": {return: SearchProductTargetsQuery, variables: SearchProductTargetsQueryVariables},
   "\n  #graphql\n  query GetProductVariantSku($id: ID!) {\n    productVariant(id: $id) {\n      id\n      sku\n    }\n  }": {return: GetProductVariantSkuQuery, variables: GetProductVariantSkuQueryVariables},
@@ -254,6 +273,7 @@ interface GeneratedQueryTypes {
   "\n    #graphql\n    query GetCurrentAppInstallation {\n      currentAppInstallation {\n        ...AppInstallationIdFragment\n      }\n    }\n    \n  #graphql\n  fragment AppInstallationIdFragment on AppInstallation {\n    id\n  }\n\n  ": {return: GetCurrentAppInstallationQuery, variables: GetCurrentAppInstallationQueryVariables},
   "\n    #graphql\n    query AllAppSubscriptions {\n      currentAppInstallation {\n        allSubscriptions(first: 150) {\n          nodes {\n            createdAt\n            currentPeriodEnd\n            id\n            lineItems {\n              id\n              plan {\n                pricingDetails {\n                  __typename\n                  ... on AppRecurringPricing {\n                    price {\n                      amount\n                      currencyCode\n                    }\n                  }\n                  ... on AppUsagePricing {\n                    balanceUsed {\n                      amount\n                      currencyCode\n                    }\n                    cappedAmount {\n                      amount\n                      currencyCode\n                    }\n                    terms\n                  }\n                }\n              }\n            }\n            name\n            returnUrl\n            status\n            test\n            trialDays\n          }\n        }\n      }\n    }\n  ": {return: AllAppSubscriptionsQuery, variables: AllAppSubscriptionsQueryVariables},
   "\n    #graphql\n    query ActiveSubscriptions {\n      currentAppInstallation {\n        ...ActiveSubscriptionsFragment\n      }\n    }\n    \n  #graphql\n  fragment ActiveSubscriptionsFragment on AppInstallation {\n    activeSubscriptions {\n      id\n      name\n      status\n      createdAt\n      currentPeriodEnd\n      trialDays\n      lineItems {\n        id\n        plan {\n          pricingDetails {\n            __typename\n            ... on AppRecurringPricing {\n              price {\n                amount\n                currencyCode\n              }\n            }\n            ... on AppUsagePricing {\n              balanceUsed {\n                amount\n                currencyCode\n              }\n              cappedAmount {\n                amount\n                currencyCode\n              }\n              terms\n            }\n          }\n        }\n      }\n    }\n  }\n\n  ": {return: ActiveSubscriptionsQuery, variables: ActiveSubscriptionsQueryVariables},
+  "#graphql\n  query GetCartTransformStatus {\n    shop {\n      features {\n        cartTransform {\n          eligibleOperations {\n            updateOperation\n          }\n        }\n      }\n    }\n    cartTransforms(first: 25) {\n      nodes {\n        id\n        functionId\n        metafield(namespace: \"#REQUIRED_VAR=FASTEDITOR_CART_TRANSFORM_NAMESPACE\", key: \"#REQUIRED_VAR=FASTEDITOR_CART_TRANSFORM_KEY\") {\n          value\n        }\n      }\n    }\n  }\n": {return: GetCartTransformStatusQuery, variables: GetCartTransformStatusQueryVariables},
 }
 
 interface GeneratedMutationTypes {
@@ -261,11 +281,12 @@ interface GeneratedMutationTypes {
   "\n  #graphql\n  mutation CreateMetafieldDefinition($definition: MetafieldDefinitionInput!) {\n    metafieldDefinitionCreate(definition: $definition) {\n      createdDefinition {\n        id\n        name\n      }\n      userErrors {\n        field\n        message\n        code\n      }\n    }\n  }\n": {return: CreateMetafieldDefinitionMutation, variables: CreateMetafieldDefinitionMutationVariables},
   "\n  #graphql\n  mutation MetafieldsSet($metafields: [MetafieldsSetInput!]!) {\n    metafieldsSet(metafields: $metafields) {\n      metafields {\n        id\n        namespace\n        key\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: MetafieldsSetMutation, variables: MetafieldsSetMutationVariables},
   "\n  #graphql\n  mutation UpdateOrderTags($input: OrderInput!) {\n    orderUpdate(input: $input) {\n      order {\n        id\n        tags\n        metafield(namespace: \"fasteditor_app\", key: \"processing_results\") {\n          value\n        }\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: UpdateOrderTagsMutation, variables: UpdateOrderTagsMutationVariables},
-  "\n  #graphql\n  mutation CreatePricingRuleProduct($product: ProductCreateInput!) {\n    productCreate(product: $product) {\n      product {\n        id\n        legacyResourceId\n        status\n        variants(first: 1) {\n          nodes {\n            id\n            legacyResourceId\n            price\n          }\n        }\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: CreatePricingRuleProductMutation, variables: CreatePricingRuleProductMutationVariables},
+  "\n  #graphql\n  mutation CreatePricingRuleProduct($product: ProductCreateInput!, $media: [CreateMediaInput!]) {\n    productCreate(product: $product, media: $media) {\n      product {\n        id\n        legacyResourceId\n        status\n        media(first: 1) {\n          nodes {\n            ... on MediaImage {\n              id\n            }\n          }\n        }\n        variants(first: 1) {\n          nodes {\n            id\n            legacyResourceId\n            price\n          }\n        }\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: CreatePricingRuleProductMutation, variables: CreatePricingRuleProductMutationVariables},
   "\n  #graphql\n  mutation DeletePricingRuleProduct($input: ProductDeleteInput!) {\n    productDelete(input: $input) {\n      deletedProductId\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: DeletePricingRuleProductMutation, variables: DeletePricingRuleProductMutationVariables},
   "\n  #graphql\n  mutation PublishPricingRuleProduct($id: ID!, $input: [PublicationInput!]!, $publicationId: ID!) {\n    publishablePublish(id: $id, input: $input) {\n      publishable {\n        publishedOnPublication(publicationId: $publicationId)\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: PublishPricingRuleProductMutation, variables: PublishPricingRuleProductMutationVariables},
-  "\n  #graphql\n  mutation UpdatePricingRuleProduct($product: ProductUpdateInput!) {\n    productUpdate(product: $product) {\n      product {\n        id\n        legacyResourceId\n        status\n        variants(first: 1) {\n          nodes {\n            id\n            legacyResourceId\n            price\n          }\n        }\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: UpdatePricingRuleProductMutation, variables: UpdatePricingRuleProductMutationVariables},
+  "\n  #graphql\n  mutation UpdatePricingRuleProduct($product: ProductUpdateInput!, $media: [CreateMediaInput!]) {\n    productUpdate(product: $product, media: $media) {\n      product {\n        id\n        legacyResourceId\n        status\n        media(first: 1) {\n          nodes {\n            ... on MediaImage {\n              id\n            }\n          }\n        }\n        variants(first: 1) {\n          nodes {\n            id\n            legacyResourceId\n            price\n          }\n        }\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: UpdatePricingRuleProductMutation, variables: UpdatePricingRuleProductMutationVariables},
   "\n  #graphql\n  mutation UpdatePricingRuleVariant(\n    $productId: ID!\n    $variants: [ProductVariantsBulkInput!]!\n  ) {\n    productVariantsBulkUpdate(productId: $productId, variants: $variants) {\n      productVariants {\n        id\n        legacyResourceId\n        price\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: UpdatePricingRuleVariantMutation, variables: UpdatePricingRuleVariantMutationVariables},
+  "#graphql\n  mutation CreateCartTransform(\n    $functionHandle: String!\n    $blockOnFailure: Boolean!\n    $metafields: [MetafieldInput!]\n  ) {\n    cartTransformCreate(\n      functionHandle: $functionHandle\n      blockOnFailure: $blockOnFailure\n      metafields: $metafields\n    ) {\n      cartTransform {\n        id\n        functionId\n      }\n      userErrors {\n        code\n        field\n        message\n      }\n    }\n  }\n": {return: CreateCartTransformMutation, variables: CreateCartTransformMutationVariables},
 }
 declare module '@shopify/admin-api-client' {
   type InputMaybe<T> = AdminTypes.InputMaybe<T>;
