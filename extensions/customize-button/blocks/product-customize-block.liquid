@@ -82,6 +82,8 @@
     data-adding-to-cart-text="{{ block.settings.adding_to_cart_text | escape }}"
     data-added-to-cart-text="{{ block.settings.added_to_cart_text | escape }}"
     data-error-text="{{ block.settings.error_text | escape }}"
+    data-auto-add-error-message="{{ block.settings.auto_add_error_message | escape }}"
+    data-auto-add-error-color="{{ block.settings.auto_add_error_color | escape }}"
     data-sold-out-text="{{ 'customize_button.sold_out' | t }}"
   {%- endcapture -%}
 
@@ -308,6 +310,20 @@
       "label": "t:blocks.customize-button.settings.button_state_texts.error_text",
       "default": "Error",
       "info": "t:blocks.customize-button.settings.button_state_texts.error_text_info"
+    },
+    {
+      "type": "text",
+      "id": "auto_add_error_message",
+      "label": "t:blocks.customize-button.settings.button_state_texts.auto_add_error_message",
+      "default": "Sorry, we can't process your request right now. Please contact the site administration.",
+      "info": "t:blocks.customize-button.settings.button_state_texts.auto_add_error_message_info"
+    },
+    {
+      "type": "color",
+      "id": "auto_add_error_color",
+      "label": "t:blocks.customize-button.settings.button_state_texts.auto_add_error_color",
+      "default": "#C9190B",
+      "info": "t:blocks.customize-button.settings.button_state_texts.auto_add_error_color_info"
     },
     {
       "type": "header",

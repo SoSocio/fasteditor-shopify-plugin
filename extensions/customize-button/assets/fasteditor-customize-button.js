@@ -14,6 +14,7 @@
     BUTTON_ICON: '.fasteditor-customize-button__icon',
     BUTTON_ICON_MAIN: '.fasteditor-customize-button__icon-main',
     BUTTON_ICON_LOADING: '.fasteditor-customize-button__icon-loading',
+    ERROR_NOTICE: '.fasteditor-customize-button__notice',
     VARIANT_INPUT: 'input[name="id"]',
     QUANTITY_INPUT: 'input[name="quantity"]',
   };
@@ -23,6 +24,7 @@
    */
   const CLASSES = {
     LOADING: 'fasteditor-customize-button--loading',
+    ERROR_NOTICE_VISIBLE: 'fasteditor-customize-button__notice--visible',
   };
 
   /**
@@ -373,6 +375,7 @@
       this.variants = [];
       this.currentVariantId = '';
       this.form = null;
+      this.errorNotice = null;
       this.sectionId = '';
       this.variantChangeHandler = null;
     }
@@ -410,8 +413,10 @@
       this.sectionId = this.button.dataset.sectionId || this.dataset.sectionId || '';
       this.variants = parseJSON(this.button.dataset.variants, []);
       this.form = findProductForm(this.sectionId);
+      this.errorNotice = this.querySelector(SELECTORS.ERROR_NOTICE);
       this.currentVariantId = this.button.dataset.initialVariantId
         || resolveVariantId(this.form, '');
+      this.hideAutoAddErrorNotice();
 
       // Check availability
       const availability = this.button.dataset.availability;
@@ -445,6 +450,7 @@
     async handleClick() {
       if (!this.button || this.button.hasAttribute('disabled')) return;
 
+      this.hideAutoAddErrorNotice();
       const shop = this.button.dataset.shop;
       const productHandle = this.button.dataset.handle;
       const variantId = this.getSelectedVariantId();
@@ -530,6 +536,7 @@
      */
     updateVariantState(variant) {
       const isVariantAvailable = Boolean(variant?.available);
+      this.hideAutoAddErrorNotice();
 
       this.currentVariantId = variant?.id ? String(variant.id) : this.currentVariantId;
       this.button.dataset.variantAvailable = String(isVariantAvailable);
@@ -561,6 +568,36 @@
       }
       const variant = providedVariant || findVariant(this.variants, this.currentVariantId);
       this.updateVariantState(variant);
+    }
+
+    showAutoAddErrorNotice(message) {
+      if (!this.errorNotice || !this.button) return;
+
+      const resolvedMessage = message || this.button.dataset.autoAddErrorMessage || '';
+      if (!resolvedMessage) {
+        this.hideAutoAddErrorNotice();
+        return;
+      }
+
+      this.errorNotice.textContent = resolvedMessage;
+      this.errorNotice.hidden = false;
+      this.errorNotice.classList.add(CLASSES.ERROR_NOTICE_VISIBLE);
+
+      const color = this.button.dataset.autoAddErrorColor;
+      if (color) {
+        this.errorNotice.style.color = color;
+      } else {
+        this.errorNotice.style.removeProperty('color');
+      }
+    }
+
+    hideAutoAddErrorNotice() {
+      if (!this.errorNotice) return;
+
+      this.errorNotice.textContent = '';
+      this.errorNotice.hidden = true;
+      this.errorNotice.classList.remove(CLASSES.ERROR_NOTICE_VISIBLE);
+      this.errorNotice.style.removeProperty('color');
     }
 
     /**
@@ -618,6 +655,12 @@
         || DEFAULTS.ADDING_TO_CART;
       const addedToCartText = this.button.dataset.addedToCartText 
         || DEFAULTS.ADDED_TO_CART;
+      const clearAutoAddUrlParam = () => {
+        urlParams.delete(URL_PARAMS.FASTEDITOR_CART_URL);
+        const nextSearch = urlParams.toString();
+        const nextUrl = `${window.location.pathname}${nextSearch ? '?' + nextSearch : ''}`;
+        window.history.replaceState({}, '', nextUrl);
+      };
 
     // Shared guard to ensure only one network call; all buttons mirror the same state
     if (!window.FastEditorAutoAddGuard) {
@@ -634,6 +677,7 @@
     guard.buttons.push({
       button: this.button,
       originalText: this.originalText,
+      component: this,
     });
 
     // Capture shared texts from the first button
@@ -645,14 +689,16 @@
     }
 
     const setLoadingForAll = () => {
-      guard.buttons.forEach(({ button }) => {
+      guard.buttons.forEach(({ button, component }) => {
+        component?.hideAutoAddErrorNotice();
         setButtonState(button, guard.texts.addingToCartText, true);
         setButtonLoadingIcon(button, true);
       });
     };
 
     const setSuccessForAll = () => {
-      guard.buttons.forEach(({ button, originalText }) => {
+      guard.buttons.forEach(({ button, originalText, component }) => {
+        component?.hideAutoAddErrorNotice();
         setButtonLoadingIcon(button, false);
         setButtonState(button, guard.texts.addedToCartText, true);
         setTimeout(() => {
@@ -662,9 +708,10 @@
     };
 
     const setErrorForAll = () => {
-      guard.buttons.forEach(({ button, originalText }) => {
+      guard.buttons.forEach(({ button, originalText, component }) => {
         setButtonLoadingIcon(button, false);
         setButtonState(button, originalText, false);
+        component?.showAutoAddErrorNotice();
       });
     };
 
@@ -760,9 +807,7 @@
         setSuccessForAll();
 
         // Clean up URL parameter
-        urlParams.delete(URL_PARAMS.FASTEDITOR_CART_URL);
-        const newUrl = `${window.location.pathname}${urlParams.toString() ? '?' + urlParams.toString() : ''}`;
-        window.history.replaceState({}, '', newUrl);
+        clearAutoAddUrlParam();
 
         // Redirect or reload based on settings
         if (enableCartRedirect) {
@@ -772,6 +817,7 @@
         }
       } catch (error) {
         console.error('[FastEditor] Cart initialization error:', error);
+        clearAutoAddUrlParam();
         guard.state = 'error';
         setErrorForAll();
         return;

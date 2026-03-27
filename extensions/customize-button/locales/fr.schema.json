@@ -58,7 +58,11 @@
           "added_to_cart_text": "Texte ajouté au panier",
           "added_to_cart_text_info": "Texte après ajout au panier",
           "error_text": "Texte d'erreur",
-          "error_text_info": "Texte affiché lorsqu'une erreur se produit"
+          "error_text_info": "Texte affiché lorsqu'une erreur se produit",
+          "auto_add_error_message": "Message d’erreur d’ajout automatique",
+          "auto_add_error_message_info": "Message affiché sous le bouton lorsque FastEditor revient mais que le produit ne peut pas être ajouté au panier",
+          "auto_add_error_color": "Couleur de l’erreur d’ajout automatique",
+          "auto_add_error_color_info": "Couleur du message affiché sous le bouton lorsque l’ajout automatique au panier échoue"
         },
         "button_behavior": {
           "header": "Comportement du bouton",
@@ -127,4 +131,3 @@
     }
   }
 }
-

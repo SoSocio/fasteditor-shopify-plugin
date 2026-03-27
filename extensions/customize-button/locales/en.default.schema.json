@@ -58,7 +58,11 @@
           "added_to_cart_text": "Added to cart text",
           "added_to_cart_text_info": "Text shown after item is added to cart",
           "error_text": "Error text",
-          "error_text_info": "Text shown when an error occurs"
+          "error_text_info": "Text shown when an error occurs",
+          "auto_add_error_message": "Auto-add error message",
+          "auto_add_error_message_info": "Message shown under the button when FastEditor returns but the product cannot be added to cart",
+          "auto_add_error_color": "Auto-add error color",
+          "auto_add_error_color_info": "Color of the message shown under the button when auto-add to cart fails"
         },
         "button_behavior": {
           "header": "Button Behavior",

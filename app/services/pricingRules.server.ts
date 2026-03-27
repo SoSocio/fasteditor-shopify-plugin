@@ -1,3 +1,5 @@
+import {existsSync} from "node:fs";
+import path from "node:path";
 import type {authenticateAdmin} from "../types/app.types";
 import type {
   PricingRule,
@@ -19,6 +21,11 @@ import {UPDATE_PRICING_RULE_VARIANT} from "../graphql/pricingRules/updatePricing
 export const PRICING_RULE_TAG = "fasteditor_pricing_rule";
 export const PRICING_RULE_PRODUCT_TYPE = "FastEditor Pricing Rule";
 export const PRICING_RULE_NAMESPACE = "fasteditor_pricing_rule";
+const PRICING_RULE_LOGO_FILENAMES = [
+  "pricing-rule-logo.svg",
+  "pricing-rule-logo.png",
+];
+const PRICING_RULE_LOGO_ALT = "FastEditor Pricing Rule";
 
 const RULE_KEYS = {
   description: "description",
@@ -41,11 +48,18 @@ type ShopifyProductVariant = {
   price?: string | null;
 };
 
+type ShopifyMedia = {
+  id: string;
+};
+
 type ShopifyProduct = {
   id: string;
   legacyResourceId: string;
   title: string;
   status: string;
+  media?: {
+    nodes: ShopifyMedia[];
+  };
   variants: {
     nodes: ShopifyProductVariant[];
   };
@@ -58,6 +72,9 @@ type ShopifyProductMutation = {
   id: string;
   legacyResourceId: string;
   status?: string | null;
+  media?: {
+    nodes: ShopifyMedia[];
+  } | null;
   variants?: {
     nodes: ShopifyProductVariant[];
   } | null;
@@ -133,6 +150,37 @@ function normalizePositiveInteger(value: number | string | null | undefined) {
   }
 
   return Math.floor(parsed);
+}
+
+function resolvePricingRuleLogoFilename() {
+  const publicDir = path.join(process.cwd(), "public");
+
+  return PRICING_RULE_LOGO_FILENAMES.find((fileName) =>
+    existsSync(path.join(publicDir, fileName))
+  );
+}
+
+function buildPricingRuleLogoMedia() {
+  const appUrl = (process.env.SHOPIFY_APP_URL || "").trim();
+  const logoFileName = resolvePricingRuleLogoFilename();
+
+  if (!appUrl || appUrl === "app_url" || !logoFileName) {
+    return undefined;
+  }
+
+  try {
+    const originalSource = new URL(`/${logoFileName}`, appUrl).toString();
+
+    return [
+      {
+        alt: PRICING_RULE_LOGO_ALT,
+        mediaContentType: "IMAGE",
+        originalSource,
+      },
+    ];
+  } catch {
+    return undefined;
+  }
 }
 
 async function updateProductStatus(
@@ -408,6 +456,19 @@ export async function getPricingRuleById(
   admin: authenticateAdmin,
   legacyId: string
 ): Promise<PricingRule | null> {
+  const product = await getPricingRuleProduct(admin, legacyId);
+
+  if (!product) {
+    return null;
+  }
+
+  return mapPricingRule(product);
+}
+
+async function getPricingRuleProduct(
+  admin: authenticateAdmin,
+  legacyId: string
+): Promise<ShopifyProduct | null> {
   const data = await adminGraphqlRequest<GraphqlProductResponse>(
     admin,
     GET_PRICING_RULE_BY_ID,
@@ -418,11 +479,7 @@ export async function getPricingRuleById(
     }
   );
 
-  if (!data.product) {
-    return null;
-  }
-
-  return mapPricingRule(data.product);
+  return data.product;
 }
 
 export async function findPricingRuleByTargetVariantId(
@@ -492,6 +549,7 @@ export async function createPricingRule(
   values: PricingRuleFormValues
 ) {
   const onlineStorePublicationId = await getOnlineStorePublicationId(admin);
+  const media = buildPricingRuleLogoMedia();
   const data = await adminGraphqlRequest<GraphqlProductMutationResponse>(
     admin,
     CREATE_PRICING_RULE_PRODUCT,
@@ -504,6 +562,7 @@ export async function createPricingRule(
           productType: PRICING_RULE_PRODUCT_TYPE,
           metafields: buildPricingRuleMetafields(values),
         },
+        media,
       },
     }
   );
@@ -541,6 +600,8 @@ export async function updatePricingRule(
   values: PricingRuleFormValues
 ) {
   const onlineStorePublicationId = await getOnlineStorePublicationId(admin);
+  const existingProduct = await getPricingRuleProduct(admin, legacyId);
+  const media = existingProduct?.media?.nodes?.length ? undefined : buildPricingRuleLogoMedia();
   const data = await adminGraphqlRequest<GraphqlProductMutationResponse>(
     admin,
     UPDATE_PRICING_RULE_PRODUCT,
@@ -552,6 +613,7 @@ export async function updatePricingRule(
           status: "UNLISTED",
           metafields: buildPricingRuleMetafields(values),
         },
+        media,
       },
     }
   );
