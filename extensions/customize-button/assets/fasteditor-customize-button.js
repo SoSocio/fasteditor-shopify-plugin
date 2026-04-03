@@ -85,13 +85,8 @@
    */
   const TIMEOUTS = {
     TEXT_RESTORE: 3000,
-  };
-
-  /**
-   * Routes
-   */
-  const ROUTES = {
-    CART: '/cart',
+    AUTO_ADD_INTERCEPT: 4000,
+    AUTO_ADD_REQUEST: 15000,
   };
 
   /**
@@ -223,6 +218,675 @@
   }
 
   /**
+   * Auto-add debug logger
+   * @param {string} message
+   * @param {object|undefined} details
+   */
+  function logAutoAdd(message, details) {
+    if (typeof details === 'undefined') {
+      console.info(`[FastEditor][AutoAdd] ${message}`);
+      return;
+    }
+
+    console.info(`[FastEditor][AutoAdd] ${message}`, details);
+  }
+
+  /**
+   * Prepare small DOM descriptor for debug logs
+   * @param {Element|null|undefined} element
+   * @returns {object|null}
+   */
+  function describeElement(element) {
+    if (!element) return null;
+
+    return {
+      tagName: element.tagName,
+      id: element.id || '',
+      name: element.getAttribute('name') || '',
+      type: element.getAttribute('type') || '',
+      action: element.getAttribute('action') || '',
+      method: element.getAttribute('method') || '',
+      classes: element.className || '',
+      dataset: element.dataset ? { ...element.dataset } : {},
+    };
+  }
+
+  /**
+   * Escape attribute value for selector usage
+   * @param {string} value
+   * @returns {string}
+   */
+  function escapeSelectorValue(value) {
+    if (window.CSS && typeof window.CSS.escape === 'function') {
+      return window.CSS.escape(value);
+    }
+
+    return String(value).replace(/["\\]/g, '\\$&');
+  }
+
+  /**
+   * Whether the request targets Shopify cart add endpoint
+   * @param {string} url
+   * @param {string} method
+   * @returns {boolean}
+   */
+  function isCartAddRequest(url, method = 'GET') {
+    if (String(method || 'GET').toUpperCase() !== 'POST') return false;
+    if (!url) return false;
+
+    try {
+      const absoluteUrl = new URL(url, window.location.origin);
+      return /\/cart\/add(?:\.js)?\/?$/.test(absoluteUrl.pathname);
+    } catch (error) {
+      console.error('[FastEditor] Failed to resolve cart/add URL:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Whether form/json field belongs to cart line item payload
+   * @param {string} key
+   * @returns {boolean}
+   */
+  function isCartItemField(key) {
+    return (
+      key === 'id'
+      || key === 'quantity'
+      || key === 'properties'
+      || key === 'items'
+      || key === 'selling_plan'
+      || /^properties\[/.test(key)
+      || /^items\[/.test(key)
+    );
+  }
+
+  /**
+   * Serialize cart item for JSON request body
+   * @param {object} item
+   * @returns {object}
+   */
+  function serializeCartItem(item) {
+    const nextItem = {
+      id: item.id,
+      quantity: item.quantity,
+    };
+
+    if (item.properties && Object.keys(item.properties).length > 0) {
+      nextItem.properties = item.properties;
+    }
+
+    return nextItem;
+  }
+
+  /**
+   * Append cart items to FormData or URLSearchParams
+   * @param {FormData|URLSearchParams} target
+   * @param {Array} cartItems
+   */
+  function appendCartItems(target, cartItems) {
+    const appendField = (key, value) => {
+      target.append(key, String(value));
+    };
+
+    if (cartItems.length === 1) {
+      const [item] = cartItems;
+      appendField('id', item.id);
+      appendField('quantity', item.quantity);
+
+      Object.entries(item.properties || {}).forEach(([key, value]) => {
+        appendField(`properties[${key}]`, value);
+      });
+      return;
+    }
+
+    cartItems.forEach((item, index) => {
+      appendField(`items[${index}][id]`, item.id);
+      appendField(`items[${index}][quantity]`, item.quantity);
+
+      Object.entries(item.properties || {}).forEach(([key, value]) => {
+        appendField(`items[${index}][properties][${key}]`, value);
+      });
+    });
+  }
+
+  /**
+   * Build replacement FormData while preserving theme metadata
+   * @param {FormData} source
+   * @param {Array} cartItems
+   * @returns {FormData}
+   */
+  function buildInterceptedFormData(source, cartItems) {
+    const nextBody = new FormData();
+
+    source.forEach((value, key) => {
+      if (!isCartItemField(key)) {
+        nextBody.append(key, value);
+      }
+    });
+
+    appendCartItems(nextBody, cartItems);
+    return nextBody;
+  }
+
+  /**
+   * Build replacement URLSearchParams while preserving theme metadata
+   * @param {URLSearchParams} source
+   * @param {Array} cartItems
+   * @returns {URLSearchParams}
+   */
+  function buildInterceptedSearchParams(source, cartItems) {
+    const nextBody = new URLSearchParams();
+
+    source.forEach((value, key) => {
+      if (!isCartItemField(key)) {
+        nextBody.append(key, value);
+      }
+    });
+
+    appendCartItems(nextBody, cartItems);
+    return nextBody;
+  }
+
+  /**
+   * Build replacement JSON payload while preserving theme metadata
+   * @param {object} payload
+   * @param {Array} cartItems
+   * @returns {object}
+   */
+  function buildInterceptedJsonPayload(payload, cartItems) {
+    const nextPayload = {};
+
+    Object.entries(payload || {}).forEach(([key, value]) => {
+      if (!isCartItemField(key)) {
+        nextPayload[key] = value;
+      }
+    });
+
+    const useItemsArray = cartItems.length > 1 || Array.isArray(payload?.items);
+    if (useItemsArray) {
+      nextPayload.items = cartItems.map((item) => serializeCartItem(item));
+      return nextPayload;
+    }
+
+    const [item] = cartItems;
+    nextPayload.id = item.id;
+    nextPayload.quantity = item.quantity;
+
+    if (item.properties && Object.keys(item.properties).length > 0) {
+      nextPayload.properties = item.properties;
+    }
+
+    return nextPayload;
+  }
+
+  /**
+   * Build replacement body from raw string payload
+   * @param {string} rawBody
+   * @param {Headers} headers
+   * @param {Array} cartItems
+   * @returns {string}
+   */
+  function buildInterceptedStringBody(rawBody, headers, cartItems) {
+    const contentType = headers.get('Content-Type') || '';
+
+    if (contentType.includes('application/json')) {
+      const payload = parseJSON(rawBody, {});
+      headers.set('Content-Type', 'application/json');
+      return JSON.stringify(buildInterceptedJsonPayload(payload, cartItems));
+    }
+
+    if (contentType.includes('application/x-www-form-urlencoded')) {
+      return buildInterceptedSearchParams(
+        new URLSearchParams(rawBody),
+        cartItems
+      ).toString();
+    }
+
+    const parsedJson = parseJSON(rawBody, null);
+    if (parsedJson && typeof parsedJson === 'object') {
+      headers.set('Content-Type', 'application/json');
+      return JSON.stringify(buildInterceptedJsonPayload(parsedJson, cartItems));
+    }
+
+    return buildInterceptedSearchParams(
+      new URLSearchParams(rawBody),
+      cartItems
+    ).toString();
+  }
+
+  /**
+   * Build replacement request body for fetch interception
+   * @param {Request|FormData|URLSearchParams|string|undefined|null} source
+   * @param {Headers} headers
+   * @param {Array} cartItems
+   * @returns {Promise<BodyInit>}
+   */
+  async function buildInterceptedRequestBody(source, headers, cartItems) {
+    if (source instanceof FormData) {
+      headers.delete('Content-Type');
+      return buildInterceptedFormData(source, cartItems);
+    }
+
+    if (source instanceof URLSearchParams) {
+      headers.set('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+      return buildInterceptedSearchParams(source, cartItems).toString();
+    }
+
+    if (typeof source === 'string') {
+      return buildInterceptedStringBody(source, headers, cartItems);
+    }
+
+    if (source && typeof source.text === 'function') {
+      const sourceHeaders = source.headers instanceof Headers ? source.headers : null;
+      const contentType =
+        headers.get('Content-Type')
+        || sourceHeaders?.get('Content-Type')
+        || '';
+
+      if (contentType.includes('multipart/form-data')) {
+        const formData = await source.formData();
+        headers.delete('Content-Type');
+        return buildInterceptedFormData(formData, cartItems);
+      }
+
+      const rawBody = await source.text();
+      if (contentType.includes('application/x-www-form-urlencoded')) {
+        headers.set('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+      }
+      return buildInterceptedStringBody(rawBody, headers, cartItems);
+    }
+
+    headers.set('Content-Type', 'application/json');
+    return JSON.stringify(buildInterceptedJsonPayload({}, cartItems));
+  }
+
+  /**
+   * Build replacement Request object for intercepted fetch
+   * @param {RequestInfo|URL} resource
+   * @param {RequestInit|undefined} init
+   * @param {Array} cartItems
+   * @returns {Promise<Request|null>}
+   */
+  async function buildInterceptedFetchRequest(resource, init, cartItems) {
+    const request = resource instanceof Request
+      ? resource
+      : new Request(resource, init);
+
+    if (!isCartAddRequest(request.url, init?.method || request.method)) {
+      return null;
+    }
+
+    const hasExplicitBody = Boolean(
+      init && Object.prototype.hasOwnProperty.call(init, 'body')
+    );
+    const headers = new Headers(init?.headers || request.headers || undefined);
+    const bodySource = hasExplicitBody ? init.body : request.clone();
+    const body = await buildInterceptedRequestBody(bodySource, headers, cartItems);
+
+    return new Request(request, {
+      headers,
+      body,
+    });
+  }
+
+  /**
+   * Build replacement payload for intercepted XMLHttpRequest
+   * @param {BodyInit|undefined|null} body
+   * @param {Array} cartItems
+   * @returns {BodyInit}
+   */
+  function buildInterceptedXhrBody(body, cartItems) {
+    const headers = new Headers();
+
+    if (body instanceof FormData) {
+      return buildInterceptedFormData(body, cartItems);
+    }
+
+    if (body instanceof URLSearchParams) {
+      return buildInterceptedSearchParams(body, cartItems).toString();
+    }
+
+    if (typeof body === 'string') {
+      return buildInterceptedStringBody(body, headers, cartItems);
+    }
+
+    headers.set('Content-Type', 'application/json');
+    return JSON.stringify(buildInterceptedJsonPayload({}, cartItems));
+  }
+
+  /**
+   * Install one-shot interception for the next theme cart/add request
+   * @param {object} options
+   * @returns {Function}
+   */
+  function createCartAddRequestInterceptor(options) {
+    const { cartItems, onRequest, onSuccess, onError } = options;
+    const originalFetch = window.fetch;
+    const originalXhrOpen = XMLHttpRequest.prototype.open;
+    const originalXhrSend = XMLHttpRequest.prototype.send;
+    let handled = false;
+    let restored = false;
+
+    const restore = () => {
+      if (restored) return;
+      restored = true;
+      logAutoAdd('Restoring original fetch/XMLHttpRequest handlers');
+      window.fetch = originalFetch;
+      XMLHttpRequest.prototype.open = originalXhrOpen;
+      XMLHttpRequest.prototype.send = originalXhrSend;
+    };
+
+    window.fetch = async function interceptFastEditorCartAdd(resource, init) {
+      if (handled) {
+        return originalFetch.call(this, resource, init);
+      }
+
+      let interceptedRequest;
+      try {
+        interceptedRequest = await buildInterceptedFetchRequest(resource, init, cartItems);
+      } catch (error) {
+        handled = true;
+        restore();
+        onError?.(error);
+        throw error;
+      }
+
+      if (!interceptedRequest) {
+        return originalFetch.call(this, resource, init);
+      }
+
+      handled = true;
+      restore();
+      logAutoAdd('Intercepted fetch cart/add request', {
+        url: interceptedRequest.url,
+        method: interceptedRequest.method,
+      });
+      onRequest?.(interceptedRequest.url);
+
+      try {
+        const response = await originalFetch.call(this, interceptedRequest);
+        if (response.ok) {
+          logAutoAdd('Fetch cart/add request completed successfully', {
+            status: response.status,
+            url: interceptedRequest.url,
+          });
+          onSuccess?.(response);
+        } else {
+          logAutoAdd('Fetch cart/add request failed', {
+            status: response.status,
+            url: interceptedRequest.url,
+          });
+          onError?.(new Error(`Cart add request failed with status ${response.status}`));
+        }
+        return response;
+      } catch (error) {
+        onError?.(error);
+        throw error;
+      }
+    };
+
+    XMLHttpRequest.prototype.open = function interceptFastEditorXhrOpen(method, url) {
+      this.__fasteditorMethod = method;
+      this.__fasteditorUrl = url;
+      return originalXhrOpen.apply(this, arguments);
+    };
+
+    XMLHttpRequest.prototype.send = function interceptFastEditorXhrSend(body) {
+      if (handled || !isCartAddRequest(this.__fasteditorUrl, this.__fasteditorMethod)) {
+        return originalXhrSend.call(this, body);
+      }
+
+      handled = true;
+      restore();
+      logAutoAdd('Intercepted XHR cart/add request', {
+        url: this.__fasteditorUrl,
+        method: this.__fasteditorMethod,
+      });
+      onRequest?.(this.__fasteditorUrl);
+
+      const handleLoad = () => {
+        if (this.status >= 200 && this.status < 400) {
+          logAutoAdd('XHR cart/add request completed successfully', {
+            status: this.status,
+            url: this.__fasteditorUrl,
+          });
+          onSuccess?.({ ok: true, status: this.status, xhr: this });
+        } else {
+          logAutoAdd('XHR cart/add request failed', {
+            status: this.status,
+            url: this.__fasteditorUrl,
+          });
+          onError?.(new Error(`Cart add request failed with status ${this.status}`));
+        }
+      };
+      const handleNetworkError = () => {
+        logAutoAdd('XHR cart/add request failed with network error', {
+          url: this.__fasteditorUrl,
+        });
+        onError?.(new Error('Cart add request failed'));
+      };
+
+      this.addEventListener('load', handleLoad, { once: true });
+      this.addEventListener('error', handleNetworkError, { once: true });
+
+      try {
+        return originalXhrSend.call(this, buildInterceptedXhrBody(body, cartItems));
+      } catch (error) {
+        onError?.(error);
+        throw error;
+      }
+    };
+
+    return restore;
+  }
+
+  /**
+   * Find theme add-to-cart submitter inside product form
+   * @param {HTMLFormElement|null} form
+   * @returns {HTMLElement|null}
+   */
+  function findProductSubmitButton(form, root) {
+    if (!form) return null;
+
+    const submitSelectors = [
+      'button[type="submit"]:not([disabled]):not([name="checkout"])',
+      'input[type="submit"]:not([disabled])',
+    ];
+
+    for (const selector of submitSelectors) {
+      const submitButton = form.querySelector(selector);
+      if (submitButton) {
+        return submitButton;
+      }
+    }
+
+    const formId = form.getAttribute('id');
+    if (formId) {
+      const escapedFormId = escapeSelectorValue(formId);
+      const scopes = [root, document].filter(Boolean);
+
+      for (const scope of scopes) {
+        for (const selector of submitSelectors) {
+          const submitButton = scope.querySelector(`${selector}[form="${escapedFormId}"]`);
+          if (submitButton) {
+            return submitButton;
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Trigger theme add-to-cart flow using submit button or form submit
+   * @param {HTMLFormElement} form
+   * @param {HTMLElement|null} submitButton
+   */
+  function triggerThemeAddToCart(form, submitButton) {
+    if (!form) {
+      throw new Error('Missing product form for auto add');
+    }
+
+    if (submitButton && typeof submitButton.click === 'function') {
+      logAutoAdd('Triggering submit button click', describeElement(submitButton));
+      submitButton.click();
+      return;
+    }
+
+    if (typeof form.requestSubmit === 'function') {
+      logAutoAdd('Submit button not found, using form.requestSubmit()', describeElement(form));
+      form.requestSubmit();
+      return;
+    }
+
+    logAutoAdd('Submit button and requestSubmit unavailable, dispatching submit event manually', describeElement(form));
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+  }
+
+  /**
+   * Execute add-to-cart via theme form and fall back to direct cart/add when needed
+   * @param {object} options
+   * @returns {Promise<{mode: string, response: Response|object}>}
+   */
+  async function runThemeAutoAddFlow(options) {
+    const { form, cartItems, fallback, sectionRoot } = options;
+
+    if (!form) {
+      logAutoAdd('Product form was not found, switching to direct fallback');
+      const response = await fallback();
+      return { mode: 'direct', response };
+    }
+
+    const submitButtons = form.querySelectorAll(
+      'button[type="submit"]:not([disabled]), input[type="submit"]:not([disabled])'
+    );
+    const submitButton = findProductSubmitButton(form, sectionRoot);
+    logAutoAdd('Found product form', describeElement(form));
+    logAutoAdd('Submit buttons found inside form', {
+      count: submitButtons.length,
+      buttons: Array.from(submitButtons).map((button) => describeElement(button)),
+    });
+    logAutoAdd(
+      submitButton ? 'Found submit button' : 'Submit button was not found',
+      submitButton ? describeElement(submitButton) : describeElement(form)
+    );
+
+    return new Promise((resolve, reject) => {
+      let requestStarted = false;
+      let requestTimeoutId = 0;
+      let fallbackTimeoutId = 0;
+      let settled = false;
+      let restoreInterceptor = () => {};
+
+      const cleanup = () => {
+        window.clearTimeout(fallbackTimeoutId);
+        window.clearTimeout(requestTimeoutId);
+        form.removeEventListener('submit', preventNativeSubmit, true);
+        if (submitButton) {
+          submitButton.removeEventListener('click', handleDebugClick, true);
+        }
+        form.removeEventListener('submit', handleDebugSubmit, true);
+        restoreInterceptor();
+      };
+
+      const settleSuccess = (payload) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        resolve(payload);
+      };
+
+      const settleError = (error) => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        reject(error);
+      };
+
+      const runFallback = () => {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        logAutoAdd('Theme cart/add request was not observed in time, running direct fallback', {
+          timeoutMs: TIMEOUTS.AUTO_ADD_INTERCEPT,
+        });
+        Promise.resolve()
+          .then(() => fallback())
+          .then((response) => {
+            resolve({ mode: 'direct', response });
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      };
+
+      const preventNativeSubmit = (event) => {
+        logAutoAdd('Submit event captured, preventing native form navigation', {
+          action: form.getAttribute('action') || '',
+          submitter: describeElement(event.submitter),
+        });
+        event.preventDefault();
+      };
+
+      const handleDebugClick = () => {
+        logAutoAdd('Submit button click event fired');
+      };
+
+      const handleDebugSubmit = (event) => {
+        logAutoAdd('Form submit event fired', {
+          action: form.getAttribute('action') || '',
+          submitter: describeElement(event.submitter),
+        });
+      };
+
+      logAutoAdd('Installing one-shot cart/add interceptor');
+      form.addEventListener('submit', preventNativeSubmit, true);
+      form.addEventListener('submit', handleDebugSubmit, true);
+      if (submitButton) {
+        submitButton.addEventListener('click', handleDebugClick, true);
+      }
+
+      restoreInterceptor = createCartAddRequestInterceptor({
+        cartItems,
+        onRequest() {
+          requestStarted = true;
+          window.clearTimeout(fallbackTimeoutId);
+          logAutoAdd('Theme cart/add request started');
+          requestTimeoutId = window.setTimeout(() => {
+            settleError(new Error('Timed out waiting for theme cart/add response'));
+          }, TIMEOUTS.AUTO_ADD_REQUEST);
+        },
+        onSuccess(response) {
+          logAutoAdd('Theme cart/add flow finished successfully', {
+            mode: 'theme',
+            status: response?.status,
+          });
+          settleSuccess({ mode: 'theme', response });
+        },
+        onError(error) {
+          logAutoAdd('Theme cart/add flow failed', {
+            message: error?.message || String(error),
+          });
+          settleError(error);
+        },
+      });
+
+      fallbackTimeoutId = window.setTimeout(() => {
+        if (!requestStarted) {
+          runFallback();
+        }
+      }, TIMEOUTS.AUTO_ADD_INTERCEPT);
+
+      try {
+        triggerThemeAddToCart(form, submitButton);
+      } catch (error) {
+        settleError(error);
+      }
+    });
+  }
+
+  /**
    * Builds cart items for the main customized product and optional extra pricing product.
    * @param {object} data
    * @returns {Array}
@@ -341,13 +1005,67 @@
    */
   function findProductForm(sectionId) {
     const section = sectionId ? document.getElementById(`shopify-section-${sectionId}`) : null;
-    if (section) {
-      const addForm = section.querySelector('form[action^="/cart/add"]');
-      if (addForm) return addForm;
-      const cartForm = section.querySelector('form[action^="/cart"]');
-      if (cartForm) return cartForm;
+    const selectors = [
+      'form[action*="/cart/add"]',
+      'form[action*="/cart"]',
+    ];
+    const forms = [];
+    const seenForms = new Set();
+
+    const collectForms = (root) => {
+      if (!root) return;
+
+      for (const selector of selectors) {
+        root.querySelectorAll(selector).forEach((form) => {
+          if (seenForms.has(form)) return;
+          seenForms.add(form);
+          forms.push(form);
+        });
+      }
+    };
+
+    collectForms(section);
+    collectForms(document);
+
+    if (forms.length === 0) {
+      return null;
     }
-    return document.querySelector('form[action^="/cart/add"]') || document.querySelector('form[action^="/cart"]');
+
+    const scoredForms = forms.map((form) => {
+      const searchRoot = section || document;
+      const submitButton = findProductSubmitButton(form, searchRoot);
+      const hasVariantInput = Boolean(form.querySelector(SELECTORS.VARIANT_INPUT));
+      const hasQuantityInput = Boolean(form.querySelector(SELECTORS.QUANTITY_INPUT));
+      const action = form.getAttribute('action') || '';
+      let score = 0;
+
+      if (action.includes('/cart/add')) score += 3;
+      if (hasVariantInput) score += 4;
+      if (hasQuantityInput) score += 1;
+      if (submitButton) score += 4;
+
+      return {
+        form,
+        score,
+        hasVariantInput,
+        hasQuantityInput,
+        submitButton,
+      };
+    });
+
+    logAutoAdd('Product form candidates', {
+      count: scoredForms.length,
+      candidates: scoredForms.map((candidate) => ({
+        score: candidate.score,
+        hasVariantInput: candidate.hasVariantInput,
+        hasQuantityInput: candidate.hasQuantityInput,
+        submitButton: describeElement(candidate.submitButton),
+        form: describeElement(candidate.form),
+      })),
+    });
+
+    scoredForms.sort((left, right) => right.score - left.score);
+    return scoredForms[0]?.form || null;
   }
 
   /**
@@ -649,8 +1367,11 @@
 
       // Exit early if no FastEditor cart URL parameter
       if (!fasteditorCartUrl) return;
+      logAutoAdd('Detected FastEditor return URL parameter', {
+        sectionId: this.sectionId,
+        fasteditorCartUrl,
+      });
 
-      const enableCartRedirect = this.button.dataset.redirect === 'true';
       const addingToCartText = this.button.dataset.addingToCartText 
         || DEFAULTS.ADDING_TO_CART;
       const addedToCartText = this.button.dataset.addedToCartText 
@@ -798,9 +1519,20 @@
         }
 
         const cartItems = buildCartItems(data);
-
-        // Add item(s) to cart
-        await addItemsToCart(cartItems);
+        logAutoAdd('Prepared cart items for theme auto-add', {
+          itemsCount: cartItems.length,
+          variantIds: cartItems.map((item) => String(item.id)),
+        });
+        this.form = findProductForm(this.sectionId);
+        const sectionRoot = this.sectionId
+          ? document.getElementById(`shopify-section-${this.sectionId}`)
+          : null;
+        const autoAddResult = await runThemeAutoAddFlow({
+          form: this.form,
+          cartItems,
+          fallback: () => addItemsToCart(cartItems),
+          sectionRoot,
+        });
 
         // Update buttons to success state
         guard.state = 'success';
@@ -808,12 +1540,10 @@
 
         // Clean up URL parameter
         clearAutoAddUrlParam();
-
-        // Redirect or reload based on settings
-        if (enableCartRedirect) {
-          window.location.href = ROUTES.CART;
+        if (autoAddResult.mode === 'direct') {
+          console.info('[FastEditor] Theme cart flow did not intercept request, direct add fallback completed.');
         } else {
-          location.reload();
+          logAutoAdd('Theme auto-add completed without FastEditor redirect/reload');
         }
       } catch (error) {
         console.error('[FastEditor] Cart initialization error:', error);

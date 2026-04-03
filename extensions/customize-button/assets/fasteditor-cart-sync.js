@@ -22,14 +22,71 @@
   const PATH_PATTERNS = {
     MUTATION: /\/cart\/(?:change|update)(?:\.js)?$/,
   };
+  const PRESENTATION = {
+    STYLE_ID: 'fasteditor-cart-sync-visual-style',
+    ITEM_ATTR: 'data-fasteditor-extra-pricing-item',
+    HIDDEN_ATTR: 'data-fasteditor-extra-pricing-control-hidden',
+  };
   const CART_PROPERTIES = {
     PROJECT_KEY: '_fasteditor_project_key',
     EXTRA_VARIANT_ID: '_fasteditor_extra_variant_id',
     EXTRA_PAGES: '_fasteditor_extra_pages',
     PARENT_PROJECT_KEY: '_fasteditor_parent_project_key',
   };
+  const CART_ROOT_SELECTORS = [
+    'cart-items',
+    'cart-drawer-items',
+    '#main-cart-items',
+    '#CartDrawer',
+    '#CartDrawer-Overlay',
+    '.cart-items',
+    '.drawer__cart-items',
+    'form[action*="/cart"]',
+  ];
+  const LINE_ITEM_SELECTORS = [
+    'tr.cart-item',
+    'cart-item',
+    '.cart-item',
+    '.cart__item',
+    '.drawer__cart-item',
+    '.line-item',
+    '[data-cart-item]',
+    'li.cart-item',
+  ];
+  const QUANTITY_WRAPPER_SELECTORS = [
+    'quantity-popover',
+    'quantity-input',
+    '.quantity',
+    '.cart-item__quantity-wrapper',
+    '.cart-item__quantity',
+    '[data-cart-quantity]',
+  ];
+  const QUANTITY_CONTROL_SELECTORS = [
+    'input[name="updates[]"]',
+    'input[name*="updates"]',
+    'input[type="number"]',
+    '.quantity__button',
+    'button[name="plus"]',
+    'button[name="minus"]',
+  ];
+  const REMOVE_WRAPPER_SELECTORS = [
+    'cart-remove-button',
+    '.cart-item__remove',
+    '.cart__remove',
+    '[data-cart-remove]',
+  ];
+  const REMOVE_CONTROL_SELECTORS = [
+    'cart-remove-button',
+    'a[href*="/cart/change"]',
+    'button[name="remove"]',
+    '[data-cart-remove]',
+    '.cart-item__remove',
+    '.cart__remove',
+  ];
 
   const originalFetch = window.fetch.bind(window);
+  let presentationSyncTimeout = 0;
+  let presentationSyncPromise = null;
 
   function isPlainObject(value) {
     return Object.prototype.toString.call(value) === '[object Object]';
@@ -160,6 +217,278 @@
   function hasManagedItems(cart) {
     return Array.isArray(cart?.items)
       && cart.items.some((item) => isMainFastEditorItem(item) || isExtraPricingItem(item));
+  }
+
+  function uniqueElements(elements) {
+    return Array.from(new Set(elements.filter(Boolean)));
+  }
+
+  function ensurePresentationStyles() {
+    if (document.getElementById(PRESENTATION.STYLE_ID)) {
+      return;
+    }
+
+    const style = document.createElement('style');
+    style.id = PRESENTATION.STYLE_ID;
+    style.textContent = `
+      [${PRESENTATION.HIDDEN_ATTR}="true"] {
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function clearPresentationState() {
+    document.querySelectorAll(`[${PRESENTATION.ITEM_ATTR}]`).forEach((element) => {
+      element.removeAttribute(PRESENTATION.ITEM_ATTR);
+    });
+
+    document.querySelectorAll(`[${PRESENTATION.HIDDEN_ATTR}]`).forEach((element) => {
+      element.removeAttribute('aria-hidden');
+      element.removeAttribute('inert');
+      element.removeAttribute(PRESENTATION.HIDDEN_ATTR);
+    });
+  }
+
+  function markHidden(element) {
+    if (!element) return;
+    element.setAttribute('aria-hidden', 'true');
+    element.setAttribute('inert', '');
+    element.setAttribute(PRESENTATION.HIDDEN_ATTR, 'true');
+  }
+
+  function resolveClosestTarget(element, selectorList, scope) {
+    if (!element) return null;
+
+    const target = selectorList.reduce((resolved, selector) => {
+      return resolved || element.closest(selector);
+    }, null);
+
+    if (!target) {
+      return element;
+    }
+
+    if (scope && !scope.contains(target)) {
+      return element;
+    }
+
+    return target;
+  }
+
+  function collectControlTargets(container, wrapperSelectors, controlSelectors) {
+    const directTargets = uniqueElements(
+      wrapperSelectors.map((selector) => Array.from(container.querySelectorAll(selector))).flat()
+    );
+
+    if (directTargets.length > 0) {
+      return directTargets;
+    }
+
+    const fallbackTargets = Array.from(
+      container.querySelectorAll(controlSelectors.join(','))
+    ).map((element) => resolveClosestTarget(element, wrapperSelectors, container));
+
+    return uniqueElements(fallbackTargets);
+  }
+
+  function getQuantityTargets(container) {
+    return collectControlTargets(
+      container,
+      QUANTITY_WRAPPER_SELECTORS,
+      QUANTITY_CONTROL_SELECTORS
+    );
+  }
+
+  function getRemoveTargets(container) {
+    return collectControlTargets(
+      container,
+      REMOVE_WRAPPER_SELECTORS,
+      REMOVE_CONTROL_SELECTORS
+    );
+  }
+
+  function isCartInterfaceAvailable() {
+    return Boolean(
+      document.querySelector(CART_ROOT_SELECTORS.join(','))
+      || document.querySelector(QUANTITY_CONTROL_SELECTORS.join(','))
+      || document.querySelector(REMOVE_CONTROL_SELECTORS.join(','))
+    );
+  }
+
+  function isCartRelatedElement(element) {
+    if (!(element instanceof Element)) {
+      return false;
+    }
+
+    const selectors = [
+      ...CART_ROOT_SELECTORS,
+      ...LINE_ITEM_SELECTORS,
+      ...QUANTITY_CONTROL_SELECTORS,
+      ...REMOVE_CONTROL_SELECTORS,
+    ].join(',');
+
+    return Boolean(
+      element.matches(selectors)
+      || element.closest(CART_ROOT_SELECTORS.join(','))
+      || element.querySelector(selectors)
+    );
+  }
+
+  function getCartRoots() {
+    return uniqueElements(
+      CART_ROOT_SELECTORS.map((selector) => Array.from(document.querySelectorAll(selector))).flat()
+    );
+  }
+
+  function getLineItemContainers(root) {
+    if (!root) return [];
+
+    const candidates = uniqueElements(
+      LINE_ITEM_SELECTORS.map((selector) => Array.from(root.querySelectorAll(selector))).flat()
+    );
+
+    return candidates.filter((candidate) => {
+      return !candidates.some((other) => other !== candidate && other.contains(candidate));
+    });
+  }
+
+  function markExtraPricingLineItem(container) {
+    container.setAttribute(PRESENTATION.ITEM_ATTR, 'true');
+
+    uniqueElements([
+      ...getQuantityTargets(container),
+      ...getRemoveTargets(container),
+    ]).forEach((element) => {
+      markHidden(element);
+    });
+  }
+
+  function applyPresentationFromRoots(cart) {
+    const items = Array.isArray(cart?.items) ? cart.items : [];
+    let applied = false;
+
+    getCartRoots().forEach((root) => {
+      const lineItems = getLineItemContainers(root);
+      if (lineItems.length === 0) {
+        return;
+      }
+
+      lineItems.forEach((lineItem, index) => {
+        if (!isExtraPricingItem(items[index])) {
+          return;
+        }
+
+        markExtraPricingLineItem(lineItem);
+        applied = true;
+      });
+    });
+
+    return applied;
+  }
+
+  function applyPresentationFromOrderedControls(cart) {
+    const items = Array.isArray(cart?.items) ? cart.items : [];
+    const quantityTargets = uniqueElements(
+      Array.from(document.querySelectorAll(QUANTITY_CONTROL_SELECTORS.join(','))).map((element) => {
+        return resolveClosestTarget(element, QUANTITY_WRAPPER_SELECTORS, document.body);
+      })
+    );
+    const removeTargets = uniqueElements(
+      Array.from(document.querySelectorAll(REMOVE_CONTROL_SELECTORS.join(','))).map((element) => {
+        return resolveClosestTarget(element, REMOVE_WRAPPER_SELECTORS, document.body);
+      })
+    );
+
+    items.forEach((item, index) => {
+      if (!isExtraPricingItem(item)) {
+        return;
+      }
+
+      markHidden(quantityTargets[index]);
+      markHidden(removeTargets[index]);
+    });
+  }
+
+  function applyExtraPricingPresentation(cart) {
+    clearPresentationState();
+
+    if (!Array.isArray(cart?.items) || cart.items.length === 0) {
+      return;
+    }
+
+    const appliedFromRoots = applyPresentationFromRoots(cart);
+    if (!appliedFromRoots) {
+      applyPresentationFromOrderedControls(cart);
+    }
+  }
+
+  async function syncExtraPricingPresentation() {
+    if (!isCartInterfaceAvailable()) {
+      return;
+    }
+
+    if (presentationSyncPromise) {
+      return presentationSyncPromise;
+    }
+
+    presentationSyncPromise = (async () => {
+      try {
+        ensurePresentationStyles();
+        const cart = await fetchCart();
+
+        if (!hasManagedItems(cart)) {
+          clearPresentationState();
+          return;
+        }
+
+        applyExtraPricingPresentation(cart);
+      } catch (error) {
+        console.error('[FastEditor] Failed to apply cart presentation sync:', error);
+      } finally {
+        presentationSyncPromise = null;
+      }
+    })();
+
+    return presentationSyncPromise;
+  }
+
+  function schedulePresentationSync(delay = 80) {
+    window.clearTimeout(presentationSyncTimeout);
+    presentationSyncTimeout = window.setTimeout(() => {
+      syncExtraPricingPresentation();
+    }, delay);
+  }
+
+  function startPresentationObserver() {
+    if (!document.body) {
+      return;
+    }
+
+    const observer = new MutationObserver((mutations) => {
+      const shouldSync = mutations.some((mutation) => {
+        if (mutation.type !== 'childList') {
+          return false;
+        }
+
+        if (isCartRelatedElement(mutation.target)) {
+          return true;
+        }
+
+        return Array.from(mutation.addedNodes).some((node) => isCartRelatedElement(node))
+          || Array.from(mutation.removedNodes).some((node) => isCartRelatedElement(node));
+      });
+
+      if (shouldSync) {
+        schedulePresentationSync();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
   }
 
   function getHeaderValue(headers, name) {
@@ -652,10 +981,24 @@
     }
 
     try {
-      return await rewriteCartMutation(input, init, url);
+      const response = await rewriteCartMutation(input, init, url);
+      schedulePresentationSync();
+      return response;
     } catch (error) {
       console.error('[FastEditor] Cart request rewrite failed:', error);
       return originalFetch(input, init);
     }
   };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      ensurePresentationStyles();
+      startPresentationObserver();
+      schedulePresentationSync(0);
+    });
+  } else {
+    ensurePresentationStyles();
+    startPresentationObserver();
+    schedulePresentationSync(0);
+  }
 })();
