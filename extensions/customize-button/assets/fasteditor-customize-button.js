@@ -51,6 +51,7 @@
    */
   const ENDPOINTS = {
     SMARTLINK: '/apps/embedded/app/smartlink',
+    CART: 'cart.js',
     CART_ADD: 'cart/add.js',
     FASTEDITOR_PRODUCT: '/apps/embedded/app/fasteditor/product',
   };
@@ -193,11 +194,12 @@
       && window.FastEditorUtils.addItemToCart
     ) {
       const [item] = items;
-      return window.FastEditorUtils.addItemToCart(
+      const response = await window.FastEditorUtils.addItemToCart(
         item.id,
         item.quantity,
         item.properties || {}
       );
+      return patchLineUpdateCartAddResponse(response, items, window.fetch.bind(window));
     }
 
     const response = await fetch(
@@ -214,7 +216,7 @@
       throw new Error(`Failed to add items to cart: ${error}`);
     }
 
-    return response;
+    return patchLineUpdateCartAddResponse(response, items, window.fetch.bind(window));
   }
 
   /**
@@ -316,6 +318,153 @@
     }
 
     return nextItem;
+  }
+
+  /**
+   * Whether cart item uses Shopify cart transform line_update pricing mode
+   * @param {object|null|undefined} item
+   * @returns {boolean}
+   */
+  function isLineUpdateCartItem(item) {
+    if (!item || typeof item !== 'object') return false;
+
+    const properties = item.properties && typeof item.properties === 'object'
+      ? item.properties
+      : {};
+
+    return String(properties[CART_PROPERTIES.PRICING_MODE] || '') === 'line_update'
+      && String(properties[CART_PROPERTIES.PROJECT_KEY] || '') !== '';
+  }
+
+  /**
+   * Fetch current Shopify cart state
+   * @param {Function} requestFn
+   * @returns {Promise<object>}
+   */
+  async function fetchCurrentCart(requestFn) {
+    const response = await requestFn(
+      `${window.Shopify?.routes?.root || '/'}${ENDPOINTS.CART}`,
+      {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: {
+          Accept: 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch cart snapshot: ${response.status}`);
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Find line_update cart item in cart.js by project key
+   * @param {object|null} cart
+   * @param {Array} cartItems
+   * @returns {object|null}
+   */
+  function findMatchingLineUpdateCartItem(cart, cartItems) {
+    if (!Array.isArray(cart?.items) || !Array.isArray(cartItems)) {
+      return null;
+    }
+
+    const sourceItem = cartItems.find((item) => isLineUpdateCartItem(item));
+    if (!sourceItem) {
+      return null;
+    }
+
+    const sourceProperties = sourceItem.properties || {};
+    const projectKey = String(sourceProperties[CART_PROPERTIES.PROJECT_KEY] || '');
+    const variantId = String(sourceItem.id || '');
+
+    const matchingItems = cart.items.filter((item) => {
+      const properties = item?.properties && typeof item.properties === 'object'
+        ? item.properties
+        : {};
+
+      if (String(properties[CART_PROPERTIES.PARENT_PROJECT_KEY] || '') !== '') {
+        return false;
+      }
+
+      if (projectKey && String(properties[CART_PROPERTIES.PROJECT_KEY] || '') === projectKey) {
+        return true;
+      }
+
+      return (
+        String(properties[CART_PROPERTIES.PRICING_MODE] || '') === 'line_update'
+        && String(item?.id || '') === variantId
+      );
+    });
+
+    return matchingItems[matchingItems.length - 1] || null;
+  }
+
+  /**
+   * Normalize cart/add response for line_update mode using current cart snapshot
+   * @param {Response} response
+   * @param {Array} cartItems
+   * @param {Function} requestFn
+   * @returns {Promise<Response>}
+   */
+  async function patchLineUpdateCartAddResponse(response, cartItems, requestFn) {
+    if (!response?.ok || !Array.isArray(cartItems) || !cartItems.some((item) => isLineUpdateCartItem(item))) {
+      return response;
+    }
+
+    const contentType = response.headers.get('Content-Type') || '';
+    if (!contentType.includes('application/json')) {
+      return response;
+    }
+
+    let payload = null;
+    try {
+      payload = await response.clone().json();
+    } catch (error) {
+      logAutoAdd('Failed to parse cart/add response for line_update normalization', {
+        message: error?.message || String(error),
+      });
+      return response;
+    }
+
+    let matchedCartItem = null;
+    try {
+      const cart = await fetchCurrentCart(requestFn);
+      matchedCartItem = findMatchingLineUpdateCartItem(cart, cartItems);
+    } catch (error) {
+      logAutoAdd('Failed to fetch cart snapshot for line_update normalization', {
+        message: error?.message || String(error),
+      });
+      return response;
+    }
+
+    if (!matchedCartItem) {
+      logAutoAdd('No matching cart.js line item found for line_update normalization');
+      return response;
+    }
+
+    const nextPayload = (payload && typeof payload === 'object' && !Array.isArray(payload))
+      ? { ...payload, ...matchedCartItem }
+      : matchedCartItem;
+
+    const headers = new Headers(response.headers);
+    headers.set('Content-Type', 'application/json; charset=utf-8');
+    headers.delete('Content-Length');
+
+    logAutoAdd('Normalized line_update cart/add response from cart.js snapshot', {
+      projectKey: matchedCartItem.properties?.[CART_PROPERTIES.PROJECT_KEY] || '',
+      key: matchedCartItem.key || '',
+      finalPrice: matchedCartItem.final_price,
+      finalLinePrice: matchedCartItem.final_line_price,
+    });
+
+    return new Response(JSON.stringify(nextPayload), {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   }
 
   /**
@@ -605,20 +754,26 @@
 
       try {
         const response = await originalFetch.call(this, interceptedRequest);
-        if (response.ok) {
+        const normalizedResponse = await patchLineUpdateCartAddResponse(
+          response,
+          cartItems,
+          originalFetch.bind(window)
+        );
+
+        if (normalizedResponse.ok) {
           logAutoAdd('Fetch cart/add request completed successfully', {
-            status: response.status,
+            status: normalizedResponse.status,
             url: interceptedRequest.url,
           });
-          onSuccess?.(response);
+          onSuccess?.(normalizedResponse);
         } else {
           logAutoAdd('Fetch cart/add request failed', {
-            status: response.status,
+            status: normalizedResponse.status,
             url: interceptedRequest.url,
           });
-          onError?.(new Error(`Cart add request failed with status ${response.status}`));
+          onError?.(new Error(`Cart add request failed with status ${normalizedResponse.status}`));
         }
-        return response;
+        return normalizedResponse;
       } catch (error) {
         onError?.(error);
         throw error;

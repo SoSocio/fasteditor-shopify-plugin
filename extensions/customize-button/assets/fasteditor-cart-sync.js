@@ -26,12 +26,21 @@
     STYLE_ID: 'fasteditor-cart-sync-visual-style',
     ITEM_ATTR: 'data-fasteditor-extra-pricing-item',
     HIDDEN_ATTR: 'data-fasteditor-extra-pricing-control-hidden',
+    IMAGE_ATTR: 'data-fasteditor-custom-image',
+    ORIGINAL_SRC_ATTR: 'data-fasteditor-original-src',
+    ORIGINAL_SRCSET_ATTR: 'data-fasteditor-original-srcset',
   };
   const CART_PROPERTIES = {
     PROJECT_KEY: '_fasteditor_project_key',
+    IMAGE_URL: '_fasteditor_image_url',
+    PRICING_MODE: '_fasteditor_pricing_mode',
     EXTRA_VARIANT_ID: '_fasteditor_extra_variant_id',
     EXTRA_PAGES: '_fasteditor_extra_pages',
     PARENT_PROJECT_KEY: '_fasteditor_parent_project_key',
+  };
+  const PRICING_MODES = {
+    EXTRA_LINE: 'extra_line',
+    LINE_UPDATE: 'line_update',
   };
   const CART_ROOT_SELECTORS = [
     'cart-items',
@@ -82,6 +91,21 @@
     '[data-cart-remove]',
     '.cart-item__remove',
     '.cart__remove',
+  ];
+  const IMAGE_WRAPPER_SELECTORS = [
+    '.cart-item__media',
+    '.cart-item__image-wrapper',
+    '.cart-item__image',
+    '.cart__image-wrapper',
+    '.cart__image',
+    '.drawer__cart-item-image',
+    '.line-item__media',
+    '[data-cart-item-image]',
+    'picture',
+    'a[href*="/products/"]',
+  ];
+  const IMAGE_SELECTORS = [
+    'img',
   ];
 
   const originalFetch = window.fetch.bind(window);
@@ -219,6 +243,11 @@
       && cart.items.some((item) => isMainFastEditorItem(item) || isExtraPricingItem(item));
   }
 
+  function hasImageManagedItems(cart) {
+    return Array.isArray(cart?.items)
+      && cart.items.some((item) => shouldReplaceItemImage(item));
+  }
+
   function uniqueElements(elements) {
     return Array.from(new Set(elements.filter(Boolean)));
   }
@@ -257,6 +286,120 @@
     element.setAttribute('aria-hidden', 'true');
     element.setAttribute('inert', '');
     element.setAttribute(PRESENTATION.HIDDEN_ATTR, 'true');
+  }
+
+  function shouldReplaceItemImage(item) {
+    const imageUrl = getProperty(item, CART_PROPERTIES.IMAGE_URL);
+    if (!imageUrl) {
+      return false;
+    }
+
+    const pricingMode = getProperty(item, CART_PROPERTIES.PRICING_MODE);
+    if (pricingMode === PRICING_MODES.LINE_UPDATE) {
+      return true;
+    }
+
+    if (pricingMode === PRICING_MODES.EXTRA_LINE) {
+      return getProperty(item, CART_PROPERTIES.PARENT_PROJECT_KEY) === ''
+        && getProperty(item, CART_PROPERTIES.PROJECT_KEY) !== '';
+    }
+
+    return getProperty(item, CART_PROPERTIES.PARENT_PROJECT_KEY) === ''
+      && getProperty(item, CART_PROPERTIES.PROJECT_KEY) !== '';
+  }
+
+  function findImageElement(container) {
+    if (!container) return null;
+
+    for (const wrapperSelector of IMAGE_WRAPPER_SELECTORS) {
+      const wrapper = container.querySelector(wrapperSelector);
+      if (!wrapper) continue;
+
+      for (const imageSelector of IMAGE_SELECTORS) {
+        const image = wrapper.matches(imageSelector)
+          ? wrapper
+          : wrapper.querySelector(imageSelector);
+        if (image) {
+          return image;
+        }
+      }
+    }
+
+    for (const imageSelector of IMAGE_SELECTORS) {
+      const image = container.querySelector(imageSelector);
+      if (image) {
+        return image;
+      }
+    }
+
+    return null;
+  }
+
+  function rememberOriginalImageState(image) {
+    if (!image) return;
+
+    if (!image.hasAttribute(PRESENTATION.ORIGINAL_SRC_ATTR)) {
+      image.setAttribute(PRESENTATION.ORIGINAL_SRC_ATTR, image.getAttribute('src') || '');
+    }
+
+    if (!image.hasAttribute(PRESENTATION.ORIGINAL_SRCSET_ATTR)) {
+      image.setAttribute(PRESENTATION.ORIGINAL_SRCSET_ATTR, image.getAttribute('srcset') || '');
+    }
+  }
+
+  function replaceImageElement(image, imageUrl) {
+    if (!image || !imageUrl) return;
+
+    rememberOriginalImageState(image);
+
+    image.setAttribute(PRESENTATION.IMAGE_ATTR, 'true');
+    image.src = imageUrl;
+    image.setAttribute('src', imageUrl);
+    image.setAttribute('srcset', imageUrl);
+    image.removeAttribute('data-src');
+    image.removeAttribute('data-srcset');
+
+    const picture = image.closest('picture');
+    if (picture) {
+      picture.querySelectorAll('source').forEach((source) => {
+        source.setAttribute('srcset', imageUrl);
+      });
+    }
+  }
+
+  function restoreReplacedImages() {
+    document.querySelectorAll(`img[${PRESENTATION.IMAGE_ATTR}="true"]`).forEach((image) => {
+      const originalSrc = image.getAttribute(PRESENTATION.ORIGINAL_SRC_ATTR);
+      const originalSrcset = image.getAttribute(PRESENTATION.ORIGINAL_SRCSET_ATTR);
+
+      if (originalSrc !== null) {
+        image.src = originalSrc;
+        image.setAttribute('src', originalSrc);
+      }
+
+      if (originalSrcset !== null) {
+        if (originalSrcset) {
+          image.setAttribute('srcset', originalSrcset);
+        } else {
+          image.removeAttribute('srcset');
+        }
+      }
+
+      const picture = image.closest('picture');
+      if (picture && originalSrcset !== null) {
+        picture.querySelectorAll('source').forEach((source) => {
+          if (originalSrcset) {
+            source.setAttribute('srcset', originalSrcset);
+          } else {
+            source.removeAttribute('srcset');
+          }
+        });
+      }
+
+      image.removeAttribute(PRESENTATION.IMAGE_ATTR);
+      image.removeAttribute(PRESENTATION.ORIGINAL_SRC_ATTR);
+      image.removeAttribute(PRESENTATION.ORIGINAL_SRCSET_ATTR);
+    });
   }
 
   function resolveClosestTarget(element, selectorList, scope) {
@@ -424,6 +567,33 @@
     }
   }
 
+  function applyCartImagePresentation(cart) {
+    const items = Array.isArray(cart?.items) ? cart.items : [];
+    restoreReplacedImages();
+
+    if (items.length === 0) {
+      return;
+    }
+
+    getCartRoots().forEach((root) => {
+      const lineItems = getLineItemContainers(root);
+      if (lineItems.length === 0) {
+        return;
+      }
+
+      lineItems.forEach((lineItem, index) => {
+        const item = items[index];
+        if (!shouldReplaceItemImage(item)) {
+          return;
+        }
+
+        const imageUrl = getProperty(item, CART_PROPERTIES.IMAGE_URL);
+        const image = findImageElement(lineItem);
+        replaceImageElement(image, imageUrl);
+      });
+    });
+  }
+
   async function syncExtraPricingPresentation() {
     if (!isCartInterfaceAvailable()) {
       return;
@@ -438,12 +608,14 @@
         ensurePresentationStyles();
         const cart = await fetchCart();
 
-        if (!hasManagedItems(cart)) {
+        if (!hasManagedItems(cart) && !hasImageManagedItems(cart)) {
           clearPresentationState();
+          restoreReplacedImages();
           return;
         }
 
         applyExtraPricingPresentation(cart);
+        applyCartImagePresentation(cart);
       } catch (error) {
         console.error('[FastEditor] Failed to apply cart presentation sync:', error);
       } finally {
