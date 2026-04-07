@@ -1,6 +1,6 @@
 export const GET_SHOP_INFO = `
   #graphql
-  query {
+  query GetShopInfo {
     shop {
       name
       myshopifyDomain

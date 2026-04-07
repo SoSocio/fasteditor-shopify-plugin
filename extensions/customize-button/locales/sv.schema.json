@@ -58,7 +58,11 @@
           "added_to_cart_text": "Text efter tillägg i varukorg",
           "added_to_cart_text_info": "Text som visas efter att en artikel har lagts till i varukorgen",
           "error_text": "Feltext",
-          "error_text_info": "Text som visas när ett fel uppstår"
+          "error_text_info": "Text som visas när ett fel uppstår",
+          "auto_add_error_message": "Felmeddelande för automatisk tilläggning",
+          "auto_add_error_message_info": "Meddelande som visas under knappen när FastEditor återvänder men produkten inte kan läggas till i kundvagnen",
+          "auto_add_error_color": "Färg för felmeddelande vid automatisk tilläggning",
+          "auto_add_error_color_info": "Färg på meddelandet som visas under knappen när automatisk tilläggning i kundvagnen misslyckas"
         },
         "button_behavior": {
           "header": "Knappbeteende",
@@ -127,4 +131,3 @@
     }
   }
 }
-

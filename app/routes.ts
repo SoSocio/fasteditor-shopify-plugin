@@ -4,4 +4,6 @@
  */
 import { flatRoutes } from "@remix-run/fs-routes";
 
-export default flatRoutes();
+export default flatRoutes({
+  ignoredRouteFiles: ["**/*.server.*"],
+}); 

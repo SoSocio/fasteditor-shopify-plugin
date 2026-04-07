@@ -16,6 +16,18 @@
       "description": "Clicca sul pulsante qui sotto per abilitare la barra fissa. La barra fissa sarà visualizzata nelle pagine prodotto che hanno il tag fasteditor. Puoi anche personalizzare gli stili della barra fissa secondo le tue esigenze.",
       "button": "Aggiungi barra fissa"
     },
+    "app-embed": {
+      "title": "Configurazione App Embed",
+      "description": "Attiva gli app embed di FastEditor nel tuo tema per usare funzioni storefront come la sticky bar e la sincronizzazione del carrello.",
+      "steps": {
+        "item-1": "Apri il Theme Editor di Shopify per il tema attuale.",
+        "item-2": "Apri il pannello <b>App embeds</b>.",
+        "item-3": "Attiva <b>FastEditor Sticky Bar</b> se vuoi mostrare la barra prodotto flottante nelle pagine prodotto.",
+        "item-4": "Attiva <b>FastEditor Cart Sync</b> se il tuo negozio usa regole di prezzo extra-line e hai bisogno della sincronizzazione delle quantità nel carrello.",
+        "item-5": "Fai clic su <b>Salva</b> nel Theme Editor."
+      },
+      "button": "Apri App Embeds"
+    },
     "product-setup": {
       "title": "Configurazione del prodotto",
       "description": "Segui questi passaggi per collegare un prodotto Shopify a FastEditor:",
@@ -113,6 +125,67 @@
       "validation-errors-title": "Errori di convalida"
     }
   },
+  "pricing-rules-page": {
+    "title": "Regole di prezzo",
+    "create-button": "Crea regola",
+    "empty-state": {
+      "title": "Nessuna regola di prezzo ancora",
+      "description": "Crea una regola per iniziare ad addebitare ogni pagina extra."
+    },
+    "table": {
+      "headings": {
+        "name": "Nome regola",
+        "description": "Descrizione",
+        "targets": "Elementi collegati",
+        "price": "Prezzo per prodotto extra",
+        "status": "Stato",
+        "actions": "Azioni"
+      }
+    },
+    "status": {
+      "active": "Attiva",
+      "inactive": "Inattiva"
+    },
+    "actions": {
+      "edit": "Modifica",
+      "delete": "Elimina"
+    }
+  },
+  "pricing-rule-form": {
+    "title": {
+      "new": "Crea regola di prezzo",
+      "edit": "Modifica regola di prezzo"
+    },
+    "fields": {
+      "name": "Nome regola",
+      "description": "Descrizione regola",
+      "price": "Prezzo per prodotto extra",
+      "enabled": "Abilita regola",
+      "target-type": "Applica a",
+      "target-search": "Cerca prodotti o varianti",
+      "target-selected": "Target selezionato"
+    },
+    "target-type": {
+      "product": "Prodotto",
+      "variant": "Variante"
+    },
+    "buttons": {
+      "search": "Cerca",
+      "select": "Seleziona",
+      "remove": "Rimuovi",
+      "save": "Salva",
+      "create": "Crea",
+      "cancel": "Annulla",
+      "delete": "Elimina"
+    },
+    "validation": {
+      "name-required": "Il nome della regola è obbligatorio",
+      "price-required": "Il prezzo è obbligatorio",
+      "price-invalid": "Inserisci un prezzo valido",
+      "target-required": "Seleziona un prodotto o una variante"
+    },
+    "delete-confirm": "Eliminare questa regola di prezzo?"
+  },
   "subscription-page": {
     "title": "Abbonamento",
     "cancel-button": "Annulla",
@@ -190,6 +263,7 @@
   "navigation": {
     "home": "Home",
     "dashboard": "Panoramica",
+    "pricing-rules": "Pricing Rules",
     "settings": "Impostazioni",
     "subscription": "Abbonamento"
   },

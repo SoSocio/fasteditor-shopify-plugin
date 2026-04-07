@@ -16,6 +16,8 @@ export interface Product {
   title: string;
   legacyResourceId: string;
   status: string;
+  productType?: string | null;
+  tags?: string[] | null;
   featuredMedia?: {
     preview: {
       image: {

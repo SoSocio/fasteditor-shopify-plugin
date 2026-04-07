@@ -133,6 +133,7 @@ export default function App() {
           {t("navigation.home")}
         </Link>
         <Link to="/app/dashboard">{t("navigation.dashboard")}</Link>
+        <Link to="/app/pricing-rules">{t("navigation.pricing-rules")}</Link>
         <Link to="/app/settings">{t("navigation.settings")}</Link>
         <Link to="/app/subscription">{t("navigation.subscription")}</Link>
       </NavMenu>

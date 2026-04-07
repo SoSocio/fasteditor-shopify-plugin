@@ -1,0 +1,20 @@
+query CartTransformRunInput {
+  presentmentCurrencyRate
+  cart {
+    lines {
+      id
+      quantity
+      pricingMode: attribute(key: "_fasteditor_pricing_mode") {
+        value
+      }
+      extraUnitAmount: attribute(key: "_fasteditor_extra_unit_amount") {
+        value
+      }
+      cost {
+        amountPerQuantity {
+          amount
+        }
+      }
+    }
+  }
+}

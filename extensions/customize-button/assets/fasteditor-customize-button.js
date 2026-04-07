@@ -14,6 +14,7 @@
     BUTTON_ICON: '.fasteditor-customize-button__icon',
     BUTTON_ICON_MAIN: '.fasteditor-customize-button__icon-main',
     BUTTON_ICON_LOADING: '.fasteditor-customize-button__icon-loading',
+    ERROR_NOTICE: '.fasteditor-customize-button__notice',
     VARIANT_INPUT: 'input[name="id"]',
     QUANTITY_INPUT: 'input[name="quantity"]',
   };
@@ -23,6 +24,7 @@
    */
   const CLASSES = {
     LOADING: 'fasteditor-customize-button--loading',
+    ERROR_NOTICE_VISIBLE: 'fasteditor-customize-button__notice--visible',
   };
 
   /**
@@ -67,6 +69,15 @@
     PROJECT_KEY: '_fasteditor_project_key',
     IMAGE_URL: '_fasteditor_image_url',
     CUSTOMIZED: 'Customized',
+    PRICING_MODE: '_fasteditor_pricing_mode',
+    EXTRA_PAGES: '_fasteditor_extra_pages',
+    PRICE_PER_EXTRA_PAGE: '_fasteditor_price_per_extra_page',
+    EXTRA_UNIT_AMOUNT: '_fasteditor_extra_unit_amount',
+    EXTRA_VARIANT_ID: '_fasteditor_extra_variant_id',
+    PRICING_RULE_ID: '_fasteditor_pricing_rule_id',
+    PRICING_RULE_TITLE: '_fasteditor_pricing_rule_title',
+    PARENT_VARIANT_ID: '_fasteditor_parent_variant_id',
+    PARENT_PROJECT_KEY: '_fasteditor_parent_project_key',
   };
 
   /**
@@ -171,50 +182,96 @@
   }
 
   /**
-   * Adds customized item to cart
-   * Uses shared utility if available
-   * @param {string} variantId - Product variant ID
-   * @param {number} quantity - Item quantity
-   * @param {string} projectKey - FastEditor project key
-   * @param {string} imageUrl - Customized image URL
+   * Adds one or more items to cart.
+   * Uses shared utility when only one line item is present.
+   * @param {Array} items
    * @throws {Error} If cart addition fails
    */
-  async function addItemToCart(variantId, quantity, projectKey, imageUrl) {
-    const properties = {
-      [CART_PROPERTIES.PROJECT_KEY]: projectKey,
-      [CART_PROPERTIES.IMAGE_URL]: imageUrl,
-      [CART_PROPERTIES.CUSTOMIZED]: 'Yes',
-    };
-
-    // Use shared utility if available
-    if (window.FastEditorUtils && window.FastEditorUtils.addItemToCart) {
-      return window.FastEditorUtils.addItemToCart(variantId, quantity, properties);
+  async function addItemsToCart(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+      throw new Error('No cart items to add');
     }
 
-    // Fallback implementation
-    const formData = {
-      items: [{
-        id: variantId,
-        quantity,
-        properties,
-      }],
-    };
+    if (
+      items.length === 1
+      && window.FastEditorUtils
+      && window.FastEditorUtils.addItemToCart
+    ) {
+      const [item] = items;
+      return window.FastEditorUtils.addItemToCart(
+        item.id,
+        item.quantity,
+        item.properties || {}
+      );
+    }
 
     const response = await fetch(
       `${window.Shopify?.routes?.root || '/'}${ENDPOINTS.CART_ADD}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ items }),
       }
     );
 
     if (!response.ok) {
       const error = await response.text();
-      throw new Error(`Failed to add item to cart: ${error}`);
+      throw new Error(`Failed to add items to cart: ${error}`);
     }
 
     return response;
+  }
+
+  /**
+   * Builds cart items for the main customized product and optional extra pricing product.
+   * @param {object} data
+   * @returns {Array}
+   */
+  function buildCartItems(data) {
+    const mainProperties = {
+      [CART_PROPERTIES.PROJECT_KEY]: data.projectKey,
+      [CART_PROPERTIES.IMAGE_URL]: data.imageUrl,
+      [CART_PROPERTIES.CUSTOMIZED]: 'Yes',
+    };
+    const pricingMode = data.pricingMode || 'extra_line';
+
+    if (data.extraPricing) {
+      mainProperties[CART_PROPERTIES.PRICING_MODE] = pricingMode;
+      mainProperties[CART_PROPERTIES.EXTRA_PAGES] = String(data.extraPricing.extraPages);
+      mainProperties[CART_PROPERTIES.PRICE_PER_EXTRA_PAGE] = String(data.extraPricing.pricePerExtraPage);
+      mainProperties[CART_PROPERTIES.EXTRA_UNIT_AMOUNT] = String(data.extraPricing.extraUnitAmount);
+      mainProperties[CART_PROPERTIES.PRICING_RULE_ID] = data.extraPricing.ruleId;
+      mainProperties[CART_PROPERTIES.PRICING_RULE_TITLE] = data.extraPricing.ruleTitle;
+
+      if (pricingMode === 'extra_line') {
+        mainProperties[CART_PROPERTIES.EXTRA_VARIANT_ID] = String(data.extraPricing.variantId);
+      }
+    }
+
+    const items = [{
+      id: data.variantId,
+      quantity: data.quantity,
+      properties: mainProperties,
+    }];
+
+    if (!data.extraPricing || pricingMode === 'line_update') {
+      return items;
+    }
+
+    items.push({
+      id: data.extraPricing.variantId,
+      quantity: data.extraPricing.quantity,
+      properties: {
+        [CART_PROPERTIES.PRICING_MODE]: 'extra_line',
+        [CART_PROPERTIES.EXTRA_PAGES]: String(data.extraPricing.extraPages),
+        [CART_PROPERTIES.PARENT_PROJECT_KEY]: String(data.projectKey),
+        [CART_PROPERTIES.PRICING_RULE_ID]: data.extraPricing.ruleId,
+        [CART_PROPERTIES.PRICING_RULE_TITLE]: data.extraPricing.ruleTitle,
+        [CART_PROPERTIES.PARENT_VARIANT_ID]: String(data.variantId),
+      },
+    });
+
+    return items;
   }
 
   /**
@@ -318,6 +375,7 @@
       this.variants = [];
       this.currentVariantId = '';
       this.form = null;
+      this.errorNotice = null;
       this.sectionId = '';
       this.variantChangeHandler = null;
     }
@@ -355,8 +413,10 @@
       this.sectionId = this.button.dataset.sectionId || this.dataset.sectionId || '';
       this.variants = parseJSON(this.button.dataset.variants, []);
       this.form = findProductForm(this.sectionId);
+      this.errorNotice = this.querySelector(SELECTORS.ERROR_NOTICE);
       this.currentVariantId = this.button.dataset.initialVariantId
         || resolveVariantId(this.form, '');
+      this.hideAutoAddErrorNotice();
 
       // Check availability
       const availability = this.button.dataset.availability;
@@ -390,6 +450,7 @@
     async handleClick() {
       if (!this.button || this.button.hasAttribute('disabled')) return;
 
+      this.hideAutoAddErrorNotice();
       const shop = this.button.dataset.shop;
       const productHandle = this.button.dataset.handle;
       const variantId = this.getSelectedVariantId();
@@ -475,6 +536,7 @@
      */
     updateVariantState(variant) {
       const isVariantAvailable = Boolean(variant?.available);
+      this.hideAutoAddErrorNotice();
 
       this.currentVariantId = variant?.id ? String(variant.id) : this.currentVariantId;
       this.button.dataset.variantAvailable = String(isVariantAvailable);
@@ -506,6 +568,36 @@
       }
       const variant = providedVariant || findVariant(this.variants, this.currentVariantId);
       this.updateVariantState(variant);
+    }
+
+    showAutoAddErrorNotice(message) {
+      if (!this.errorNotice || !this.button) return;
+
+      const resolvedMessage = message || this.button.dataset.autoAddErrorMessage || '';
+      if (!resolvedMessage) {
+        this.hideAutoAddErrorNotice();
+        return;
+      }
+
+      this.errorNotice.textContent = resolvedMessage;
+      this.errorNotice.hidden = false;
+      this.errorNotice.classList.add(CLASSES.ERROR_NOTICE_VISIBLE);
+
+      const color = this.button.dataset.autoAddErrorColor;
+      if (color) {
+        this.errorNotice.style.color = color;
+      } else {
+        this.errorNotice.style.removeProperty('color');
+      }
+    }
+
+    hideAutoAddErrorNotice() {
+      if (!this.errorNotice) return;
+
+      this.errorNotice.textContent = '';
+      this.errorNotice.hidden = true;
+      this.errorNotice.classList.remove(CLASSES.ERROR_NOTICE_VISIBLE);
+      this.errorNotice.style.removeProperty('color');
     }
 
     /**
@@ -563,6 +655,12 @@
         || DEFAULTS.ADDING_TO_CART;
       const addedToCartText = this.button.dataset.addedToCartText 
         || DEFAULTS.ADDED_TO_CART;
+      const clearAutoAddUrlParam = () => {
+        urlParams.delete(URL_PARAMS.FASTEDITOR_CART_URL);
+        const nextSearch = urlParams.toString();
+        const nextUrl = `${window.location.pathname}${nextSearch ? '?' + nextSearch : ''}`;
+        window.history.replaceState({}, '', nextUrl);
+      };
 
     // Shared guard to ensure only one network call; all buttons mirror the same state
     if (!window.FastEditorAutoAddGuard) {
@@ -579,6 +677,7 @@
     guard.buttons.push({
       button: this.button,
       originalText: this.originalText,
+      component: this,
     });
 
     // Capture shared texts from the first button
@@ -590,14 +689,16 @@
     }
 
     const setLoadingForAll = () => {
-      guard.buttons.forEach(({ button }) => {
+      guard.buttons.forEach(({ button, component }) => {
+        component?.hideAutoAddErrorNotice();
         setButtonState(button, guard.texts.addingToCartText, true);
         setButtonLoadingIcon(button, true);
       });
     };
 
     const setSuccessForAll = () => {
-      guard.buttons.forEach(({ button, originalText }) => {
+      guard.buttons.forEach(({ button, originalText, component }) => {
+        component?.hideAutoAddErrorNotice();
         setButtonLoadingIcon(button, false);
         setButtonState(button, guard.texts.addedToCartText, true);
         setTimeout(() => {
@@ -607,9 +708,10 @@
     };
 
     const setErrorForAll = () => {
-      guard.buttons.forEach(({ button, originalText }) => {
+      guard.buttons.forEach(({ button, originalText, component }) => {
         setButtonLoadingIcon(button, false);
         setButtonState(button, originalText, false);
+        component?.showAutoAddErrorNotice();
       });
     };
 
@@ -682,22 +784,30 @@
           throw new Error('Invalid response payload');
         }
 
-        // Add item to cart
-        await addItemToCart(
-          data.variantId, 
-          data.quantity, 
-          data.projectKey, 
-          data.imageUrl
-        );
+        console.info('[FastEditor] Resolved product payload:', data);
+        if (data.extraPricing) {
+          console.info('[FastEditor] Extra pricing payload:', data.extraPricing);
+        }
+
+        if (Number(data.extraPages || 0) > 0 && !data.extraPricing) {
+          console.error('[FastEditor] Extra pages detected but no pricing rule was resolved:', {
+            variantId: data.variantId,
+            extraPages: data.extraPages,
+          });
+          throw new Error('Missing pricing rule for extra pages');
+        }
+
+        const cartItems = buildCartItems(data);
+
+        // Add item(s) to cart
+        await addItemsToCart(cartItems);
 
         // Update buttons to success state
         guard.state = 'success';
         setSuccessForAll();
 
         // Clean up URL parameter
-        urlParams.delete(URL_PARAMS.FASTEDITOR_CART_URL);
-        const newUrl = `${window.location.pathname}${urlParams.toString() ? '?' + urlParams.toString() : ''}`;
-        window.history.replaceState({}, '', newUrl);
+        clearAutoAddUrlParam();
 
         // Redirect or reload based on settings
         if (enableCartRedirect) {
@@ -707,6 +817,7 @@
         }
       } catch (error) {
         console.error('[FastEditor] Cart initialization error:', error);
+        clearAutoAddUrlParam();
         guard.state = 'error';
         setErrorForAll();
         return;
@@ -733,4 +844,3 @@
     setButtonLoadingIcon,
   };
 })();
-

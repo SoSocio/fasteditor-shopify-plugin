@@ -16,6 +16,18 @@
       "description": "Cliquez sur le bouton ci-dessous pour activer la barre fixe. La barre fixe sera affichée sur les pages produit qui ont le tag fasteditor. Vous pouvez également personnaliser les styles de la barre fixe selon vos besoins.",
       "button": "Ajouter la barre fixe"
     },
+    "app-embed": {
+      "title": "Configuration des App Embeds",
+      "description": "Activez les app embeds FastEditor dans votre thème pour utiliser des fonctionnalités storefront comme la barre flottante et la synchronisation du panier.",
+      "steps": {
+        "item-1": "Ouvrez l'éditeur de thème Shopify pour votre thème actuel.",
+        "item-2": "Ouvrez le panneau <b>App embeds</b>.",
+        "item-3": "Activez <b>FastEditor Sticky Bar</b> si vous souhaitez afficher la barre produit flottante sur les pages produit.",
+        "item-4": "Activez <b>FastEditor Cart Sync</b> si votre boutique utilise des règles tarifaires de type extra-line et que vous avez besoin de synchroniser les quantités du panier.",
+        "item-5": "Cliquez sur <b>Enregistrer</b> dans l'éditeur de thème."
+      },
+      "button": "Ouvrir les App Embeds"
+    },
     "product-setup": {
       "title": "Configuration du produit",
       "description": "Pour lier un produit Shopify à FastEditor, suivez ces étapes :",
@@ -113,6 +125,67 @@
       "validation-errors-title": "Erreurs de validation"
     }
   },
+  "pricing-rules-page": {
+    "title": "Règles tarifaires",
+    "create-button": "Créer une règle",
+    "empty-state": {
+      "title": "Aucune règle tarifaire pour le moment",
+      "description": "Créez une règle pour commencer à facturer chaque page supplémentaire."
+    },
+    "table": {
+      "headings": {
+        "name": "Nom de la règle",
+        "description": "Description",
+        "targets": "Éléments liés",
+        "price": "Prix par produit supplémentaire",
+        "status": "Statut",
+        "actions": "Actions"
+      }
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    }
+  },
+  "pricing-rule-form": {
+    "title": {
+      "new": "Créer une règle tarifaire",
+      "edit": "Modifier la règle tarifaire"
+    },
+    "fields": {
+      "name": "Nom de la règle",
+      "description": "Description de la règle",
+      "price": "Prix par produit supplémentaire",
+      "enabled": "Activer la règle",
+      "target-type": "Appliquer à",
+      "target-search": "Rechercher des produits ou des variantes",
+      "target-selected": "Cible sélectionnée"
+    },
+    "target-type": {
+      "product": "Produit",
+      "variant": "Variante"
+    },
+    "buttons": {
+      "search": "Rechercher",
+      "select": "Sélectionner",
+      "remove": "Retirer",
+      "save": "Enregistrer",
+      "create": "Créer",
+      "cancel": "Annuler",
+      "delete": "Supprimer"
+    },
+    "validation": {
+      "name-required": "Le nom de la règle est requis",
+      "price-required": "Le prix est requis",
+      "price-invalid": "Saisissez un prix valide",
+      "target-required": "Sélectionnez un produit ou une variante"
+    },
+    "delete-confirm": "Supprimer cette règle tarifaire ?"
+  },
   "subscription-page": {
     "title": "Abonnement",
     "cancel-button": "Annuler",
@@ -190,6 +263,7 @@
   "navigation": {
     "home": "Accueil",
     "dashboard": "Tableau de bord",
+    "pricing-rules": "Pricing Rules",
     "settings": "Paramètres",
     "subscription": "Abonnement"
   },
