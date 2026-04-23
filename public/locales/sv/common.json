@@ -115,11 +115,24 @@
     "integration-form": {
       "api-key-label": "API-nyckel",
       "api-domain-label": "API-domän",
+      "domain-source-label": "Domänkälla",
+      "fasteditor-domain-label": "FastEditor-domän",
+      "custom-domain-label": "Anpassad domän",
+      "domain-options": {
+        "fasteditor": {
+          "label": "Använd FastEditor-domänen"
+        },
+        "custom": {
+          "label": "Använd anpassad domän"
+        }
+      },
       "connect-button": "Anslut",
       "connection-failed-error": "Kan inte ansluta till FastEditor. Kontrollera API-nyckel och domän.",
       "validation-errors": {
         "api-key-required": "API-nyckel krävs",
-        "api-domain-required": "API-domän krävs"
+        "fasteditor-domain-required": "FastEditor-domän krävs",
+        "api-domain-required": "API-domän krävs",
+        "custom-domain-required": "Anpassad domän krävs"
       },
       "success-message": "FastEditor-integrationen lyckades.",
       "validation-errors-title": "Valideringsfel"

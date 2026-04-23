@@ -115,11 +115,24 @@
     "integration-form": {
       "api-key-label": "Chiave API",
       "api-domain-label": "Dominio API",
+      "domain-source-label": "Origine del dominio",
+      "fasteditor-domain-label": "Dominio FastEditor",
+      "custom-domain-label": "Dominio personalizzato",
+      "domain-options": {
+        "fasteditor": {
+          "label": "Usa il dominio FastEditor"
+        },
+        "custom": {
+          "label": "Usa un dominio personalizzato"
+        }
+      },
       "connect-button": "Collega",
       "connection-failed-error": "Connessione a FastEditor fallita. Controlla chiave API e dominio.",
       "validation-errors": {
         "api-key-required": "Chiave API richiesta",
-        "api-domain-required": "Dominio API richiesto"
+        "fasteditor-domain-required": "Il dominio FastEditor è obbligatorio",
+        "api-domain-required": "Dominio API richiesto",
+        "custom-domain-required": "Il dominio personalizzato è obbligatorio"
       },
       "success-message": "Integrazione con FastEditor completata con successo.",
       "validation-errors-title": "Errori di convalida"

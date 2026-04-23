@@ -14,6 +14,12 @@ import {
   validateFormData
 } from "../services/fastEditorFactory.server";
 import {getAppMetafield} from "../services/app.server";
+import {
+  type FastEditorDomainType,
+  inferFastEditorActiveDomainType,
+  normalizeDomainInput,
+  resolveActiveFastEditorDomain,
+} from "../utils/fastEditorDomain";
 
 import {PageLayout} from "../components/layout/PageLayout";
 import ShopIntegrationCard from "../components/SettingsPage/ShopIntegrationCard";
@@ -27,7 +33,10 @@ const ENDPOINT = "/app/settings";
 
 export interface SettingsLoader {
   fastEditorApiKey: string;
+  activeFastEditorDomain: string;
   fastEditorDomain: string;
+  customDomain: string;
+  activeDomainType: FastEditorDomainType;
   appAvailability: string;
   shopName: string;
 }
@@ -40,10 +49,20 @@ export const loader = async (
   try {
     const shopSettings = await getFastEditorShopSettings(session.shop)
     const appAvailability = await getAppMetafield(admin, "fasteditor_app", "availability")
+    const activeDomainType = inferFastEditorActiveDomainType({
+      activeDomainType: shopSettings?.fastEditorActiveDomainType,
+      fastEditorDomain: shopSettings?.fastEditorDomain,
+      customDomain: shopSettings?.fastEditorCustomDomain,
+    });
+    const fastEditorDomain = normalizeDomainInput(shopSettings?.fastEditorDomain);
+    const customDomain = normalizeDomainInput(shopSettings?.fastEditorCustomDomain);
 
     return {
       fastEditorApiKey: shopSettings?.fastEditorApiKey || "",
-      fastEditorDomain: shopSettings?.fastEditorDomain || "",
+      activeFastEditorDomain: resolveActiveFastEditorDomain(activeDomainType, fastEditorDomain, customDomain),
+      fastEditorDomain,
+      customDomain,
+      activeDomainType,
       appAvailability: appAvailability?.value,
       shopName: session.shop.replace(".myshopify.com", ""),
     };
@@ -61,8 +80,8 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
 
   try {
     console.info(`[${ENDPOINT}] FastEditor API integration request for shop ${session.shop}`);
-    const {apiKey, apiDomain} = await parseFormData(request);
-    const errors = validateFormData(apiKey, apiDomain);
+    const {apiKey, fastEditorDomain, customDomain, activeDomainType} = await parseFormData(request);
+    const errors = validateFormData(apiKey, fastEditorDomain, customDomain, activeDomainType);
 
     if (Object.keys(errors).length > 0) {
       return new Response(JSON.stringify({
@@ -80,7 +99,7 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
       );
     }
 
-    await setupFastEditorIntegration(session.shop, apiKey, apiDomain);
+    await setupFastEditorIntegration(session.shop, apiKey, fastEditorDomain, customDomain, activeDomainType);
 
     await createMetafieldDefinition(
       admin,
@@ -125,7 +144,10 @@ const Index = () => {
   const { t } = useTranslation();
   const {
     fastEditorApiKey,
+    activeFastEditorDomain,
     fastEditorDomain,
+    customDomain,
+    activeDomainType,
     appAvailability,
     shopName
   } = useLoaderData<typeof loader>()
@@ -133,47 +155,79 @@ const Index = () => {
 
   const [formValues, setFormValues] = useState<IntegrationFormValues>({
     apiKey: fastEditorApiKey ?? "",
-    apiDomain: fastEditorDomain ?? "",
+    fastEditorDomain: fastEditorDomain ?? "",
+    customDomain: customDomain ?? "",
+    activeDomainType,
   });
 
   const [isApiKeyError, setApiKeyError] = useState<boolean>(false);
-  const [isApiDomainError, setApiDomainError] = useState<boolean>(false);
+  const [isFastEditorDomainError, setFastEditorDomainError] = useState<boolean>(false);
+  const [isCustomDomainError, setCustomDomainError] = useState<boolean>(false);
   const [fastEditorError, setFastEditorError] = useState<boolean>(false);
 
   const formErrors = fetcher.data?.body?.errors
 
   useEffect(() => {
+    setFormValues({
+      apiKey: fastEditorApiKey ?? "",
+      fastEditorDomain: fastEditorDomain ?? "",
+      customDomain: customDomain ?? "",
+      activeDomainType,
+    });
+  }, [activeDomainType, customDomain, fastEditorApiKey, fastEditorDomain]);
+
+  useEffect(() => {
     if (fetcher.state !== "idle" || !fetcher.data) return;
+    const hasValidationErrors = fetcher.data.statusText === "validation-errors";
 
     if (fetcher.data?.ok) {
       const message = fetcher.data.statusText === "success"
         ? t("settings-page.integration-form.success-message")
         : fetcher.data.statusText;
       shopify.toast.show(message);
-    } else {
+    } else if (!hasValidationErrors) {
       shopify.toast.show(t("settings-page.integration-form.connection-failed-error"));
     }
 
-    if (!fetcher.data?.ok) {
-      setFastEditorError(true);
-    } else {
-      setFastEditorError(false);
-    }
+    setFastEditorError(!fetcher.data?.ok && !hasValidationErrors);
 
     setApiKeyError(!!formErrors?.apiKey);
-    setApiDomainError(!!formErrors?.apiDomain);
-  }, [fetcher.state, fetcher.data, t, formErrors?.apiKey, formErrors?.apiDomain]);
+    setFastEditorDomainError(!!formErrors?.fastEditorDomain);
+    setCustomDomainError(!!formErrors?.customDomain);
+  }, [fetcher.state, fetcher.data, t, formErrors?.apiKey, formErrors?.fastEditorDomain, formErrors?.customDomain]);
 
   const handleChange = useCallback(
     (field: keyof typeof formValues) => (value: string) => {
       setFormValues(prev => ({...prev, [field]: value}));
+      if (field === "apiKey") setApiKeyError(false);
+      if (field === "fastEditorDomain") setFastEditorDomainError(false);
+      if (field === "customDomain") setCustomDomainError(false);
+      setFastEditorError(false);
     }, []);
+
+  const handleDomainTypeChange = useCallback((selected: string[]) => {
+    const [nextValue] = selected;
+
+    if (!nextValue) {
+      return;
+    }
+
+    setFormValues((prev) => ({
+      ...prev,
+      activeDomainType: nextValue as FastEditorDomainType,
+    }));
+    setFastEditorDomainError(false);
+    setCustomDomainError(false);
+    setFastEditorError(false);
+  }, []);
 
   const handleSubmit = useCallback(async () => {
     fetcher.submit(
       {
         apiKey: formValues.apiKey,
-        apiDomain: formValues.apiDomain,
+        fastEditorDomain: formValues.fastEditorDomain,
+        customDomain: formValues.customDomain,
+        activeDomainType: formValues.activeDomainType,
       },
       {
         method: "POST"
@@ -191,14 +245,16 @@ const Index = () => {
           <Layout.Section>
             <ShopIntegrationCard
               fastEditorApiKey={fastEditorApiKey}
-              fastEditorDomain={fastEditorDomain}
+              fastEditorDomain={activeFastEditorDomain}
             >
               <ShopIntegrationForm
                 handleChange={handleChange}
+                handleDomainTypeChange={handleDomainTypeChange}
                 handleSubmit={handleSubmit}
                 formValues={formValues}
                 isApiKeyError={isApiKeyError}
-                isApiDomainError={isApiDomainError}
+                isFastEditorDomainError={isFastEditorDomainError}
+                isCustomDomainError={isCustomDomainError}
                 errors={formErrors}
                 fastEditorError={fastEditorError}
                 isLoading={fetcher.state === "submitting" || fetcher.state === "loading"}

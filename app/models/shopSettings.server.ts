@@ -14,6 +14,8 @@ export interface ShopSettings extends ShopSettingsCore {
   trialEndDate: Date | null;
   fastEditorApiKey: string | null;
   fastEditorDomain: string | null;
+  fastEditorCustomDomain: string | null;
+  fastEditorActiveDomainType: string | null;
   language: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -79,6 +81,8 @@ export async function createShopSettings(
       trialEndDate,
       fastEditorApiKey: null,
       fastEditorDomain: null,
+      fastEditorCustomDomain: null,
+      fastEditorActiveDomainType: null,
       language,
       country: countryCode,
       currency
@@ -157,12 +161,16 @@ export async function upsertFastEditorShopSettings(
   shop: string,
   fastEditorApiKey: string,
   fastEditorDomain: string,
+  fastEditorCustomDomain: string | null,
+  fastEditorActiveDomainType: string,
 ): Promise<ShopSettings> {
   return await prisma.shopSettings.update({
     where: {shop},
     data: {
       fastEditorApiKey,
       fastEditorDomain,
+      fastEditorCustomDomain,
+      fastEditorActiveDomainType,
     },
   });
 }
@@ -197,6 +205,8 @@ export async function upsertShopSubscriptionState(
       trialEndDate: state.trialEndDate,
       fastEditorApiKey: null,
       fastEditorDomain: null,
+      fastEditorCustomDomain: null,
+      fastEditorActiveDomainType: null,
       language: null,
       country: null,
       currency: null,

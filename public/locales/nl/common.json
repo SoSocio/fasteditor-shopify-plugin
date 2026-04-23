@@ -115,11 +115,24 @@
     "integration-form": {
       "api-key-label": "API-sleutel",
       "api-domain-label": "API-domein",
+      "domain-source-label": "Domeinbron",
+      "fasteditor-domain-label": "FastEditor-domein",
+      "custom-domain-label": "Aangepast domein",
+      "domain-options": {
+        "fasteditor": {
+          "label": "FastEditor-domein gebruiken"
+        },
+        "custom": {
+          "label": "Aangepast domein gebruiken"
+        }
+      },
       "connect-button": "Verbinden",
       "connection-failed-error": "Kan geen verbinding maken met FastEditor. Controleer de API-sleutel en het domein.",
       "validation-errors": {
         "api-key-required": "API-sleutel is verplicht",
-        "api-domain-required": "API-domein is verplicht"
+        "fasteditor-domain-required": "FastEditor-domein is verplicht",
+        "api-domain-required": "API-domein is verplicht",
+        "custom-domain-required": "Aangepast domein is verplicht"
       },
       "success-message": "FastEditor-integratie succesvol.",
       "validation-errors-title": "Validatiefouten"
