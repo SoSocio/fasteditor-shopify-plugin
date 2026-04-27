@@ -71,6 +71,7 @@
     IMAGE_URL: '_fasteditor_image_url',
     CUSTOMIZED: 'Customized',
     PRICING_MODE: '_fasteditor_pricing_mode',
+    BASE_UNIT_AMOUNT: '_fasteditor_base_unit_amount',
     EXTRA_PAGES: '_fasteditor_extra_pages',
     PRICE_PER_EXTRA_PAGE: '_fasteditor_price_per_extra_page',
     EXTRA_UNIT_AMOUNT: '_fasteditor_extra_unit_amount',
@@ -1052,6 +1053,11 @@
       [CART_PROPERTIES.IMAGE_URL]: data.imageUrl,
       [CART_PROPERTIES.CUSTOMIZED]: 'Yes',
     };
+
+    if (typeof data.price === 'number' && Number.isFinite(data.price) && data.price > 0) {
+      mainProperties[CART_PROPERTIES.BASE_UNIT_AMOUNT] = String(data.price);
+    }
+
     const pricingMode = data.pricingMode || 'extra_line';
 
     if (data.extraPricing) {
