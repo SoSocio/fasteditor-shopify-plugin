@@ -6,6 +6,10 @@ import type {
 import {unauthenticated} from "../shopify.server";
 import {getShopSettings} from "../models/shopSettings.server";
 import {getProductVariantSku} from "./products.server";
+import {
+  inferFastEditorActiveDomainType,
+  resolveActiveFastEditorDomain,
+} from "../utils/fastEditorDomain";
 
 const ENDPOINT = "/app/smartlink";
 
@@ -152,7 +156,17 @@ export async function fetchShopSettings(shop: string): Promise<SmartLinkShopSett
     });
   }
 
-  const {fastEditorApiKey, fastEditorDomain} = settings;
+  const {fastEditorApiKey} = settings;
+  const activeDomainType = inferFastEditorActiveDomainType({
+    activeDomainType: settings.fastEditorActiveDomainType,
+    fastEditorDomain: settings.fastEditorDomain,
+    customDomain: settings.fastEditorCustomDomain,
+  });
+  const fastEditorDomain = resolveActiveFastEditorDomain(
+    activeDomainType,
+    settings.fastEditorDomain,
+    settings.fastEditorCustomDomain
+  );
 
   if (!fastEditorApiKey || !fastEditorDomain) {
     console.error(`[${ENDPOINT}] FastEditor integration not configured for shop: ${shop}`);

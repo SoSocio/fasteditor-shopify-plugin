@@ -12,14 +12,16 @@
             "pricingMode": {
               "value": "line_update"
             },
-            "baseUnitAmount": null,
+            "baseUnitAmount": {
+              "value": "12.00"
+            },
             "extraUnitAmount": {
               "value": "6.50"
             },
             "imageUrl": null,
             "cost": {
               "amountPerQuantity": {
-                "amount": "12.00"
+                "amount": "18.50"
               }
             }
           }

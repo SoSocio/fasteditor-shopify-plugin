@@ -8,15 +8,19 @@
         "lines": [
           {
             "id": "gid://shopify/CartLine/1",
-            "quantity": 2,
+            "quantity": 1,
             "pricingMode": {
               "value": "line_update"
             },
-            "baseUnitAmount": null,
+            "baseUnitAmount": {
+              "value": "12.00"
+            },
             "extraUnitAmount": {
               "value": "6.50"
             },
-            "imageUrl": null,
+            "imageUrl": {
+              "value": "https://cdn.shopify.com/s/files/1/0000/0001/files/cover.jpg?v=123"
+            },
             "cost": {
               "amountPerQuantity": {
                 "amount": "12.00"
@@ -31,6 +35,9 @@
         {
           "lineUpdate": {
             "cartLineId": "gid://shopify/CartLine/1",
+            "image": {
+              "url": "https://cdn.shopify.com/s/files/1/0000/0001/files/cover.jpg?v=123"
+            },
             "price": {
               "adjustment": {
                 "fixedPricePerUnit": {
