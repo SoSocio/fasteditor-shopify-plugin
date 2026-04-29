@@ -48,6 +48,8 @@ model ShopSettings {
   trialEndDate                 DateTime? // End date of the trial period
   fastEditorApiKey             String?
   fastEditorDomain             String? // Should be in format {{your_brand}}.staging.fasteditor.com
+  fastEditorCustomDomain       String? // Optional merchant-provided domain for FastEditor
+  fastEditorActiveDomainType   String? // Selected domain source: fasteditor or custom
   language                     String?
   country                      String?
   currency                     String?
