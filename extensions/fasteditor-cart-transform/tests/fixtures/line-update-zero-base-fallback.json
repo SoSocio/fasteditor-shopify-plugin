@@ -8,18 +8,22 @@
         "lines": [
           {
             "id": "gid://shopify/CartLine/1",
-            "quantity": 2,
+            "quantity": 1,
             "pricingMode": {
               "value": "line_update"
             },
-            "baseUnitAmount": null,
-            "extraUnitAmount": {
-              "value": "6.50"
+            "baseUnitAmount": {
+              "value": "0"
             },
-            "imageUrl": null,
+            "extraUnitAmount": {
+              "value": "6.00"
+            },
+            "imageUrl": {
+              "value": "https://zecbotvh3i.execute-api.eu-west-1.amazonaws.com/staging/project-image/21/2052/TMXoPxQDrmsmfL8hXa37/1777323296"
+            },
             "cost": {
               "amountPerQuantity": {
-                "amount": "12.00"
+                "amount": "950.0"
               }
             }
           }
@@ -34,7 +38,7 @@
             "price": {
               "adjustment": {
                 "fixedPricePerUnit": {
-                  "amount": "18.5"
+                  "amount": "956"
                 }
               }
             }

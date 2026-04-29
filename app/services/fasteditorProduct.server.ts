@@ -123,11 +123,29 @@ export async function resolveExtraPricingForProduct(
   }
 
   const forcedPricingMode = getForcedPricingMode();
-  const pricingMode = forcedPricingMode || (
-    await ensureFastEditorCartTransformReady(admin)
-      ? "line_update"
-      : "extra_line"
+  const shouldEnsureCartTransform = (
+    forcedPricingMode === null
+    || forcedPricingMode === "line_update"
   );
+  const cartTransformReady = shouldEnsureCartTransform
+    ? await ensureFastEditorCartTransformReady(admin)
+    : false;
+
+  let pricingMode: Exclude<FastEditorResolvedPricing["pricingMode"], null>;
+
+  if (forcedPricingMode === "extra_line") {
+    pricingMode = "extra_line";
+  } else if (cartTransformReady) {
+    pricingMode = "line_update";
+  } else {
+    if (forcedPricingMode === "line_update") {
+      console.warn(
+        `[${ENDPOINT}] FASTEDITOR_PRICING_MODE=line_update was requested, but cart transform is not ready. Falling back to extra_line.`
+      );
+    }
+
+    pricingMode = "extra_line";
+  }
 
   return {
     extraPricing,

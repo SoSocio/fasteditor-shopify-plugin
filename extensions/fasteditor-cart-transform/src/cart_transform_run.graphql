@@ -7,7 +7,13 @@ query CartTransformRunInput {
       pricingMode: attribute(key: "_fasteditor_pricing_mode") {
         value
       }
+      baseUnitAmount: attribute(key: "_fasteditor_base_unit_amount") {
+        value
+      }
       extraUnitAmount: attribute(key: "_fasteditor_extra_unit_amount") {
+        value
+      }
+      imageUrl: attribute(key: "_fasteditor_image_url") {
         value
       }
       cost {

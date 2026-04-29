@@ -115,11 +115,24 @@
     "integration-form": {
       "api-key-label": "API-nøgle",
       "api-domain-label": "API-domæne",
+      "domain-source-label": "Domænekilde",
+      "fasteditor-domain-label": "FastEditor-domæne",
+      "custom-domain-label": "Brugerdefineret domæne",
+      "domain-options": {
+        "fasteditor": {
+          "label": "Brug FastEditor-domænet"
+        },
+        "custom": {
+          "label": "Brug et brugerdefineret domæne"
+        }
+      },
       "connect-button": "Forbind",
       "connection-failed-error": "Forbindelsen til FastEditor mislykkedes. Kontroller API-nøglen og domænet.",
       "validation-errors": {
         "api-key-required": "API-nøgle kræves",
-        "api-domain-required": "API-domæne kræves"
+        "fasteditor-domain-required": "FastEditor-domæne er påkrævet",
+        "api-domain-required": "API-domæne kræves",
+        "custom-domain-required": "Brugerdefineret domæne er påkrævet"
       },
       "success-message": "FastEditor-integration gennemført.",
       "validation-errors-title": "Valideringsfejl"
