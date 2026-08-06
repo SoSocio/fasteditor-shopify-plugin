@@ -13,8 +13,8 @@ import {
   getActiveSubscription
 } from "./billing.server";
 import {createUsageBillingHistoryForShop} from "../models/usageBillingHistory.server";
-import {unauthenticated} from "../shopify.server";
 import {setAppAvailabilityMetafield} from "./app.server";
+import {getOfflineAdmin} from "./offlineAdmin.server";
 
 const ENDPOINT = "cron/usage-billing";
 
@@ -27,7 +27,7 @@ export async function processMonthlyUsageBilling(): Promise<void> {
   const activeShops = await getShopsWithActivity();
 
   for (const {shop} of activeShops) {
-    const {admin} = await unauthenticated.admin(shop);
+    const admin = await getOfflineAdmin(shop);
     await handleShopBilling(admin, shop);
   }
 }
