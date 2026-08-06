@@ -1,6 +1,6 @@
-import {unauthenticated} from "../shopify.server";
 import {resolvePricingRuleExtraCharge} from "./pricingRules.server";
 import {ensureFastEditorCartTransformReady} from "./cartTransform.server";
+import {getOfflineAdmin} from "./offlineAdmin.server";
 import type {
   FastEditorPricingMode,
   FastEditorResolvedPricing,
@@ -109,7 +109,7 @@ export async function resolveExtraPricingForProduct(
     return null;
   }
 
-  const {admin} = await unauthenticated.admin(shop);
+  const admin = await getOfflineAdmin(shop);
 
   const extraPricing = await resolvePricingRuleExtraCharge(
     admin,
