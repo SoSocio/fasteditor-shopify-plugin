@@ -1,13 +1,17 @@
 import type {ReactNode} from "react";
+import type {FastEditorDomainType} from "../utils/fastEditorDomain";
 
 export interface IntegrationFormValues {
   apiKey: string;
-  apiDomain: string;
+  fastEditorDomain: string;
+  customDomain: string;
+  activeDomainType: FastEditorDomainType;
 }
 
 export interface IntegrationErrorsData {
   apiKey?: string;
-  apiDomain?: string;
+  fastEditorDomain?: string;
+  customDomain?: string;
 }
 
 export interface IntegrationActionData {
@@ -22,9 +26,11 @@ export interface IntegrationActionData {
 export interface IntegrationFormProps {
   formValues: IntegrationFormValues;
   handleChange: (field: keyof IntegrationFormValues) => (value: string) => void;
+  handleDomainTypeChange: (selected: string[]) => void;
   handleSubmit: () => void;
   isApiKeyError: boolean;
-  isApiDomainError: boolean;
+  isFastEditorDomainError: boolean;
+  isCustomDomainError: boolean;
   errors?: IntegrationErrorsData;
   fastEditorError: boolean;
   isLoading?: boolean;

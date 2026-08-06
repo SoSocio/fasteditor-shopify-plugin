@@ -13,6 +13,10 @@ const NO_CHANGES = {
 };
 
 const FASTEDITOR_LINE_UPDATE_MODE = "line_update";
+const SHOPIFY_CHECKOUT_IMAGE_PREFIXES = [
+  "https://cdn.shopify.com/",
+  "https://cdn.shopifycdn.net/",
+];
 
 /**
  * @param {string | null | undefined} value
@@ -40,6 +44,36 @@ function formatDecimal(value) {
 }
 
 /**
+ * @param {string | null | undefined} value
+ * @returns {string | null}
+ */
+function normalizeUrl(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.trim();
+  return normalized || null;
+}
+
+/**
+ * Shopify cart transform accepts checkout image overrides only from Shopify CDN hosts.
+ *
+ * @param {string | null | undefined} value
+ * @returns {string | null}
+ */
+function resolveCheckoutImageUrl(value) {
+  const normalized = normalizeUrl(value);
+  if (!normalized) {
+    return null;
+  }
+
+  return SHOPIFY_CHECKOUT_IMAGE_PREFIXES.some((prefix) => normalized.startsWith(prefix))
+    ? normalized
+    : null;
+}
+
+/**
  * @param {CartTransformRunInput} input
  * @returns {CartTransformRunResult}
  */
@@ -51,26 +85,52 @@ export function cartTransformRun(input) {
       return result;
     }
 
-    const baseUnitAmount = parseDecimal(line.cost?.amountPerQuantity?.amount);
+    const currentUnitAmount = parseDecimal(line.cost?.amountPerQuantity?.amount);
+    const storedBaseUnitAmount = parseDecimal(line.baseUnitAmount?.value);
+    // Ignore placeholder zero values when Shopify already provides a positive line price.
+    const baseUnitAmount = (
+      storedBaseUnitAmount !== null
+      && (storedBaseUnitAmount > 0 || currentUnitAmount === null || currentUnitAmount <= 0)
+    )
+      ? storedBaseUnitAmount
+      : currentUnitAmount;
     const extraUnitAmount = parseDecimal(line.extraUnitAmount?.value);
+    const imageUrl = resolveCheckoutImageUrl(line.imageUrl?.value);
+    const hasPriceUpdate = (
+      baseUnitAmount !== null
+      && extraUnitAmount !== null
+      && extraUnitAmount > 0
+    );
 
-    if (baseUnitAmount === null || extraUnitAmount === null || extraUnitAmount <= 0) {
+    if (!hasPriceUpdate && !imageUrl) {
       return result;
     }
 
-    const fixedPricePerUnit = baseUnitAmount + (extraUnitAmount * presentmentCurrencyRate);
+    /** @type {{cartLineId: string, image?: {url: string}, price?: {adjustment: {fixedPricePerUnit: {amount: string}}}}} */
+    const lineUpdate = {
+      cartLineId: line.id,
+    };
 
-    result.push({
-      lineUpdate: {
-        cartLineId: line.id,
-        price: {
-          adjustment: {
-            fixedPricePerUnit: {
-              amount: formatDecimal(fixedPricePerUnit),
-            },
+    if (imageUrl) {
+      lineUpdate.image = {
+        url: imageUrl,
+      };
+    }
+
+    if (hasPriceUpdate) {
+      const fixedPricePerUnit = baseUnitAmount + (extraUnitAmount * presentmentCurrencyRate);
+
+      lineUpdate.price = {
+        adjustment: {
+          fixedPricePerUnit: {
+            amount: formatDecimal(fixedPricePerUnit),
           },
         },
-      },
+      };
+    }
+
+    result.push({
+      lineUpdate,
     });
 
     return result;

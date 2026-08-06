@@ -17,4 +17,6 @@ export interface ShopSettingsCore {
 export interface IntegrationShopSettings {
   fastEditorApiKey: string | null;
   fastEditorDomain: string | null;
+  fastEditorCustomDomain: string | null;
+  fastEditorActiveDomainType: string | null;
 }

@@ -115,11 +115,24 @@
     "integration-form": {
       "api-key-label": "Chave API",
       "api-domain-label": "Domínio API",
+      "domain-source-label": "Origem do domínio",
+      "fasteditor-domain-label": "Domínio FastEditor",
+      "custom-domain-label": "Domínio personalizado",
+      "domain-options": {
+        "fasteditor": {
+          "label": "Usar domínio FastEditor"
+        },
+        "custom": {
+          "label": "Usar domínio personalizado"
+        }
+      },
       "connect-button": "Ligar",
       "connection-failed-error": "Não foi possível ligar ao FastEditor. Verifique a chave API e o domínio.",
       "validation-errors": {
         "api-key-required": "Chave API obrigatória",
-        "api-domain-required": "Domínio API obrigatório"
+        "fasteditor-domain-required": "O domínio FastEditor é obrigatório",
+        "api-domain-required": "Domínio API obrigatório",
+        "custom-domain-required": "O domínio personalizado é obrigatório"
       },
       "success-message": "Integração com FastEditor bem-sucedida.",
       "validation-errors-title": "Erros de validação"
