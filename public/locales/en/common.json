@@ -115,11 +115,24 @@
     "integration-form": {
       "api-key-label": "API Key",
       "api-domain-label": "API Domain",
+      "domain-source-label": "Domain source",
+      "fasteditor-domain-label": "FastEditor domain",
+      "custom-domain-label": "Custom domain",
+      "domain-options": {
+        "fasteditor": {
+          "label": "Use FastEditor domain"
+        },
+        "custom": {
+          "label": "Use custom domain"
+        }
+      },
       "connect-button": "Connect",
       "connection-failed-error": "Connection to FastEditor failed. Please check your API Key and Domain and try again.",
       "validation-errors": {
         "api-key-required": "API Key is required",
-        "api-domain-required": "API Domain is required"
+        "fasteditor-domain-required": "FastEditor domain is required",
+        "api-domain-required": "API Domain is required",
+        "custom-domain-required": "Custom domain is required"
       },
       "success-message": "FastEditor integration is successful.",
       "validation-errors-title": "Validation errors"

@@ -19,21 +19,23 @@ datasource db {
 }
 
 model Session {
-  id            String    @id
-  shop          String
-  state         String
-  isOnline      Boolean   @default(false)
-  scope         String?
-  expires       DateTime?
-  accessToken   String
-  userId        BigInt?
-  firstName     String?
-  lastName      String?
-  email         String?
-  accountOwner  Boolean   @default(false)
-  locale        String?
-  collaborator  Boolean?  @default(false)
-  emailVerified Boolean?  @default(false)
+  id                  String    @id
+  shop                String
+  state               String
+  isOnline            Boolean   @default(false)
+  scope               String?
+  expires             DateTime?
+  accessToken         String
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+  userId              BigInt?
+  firstName           String?
+  lastName            String?
+  email               String?
+  accountOwner        Boolean   @default(false)
+  locale              String?
+  collaborator        Boolean?  @default(false)
+  emailVerified       Boolean?  @default(false)
 
   @@map("session")
 }
@@ -48,6 +50,8 @@ model ShopSettings {
   trialEndDate                 DateTime? // End date of the trial period
   fastEditorApiKey             String?
   fastEditorDomain             String? // Should be in format {{your_brand}}.staging.fasteditor.com
+  fastEditorCustomDomain       String? // Optional merchant-provided domain for FastEditor
+  fastEditorActiveDomainType   String? // Selected domain source: fasteditor or custom
   language                     String?
   country                      String?
   currency                     String?

@@ -1,3 +1,30 @@
+import {getFastEditorApiBaseUrl} from "../utils/fastEditorDomain";
+import type {FastEditorIntegrationData} from "../types/fastEditor.types";
+
+function maskSecret(value: string): string {
+  if (!value) {
+    return "";
+  }
+
+  if (value.length <= 8) {
+    return `${value.slice(0, 2)}***${value.slice(-2)}`;
+  }
+
+  return `${value.slice(0, 4)}***${value.slice(-4)}`;
+}
+
+function parseJsonResponse<T>(responseText: string): T | null {
+  if (!responseText.trim()) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(responseText) as T;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Service class for interacting with the FastEditor API.
  * Provides methods for product personalization, order notification, and more.
@@ -38,8 +65,10 @@ export class FastEditorAPI {
     quantity?: number;
     cartUrl?: string;
   }): Promise<any> {
+    const apiBaseUrl = getFastEditorApiBaseUrl(this.domain);
+
     // Prepare the request to FastEditor API
-    const response = await fetch(`https://api.${this.domain}/api/smartlink`, {
+    const response = await fetch(`${apiBaseUrl}/api/smartlink`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,22 +86,56 @@ export class FastEditorAPI {
     return response.json();
   }
 
-  async checkShopIntegration() {
-    const response = await fetch(`https://api.${this.domain}/api/smartlink`, {
+  async checkShopIntegration(): Promise<FastEditorIntegrationData> {
+    const apiBaseUrl = getFastEditorApiBaseUrl(this.domain);
+    const requestUrl = `${apiBaseUrl}/api/smartlink`;
+    const requestDetails = {
+      method: "POST",
+      url: requestUrl,
+      domain: this.domain,
+      headers: {
+        "Content-Type": "application/json",
+        "X-Api-Key": maskSecret(this.apiKey),
+      },
+      body: null,
+    };
+
+    console.info("[FastEditor checkShopIntegration] Request", requestDetails);
+
+    const response = await fetch(requestUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Api-Key': this.apiKey,
       },
     });
+    const responseText = await response.text();
+    const parsedResponse = parseJsonResponse<FastEditorIntegrationData>(responseText);
+
+    console.info("[FastEditor checkShopIntegration] Response", {
+      method: requestDetails.method,
+      url: requestDetails.url,
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok,
+      contentType: response.headers.get("content-type"),
+      body: parsedResponse ?? responseText,
+    });
 
     // Check for unsuccessful response
     if (!response.ok) {
-      throw new Error(`FastEditor checkShopIntegration failed: ${response.statusText}`);
+      throw new Error(
+        `FastEditor checkShopIntegration failed: ${response.status} ${response.statusText}. Response: ${responseText}`
+      );
     }
 
-    // Return the parsed JSON response
-    return response.json();
+    if (!parsedResponse) {
+      throw new Error(
+        `FastEditor checkShopIntegration returned an empty or non-JSON response. Response: ${responseText}`
+      );
+    }
+
+    return parsedResponse;
   }
 
   /**
@@ -109,7 +172,8 @@ export class FastEditorAPI {
     }
     callbackUrl?: string;
   }): Promise<any> {
-    const response = await fetch(`https://api.${this.domain}/webhook/notifyorder`, {
+    const apiBaseUrl = getFastEditorApiBaseUrl(this.domain);
+    const response = await fetch(`${apiBaseUrl}/webhook/notifyorder`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

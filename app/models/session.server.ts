@@ -11,6 +11,8 @@ export interface SessionResponse {
   scope: string | null;
   expires: Date | null;
   accessToken: string;
+  refreshToken: string | null;
+  refreshTokenExpires: Date | null;
   userId: bigint | null;
   firstName: string | null;
   lastName: string | null;

@@ -607,13 +607,21 @@
 
     findProductForm(sectionId) {
       const section = sectionId ? document.getElementById(`shopify-section-${sectionId}`) : null;
+      const selectors = [
+        'form[action*="/cart/add"]',
+        'form[action*="/cart"]'
+      ];
       if (section) {
-        const addForm = section.querySelector('form[action^="/cart/add"]');
-        if (addForm) return addForm;
-        const cartForm = section.querySelector('form[action^="/cart"]');
-        if (cartForm) return cartForm;
+        for (const selector of selectors) {
+          const form = section.querySelector(selector);
+          if (form) return form;
+        }
       }
-      return document.querySelector('form[action^="/cart/add"]') || document.querySelector('form[action^="/cart"]');
+      for (const selector of selectors) {
+        const form = document.querySelector(selector);
+        if (form) return form;
+      }
+      return null;
     }
 
     findHeaderElement() {

@@ -1,6 +1,6 @@
-import {unauthenticated} from "../shopify.server";
 import {resolvePricingRuleExtraCharge} from "./pricingRules.server";
 import {ensureFastEditorCartTransformReady} from "./cartTransform.server";
+import {getOfflineAdmin} from "./offlineAdmin.server";
 import type {
   FastEditorPricingMode,
   FastEditorResolvedPricing,
@@ -109,7 +109,7 @@ export async function resolveExtraPricingForProduct(
     return null;
   }
 
-  const {admin} = await unauthenticated.admin(shop);
+  const admin = await getOfflineAdmin(shop);
 
   const extraPricing = await resolvePricingRuleExtraCharge(
     admin,
@@ -123,11 +123,29 @@ export async function resolveExtraPricingForProduct(
   }
 
   const forcedPricingMode = getForcedPricingMode();
-  const pricingMode = forcedPricingMode || (
-    await ensureFastEditorCartTransformReady(admin)
-      ? "line_update"
-      : "extra_line"
+  const shouldEnsureCartTransform = (
+    forcedPricingMode === null
+    || forcedPricingMode === "line_update"
   );
+  const cartTransformReady = shouldEnsureCartTransform
+    ? await ensureFastEditorCartTransformReady(admin)
+    : false;
+
+  let pricingMode: Exclude<FastEditorResolvedPricing["pricingMode"], null>;
+
+  if (forcedPricingMode === "extra_line") {
+    pricingMode = "extra_line";
+  } else if (cartTransformReady) {
+    pricingMode = "line_update";
+  } else {
+    if (forcedPricingMode === "line_update") {
+      console.warn(
+        `[${ENDPOINT}] FASTEDITOR_PRICING_MODE=line_update was requested, but cart transform is not ready. Falling back to extra_line.`
+      );
+    }
+
+    pricingMode = "extra_line";
+  }
 
   return {
     extraPricing,

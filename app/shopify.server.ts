@@ -4,7 +4,7 @@ import {
   BillingInterval,
   shopifyApp,
 } from "@shopify/shopify-app-remix/server";
-import type {ApiVersion} from "@shopify/shopify-app-remix/server";
+import type {ApiVersion} from "@shopify/shopify-api";
 import {PrismaSessionStorage} from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
 import * as process from "node:process";
@@ -52,8 +52,8 @@ const shopify = shopifyApp({
     }
   },
   future: {
+    expiringOfflineAccessTokens: true,
     unstable_newEmbeddedAuthStrategy: true,
-    removeRest: true,
   },
   ...(process.env.SHOP_CUSTOM_DOMAIN
     ? {customShopDomains: [process.env.SHOP_CUSTOM_DOMAIN]}
