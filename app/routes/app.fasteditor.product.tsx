@@ -8,6 +8,8 @@ import {
   validateProductData
 } from "../services/fasteditorProduct.server";
 import {actionMethodNotAllowed} from "../services/app.server";
+import {authenticateAppProxyShop} from "../services/appProxyAuth.server";
+import {authenticate} from "../shopify.server";
 
 const ENDPOINT = "/app/fasteditor/product";
 
@@ -18,10 +20,14 @@ export const loader = async ({request}: LoaderFunctionArgs): Promise<Response> =
   console.info(`[${ENDPOINT}] Resolving FastEditor product...`);
 
   try {
+    const shop = await authenticateAppProxyShop(
+      request,
+      (proxyRequest) => authenticate.public.appProxy(proxyRequest),
+    );
     const paramUrl = extractFastEditorUrlFromRequest(request);
     const product = await fetchProductDataFromFastEditor(paramUrl);
     validateProductData(product);
-    const resolvedPricing = await resolveExtraPricingForProduct(request, product);
+    const resolvedPricing = await resolveExtraPricingForProduct(shop, product);
     const resolvedData = buildResolvedFastEditorProductData(product, resolvedPricing);
     const extraPages = getExtraPagesCount(product);
 
