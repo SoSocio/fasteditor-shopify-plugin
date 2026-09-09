@@ -62,19 +62,6 @@ export function extractFastEditorUrlFromRequest(request: Request): string {
 }
 
 /**
- * Extracts shop domain from app proxy request.
- *
- * @param request - The incoming request object
- * @returns Shop domain or null when not available
- */
-export function extractShopFromRequest(request: Request): string | null {
-  const requestUrl = new URL(request.url);
-  const shop = requestUrl.searchParams.get("shop")?.trim();
-
-  return shop || null;
-}
-
-/**
  * Resolves the number of extra pages returned by FastEditor.
  *
  * @param product - Product data returned from FastEditor
@@ -93,15 +80,14 @@ export function getExtraPagesCount(product: ProductDataFromFastEditor): number {
 /**
  * Resolves pricing rule data for extra pages, if applicable.
  *
- * @param request - The incoming request object
+ * @param shop - Canonical shop domain from a validated Shopify App Proxy request.
  * @param product - Product data returned from FastEditor
  * @returns Extra pricing payload or null when no pricing rule applies
  */
 export async function resolveExtraPricingForProduct(
-  request: Request,
+  shop: string,
   product: ProductDataFromFastEditor
 ): Promise<FastEditorResolvedPricing | null> {
-  const shop = extractShopFromRequest(request);
   const variantId = String(product.customAttributes?.variantId || "").trim();
   const extraPages = getExtraPagesCount(product);
 

@@ -1,6 +1,5 @@
 import type {
   SmartLinkPayload,
-  SmartLinkRequestData,
   SmartLinkShopSettings
 } from "../types/smartlink.types";
 import {getShopSettings} from "../models/shopSettings.server";
@@ -10,6 +9,7 @@ import {
   inferFastEditorActiveDomainType,
   resolveActiveFastEditorDomain,
 } from "../utils/fastEditorDomain";
+export {parseAndValidateRequest} from "./smartlinkValidation.server";
 
 const ENDPOINT = "/app/smartlink";
 
@@ -50,89 +50,6 @@ function createErrorResponse(
     message,
     ...(code && {code}),
     ok: false,
-  };
-}
-
-/**
- * Parses and validates the incoming SmartLink request.
- *
- * @param request - The incoming HTTP request containing JSON with SmartLink data.
- * @returns Parsed and validated SmartLinkRequestData object.
- * @throws {Response} 400 - If any of the required fields are missing or invalid.
- */
-export async function parseAndValidateRequest(request: Request): Promise<SmartLinkRequestData> {
-  let data: unknown;
-
-  try {
-    data = await request.json();
-  } catch (error) {
-    console.warn(`[${ENDPOINT}] Invalid JSON in request body.`);
-    const errorResponse = createErrorResponse(400, "Invalid JSON in request body.", "INVALID_JSON");
-    throw new Response(JSON.stringify(errorResponse), {
-      status: 400,
-      headers: {"Content-Type": "application/json"},
-    });
-  }
-
-  if (!data || typeof data !== 'object') {
-    const errorResponse = createErrorResponse(400, "Request body must be a valid JSON object.", "INVALID_FORMAT");
-    throw new Response(JSON.stringify(errorResponse), {
-      status: 400,
-      headers: {"Content-Type": "application/json"},
-    });
-  }
-
-  const requestData = data as Partial<SmartLinkRequestData>;
-  const {shop, variantId, productHandle, quantity, userId} = requestData;
-
-  // Validate required fields
-  if (!shop || (typeof shop === 'string' && !shop.trim())) {
-    const errorResponse = createErrorResponse(400, "Field 'shop' is required and cannot be empty.", "MISSING_SHOP");
-    throw new Response(JSON.stringify(errorResponse), {
-      status: 400,
-      headers: {"Content-Type": "application/json"},
-    });
-  }
-
-  if (!variantId || (typeof variantId === 'string' && !variantId.trim())) {
-    const errorResponse = createErrorResponse(400, "Field 'variantId' is required and cannot be empty.", "MISSING_VARIANT_ID");
-    throw new Response(JSON.stringify(errorResponse), {
-      status: 400,
-      headers: {"Content-Type": "application/json"},
-    });
-  }
-
-  if (!productHandle || (typeof productHandle === 'string' && !productHandle.trim())) {
-    const errorResponse = createErrorResponse(400, "Field 'productHandle' is required and cannot be empty.", "MISSING_PRODUCT_HANDLE");
-    throw new Response(JSON.stringify(errorResponse), {
-      status: 400,
-      headers: {"Content-Type": "application/json"},
-    });
-  }
-
-  if (quantity === undefined || quantity === null) {
-    const errorResponse = createErrorResponse(400, "Field 'quantity' is required.", "MISSING_QUANTITY");
-    throw new Response(JSON.stringify(errorResponse), {
-      status: 400,
-      headers: {"Content-Type": "application/json"},
-    });
-  }
-
-  const quantityNum = Number(quantity);
-  if (isNaN(quantityNum) || !Number.isInteger(quantityNum) || quantityNum <= 0) {
-    const errorResponse = createErrorResponse(400, `Invalid quantity. Must be a positive integer, got: ${quantity}`, "INVALID_QUANTITY");
-    throw new Response(JSON.stringify(errorResponse), {
-      status: 400,
-      headers: {"Content-Type": "application/json"},
-    });
-  }
-
-  return {
-    shop: String(shop).trim(),
-    variantId: String(variantId).trim(),
-    productHandle: String(productHandle).trim(),
-    quantity: quantityNum,
-    userId: userId ? String(userId).trim() : undefined,
   };
 }
 

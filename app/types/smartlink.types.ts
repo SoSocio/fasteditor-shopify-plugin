@@ -1,5 +1,4 @@
 export interface SmartLinkRequestData {
-  shop: string;
   variantId: string;
   productHandle: string;
   quantity: number;

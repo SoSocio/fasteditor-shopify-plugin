@@ -11,6 +11,8 @@ import {
 } from "../services/smartlink.server";
 import {FastEditorAPI} from "../services/fastEditorAPI.server";
 import type {FastEditorIntegrationData} from "../types/fastEditor.types";
+import {authenticateAppProxyShop} from "../services/appProxyAuth.server";
+import {authenticate} from "../shopify.server";
 
 const ENDPOINT = "/app/smartlink";
 
@@ -30,13 +32,17 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
   console.info(`[${ENDPOINT}] SmartLink creation request received`);
 
   try {
+    const shop = await authenticateAppProxyShop(
+      request,
+      (proxyRequest) => authenticate.public.appProxy(proxyRequest),
+    );
     // Parse and validate request
     const requestData = await parseAndValidateRequest(request);
 
     // Fetch required data
-    const shopSettings = await fetchShopSettings(requestData.shop);
-    const variantSKU = await fetchProductSKU(requestData.variantId, requestData.shop);
-    const cartUrl = `https://${requestData.shop}/products/${requestData.productHandle}`;
+    const shopSettings = await fetchShopSettings(shop);
+    const variantSKU = await fetchProductSKU(requestData.variantId, shop);
+    const cartUrl = `https://${shop}/products/${requestData.productHandle}`;
 
     // Build FastEditor payload
     const fastEditorParams = buildFastEditorPayload({
@@ -80,7 +86,7 @@ export const action = async ({request}: ActionFunctionArgs): Promise<Response> =
       throw error;
     }
 
-    console.info(`[${ENDPOINT}] SmartLink created successfully for shop: ${requestData.shop}, variantId: ${requestData.variantId}`);
+    console.info(`[${ENDPOINT}] SmartLink created successfully for shop: ${shop}, variantId: ${requestData.variantId}`);
 
     // Return structured success response
     return new Response(
