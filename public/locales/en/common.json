@@ -182,9 +182,19 @@
       "product": "Product",
       "variant": "Variant"
     },
+  "target-filters": {
+    "all": "All",
+    "selected": "Selected",
+    "unselected": "Unselected"
+  },
+    "targets": {
+      "title": "Select products"
+    },
     "buttons": {
       "search": "Search",
       "select": "Select",
+      "select-all-page": "Select all on this page",
+      "select-all-products": "Select all products",
       "remove": "Remove",
       "save": "Save",
       "create": "Create",
