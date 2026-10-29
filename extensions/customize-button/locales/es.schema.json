@@ -15,7 +15,9 @@
           "bg_color": "Color de fondo del botón",
           "border_width": "Ancho del borde",
           "border_color": "Color del borde",
-          "border_radius": "Radio del borde"
+          "border_radius": "Radio del borde",
+          "text_alignment": "Alineación del texto",
+          "full_width": "Botón de ancho completo"
         },
         "icon_settings": {
           "header": "Configuración del icono",

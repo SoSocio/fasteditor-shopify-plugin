@@ -15,7 +15,9 @@
           "bg_color": "Couleur de fond du bouton",
           "border_width": "Largeur de la bordure",
           "border_color": "Couleur de la bordure",
-          "border_radius": "Rayon de la bordure"
+          "border_radius": "Rayon de la bordure",
+          "text_alignment": "Alignement du texte",
+          "full_width": "Bouton pleine largeur"
         },
         "icon_settings": {
           "header": "Paramètres de l'icône",
