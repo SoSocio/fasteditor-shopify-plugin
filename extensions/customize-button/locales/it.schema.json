@@ -15,7 +15,9 @@
           "bg_color": "Colore di sfondo del pulsante",
           "border_width": "Larghezza del bordo",
           "border_color": "Colore del bordo",
-          "border_radius": "Raggio del bordo"
+          "border_radius": "Raggio del bordo",
+          "text_alignment": "Allineamento del testo",
+          "full_width": "Pulsante a larghezza intera"
         },
         "icon_settings": {
           "header": "Impostazioni icona",

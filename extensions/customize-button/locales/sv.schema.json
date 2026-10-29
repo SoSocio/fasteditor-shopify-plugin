@@ -15,7 +15,9 @@
           "bg_color": "Knappbakgrundsfärg",
           "border_width": "Kantbredd",
           "border_color": "Kantfärg",
-          "border_radius": "Kantradie"
+          "border_radius": "Kantradie",
+          "text_alignment": "Textjustering",
+          "full_width": "Knapp i full bredd"
         },
         "icon_settings": {
           "header": "Ikoninställningar",

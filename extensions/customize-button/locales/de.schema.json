@@ -15,7 +15,9 @@
           "bg_color": "Button-Hintergrundfarbe",
           "border_width": "Rahmenbreite",
           "border_color": "Rahmenfarbe",
-          "border_radius": "Rahmenradius"
+          "border_radius": "Rahmenradius",
+          "text_alignment": "Textausrichtung",
+          "full_width": "Schaltfläche über volle Breite"
         },
         "icon_settings": {
           "header": "Symbol-Einstellungen",

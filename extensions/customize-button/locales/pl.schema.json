@@ -15,7 +15,9 @@
           "bg_color": "Kolor tła przycisku",
           "border_width": "Szerokość obramowania",
           "border_color": "Kolor obramowania",
-          "border_radius": "Promień obramowania"
+          "border_radius": "Promień obramowania",
+          "text_alignment": "Wyrównanie tekstu",
+          "full_width": "Przycisk na całą szerokość"
         },
         "icon_settings": {
           "header": "Ustawienia ikony",

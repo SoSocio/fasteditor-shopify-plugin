@@ -15,7 +15,9 @@
           "bg_color": "Knapbaggrundsfarve",
           "border_width": "Kantbredde",
           "border_color": "Kantfarve",
-          "border_radius": "Kantradius"
+          "border_radius": "Kantradius",
+          "text_alignment": "Tekstjustering",
+          "full_width": "Knap i fuld bredde"
         },
         "icon_settings": {
           "header": "Ikonindstillinger",
