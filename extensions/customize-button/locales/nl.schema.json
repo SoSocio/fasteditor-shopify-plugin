@@ -15,7 +15,9 @@
           "bg_color": "Knopachtergrondkleur",
           "border_width": "Randbreedte",
           "border_color": "Randkleur",
-          "border_radius": "Randradius"
+          "border_radius": "Randradius",
+          "text_alignment": "Tekstuitlijning",
+          "full_width": "Knop over volledige breedte"
         },
         "icon_settings": {
           "header": "Pictograminstellingen",

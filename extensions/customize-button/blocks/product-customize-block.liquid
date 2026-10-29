@@ -9,6 +9,7 @@
   assign font = block.settings.text_font
   assign icon_type = block.settings.icon_type | default: 'none'
   assign icon_position = block.settings.icon_position | default: 'left'
+  assign text_alignment = block.settings.text_alignment | default: 'center'
 
   # Product variant data
   assign selected_variant = product.selected_or_first_available_variant
@@ -58,6 +59,9 @@
       --button-border-color: {{ block.settings.border_color }};
       --button-border-radius: {{ block.settings.border_radius }}px;
       --icon-gap: {{ block.settings.icon_gap}}px;
+      --button-text-align: {{ text_alignment }};
+      --button-content-justify: {% if text_alignment == 'left' %}flex-start{% elsif text_alignment == 'right' %}flex-end{% else %}center{% endif %};
+      --button-width: {% if block.settings.full_width %}100%{% else %}auto{% endif %};
     }
   </style>
 
@@ -182,6 +186,18 @@
       "unit": "px",
       "label": "t:blocks.customize-button.settings.button_appearance.border_radius",
       "default": 0
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_alignment",
+      "label": "t:blocks.customize-button.settings.button_appearance.text_alignment",
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:blocks.customize-button.settings.button_appearance.full_width",
+      "default": false
     },
     {
       "type": "header",

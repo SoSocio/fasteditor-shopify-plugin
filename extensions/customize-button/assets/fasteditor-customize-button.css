@@ -19,8 +19,10 @@ fasteditor-customize-button {
   /* Layout */
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: var(--button-content-justify, center);
   gap: var(--icon-gap, 8px);
+  width: var(--button-width, auto);
+  box-sizing: border-box;
   
   /* Spacing */
   padding: 10px 20px;
@@ -40,7 +42,7 @@ fasteditor-customize-button {
   font-family: var(--button-font-family, inherit);
   font-weight: inherit;
   line-height: 1.4;
-  text-align: center;
+  text-align: var(--button-text-align, center);
   
   /* Interaction */
   cursor: pointer;

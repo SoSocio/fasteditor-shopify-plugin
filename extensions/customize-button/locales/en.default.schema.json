@@ -15,7 +15,9 @@
           "bg_color": "Button background color",
           "border_width": "Border width",
           "border_color": "Border color",
-          "border_radius": "Border radius"
+          "border_radius": "Border radius",
+          "text_alignment": "Text alignment",
+          "full_width": "Full width button"
         },
         "icon_settings": {
           "header": "Icon Settings",
