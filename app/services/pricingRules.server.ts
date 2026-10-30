@@ -17,6 +17,9 @@ import {SEARCH_PRODUCT_TARGETS} from "../graphql/pricingRules/searchProductTarge
 import {GET_PUBLICATIONS} from "../graphql/pricingRules/getPublications";
 import {PUBLISH_PRICING_RULE_PRODUCT} from "../graphql/pricingRules/publishPricingRuleProduct";
 import {UPDATE_PRICING_RULE_VARIANT} from "../graphql/pricingRules/updatePricingRuleVariant";
+import {getProductsByQuery} from "./products.server";
+import {GET_PRODUCT_VARIANTS_BY_CURSOR} from "../graphql/product/getProductVariantsByCursor";
+import type {Product} from "../types/products.types";
 
 export const PRICING_RULE_TAG = "fasteditor_pricing_rule";
 export const PRICING_RULE_PRODUCT_TYPE = "FastEditor Pricing Rule";
@@ -331,6 +334,21 @@ type GraphqlSearchResponse = {
   };
 };
 
+type GraphqlProductVariantsResponse = {
+  product: {
+    variants: {
+      nodes: {
+        id: string;
+        title: string;
+      }[];
+      pageInfo: {
+        hasNextPage: boolean;
+        endCursor: string | null;
+      };
+    };
+  } | null;
+};
+
 function normalizeMetafields(metafields: ShopifyMetafield[]) {
   return metafields.reduce<Record<string, string>>((acc, metafield) => {
     if (metafield?.key) {
@@ -433,6 +451,98 @@ function buildSearchQuery(term: string) {
   const sanitized = term.replace(/"/g, "").trim();
   if (!sanitized) return null;
   return `title:*${sanitized}*`;
+}
+
+function isGiftCardProduct(product: Product) {
+  const productType = (product.productType || "").toLowerCase();
+  if (
+    productType.includes("gift card") ||
+    productType === "giftcard" ||
+    productType === "gift-card"
+  ) {
+    return true;
+  }
+
+  return (product.tags || []).some((tag) => {
+    const normalizedTag = tag.toLowerCase();
+    return normalizedTag === "gift card" || normalizedTag === "giftcard" || normalizedTag === "gift-card";
+  });
+}
+
+async function getAllProductVariants(
+  admin: authenticateAdmin,
+  product: Product
+) {
+  const variants = [...product.variants.nodes];
+  let pageInfo = product.variants.pageInfo;
+
+  while (pageInfo?.hasNextPage && pageInfo.endCursor) {
+    const data = await adminGraphqlRequest<GraphqlProductVariantsResponse>(
+      admin,
+      GET_PRODUCT_VARIANTS_BY_CURSOR,
+      {
+        variables: {
+          id: product.id,
+          after: pageInfo.endCursor,
+        },
+      }
+    );
+
+    if (!data.product) {
+      break;
+    }
+
+    variants.push(...data.product.variants.nodes);
+    pageInfo = data.product.variants.pageInfo;
+  }
+
+  return variants;
+}
+
+export async function getAllPricingRuleTargetOptions(
+  admin: authenticateAdmin,
+  blockedTargetIds: string[] = []
+): Promise<PricingRuleTargetOption[]> {
+  const blockedTargetIdSet = new Set(blockedTargetIds);
+  const targets: PricingRuleTargetOption[] = [];
+  let after: string | undefined;
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const products = await getProductsByQuery(admin, {
+      first: 15,
+      after,
+      query: 'tag:fasteditor -product_type:"Gift Card"',
+      sortKey: "TITLE",
+      reverse: false,
+    });
+
+    for (const {node: product} of products.edges) {
+      if (isGiftCardProduct(product)) {
+        continue;
+      }
+
+      const variants = await getAllProductVariants(admin, product);
+      variants.forEach((variant) => {
+        if (blockedTargetIdSet.has(variant.id)) {
+          return;
+        }
+
+        const label = `Variant: ${product.title} — ${variant.title}`;
+        targets.push({
+          id: variant.id,
+          type: "variant",
+          title: label,
+          label,
+        });
+      });
+    }
+
+    hasNextPage = products.pageInfo.hasNextPage && Boolean(products.pageInfo.endCursor);
+    after = products.pageInfo.endCursor || undefined;
+  }
+
+  return targets;
 }
 
 export async function getPricingRules(

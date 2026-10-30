@@ -182,9 +182,19 @@
       "product": "Produkt",
       "variant": "Variant"
     },
+  "target-filters": {
+    "all": "Alle",
+    "selected": "Valgte",
+    "unselected": "Ikke valgte"
+  },
+    "targets": {
+      "title": "Vælg produkter"
+    },
     "buttons": {
       "search": "Søg",
       "select": "Vælg",
+      "select-all-page": "Vælg alle på denne side",
+      "select-all-products": "Vælg alle produkter",
       "remove": "Fjern",
       "save": "Gem",
       "create": "Opret",

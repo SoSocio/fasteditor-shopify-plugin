@@ -182,9 +182,19 @@
       "product": "Prodotto",
       "variant": "Variante"
     },
+  "target-filters": {
+    "all": "Tutti",
+    "selected": "Selezionati",
+    "unselected": "Non selezionati"
+  },
+    "targets": {
+      "title": "Seleziona prodotti"
+    },
     "buttons": {
       "search": "Cerca",
       "select": "Seleziona",
+      "select-all-page": "Seleziona tutto in questa pagina",
+      "select-all-products": "Seleziona tutti i prodotti",
       "remove": "Rimuovi",
       "save": "Salva",
       "create": "Crea",

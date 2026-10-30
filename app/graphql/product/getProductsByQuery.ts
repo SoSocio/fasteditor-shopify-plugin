@@ -50,6 +50,10 @@ export const GET_PRODUCTS_BY_QUERY = `
                 url
               }
             }
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
           }
         }
       }

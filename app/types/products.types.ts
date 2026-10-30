@@ -28,6 +28,7 @@ export interface Product {
   };
   variants: {
     nodes: ProductVariant[];
+    pageInfo?: Pick<PageInfo, "hasNextPage" | "endCursor">;
   };
 }
 

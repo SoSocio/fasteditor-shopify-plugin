@@ -182,9 +182,19 @@
       "product": "Product",
       "variant": "Variant"
     },
+  "target-filters": {
+    "all": "Alle",
+    "selected": "Geselecteerd",
+    "unselected": "Niet geselecteerd"
+  },
+    "targets": {
+      "title": "Producten selecteren"
+    },
     "buttons": {
       "search": "Zoeken",
       "select": "Selecteren",
+      "select-all-page": "Alles op deze pagina selecteren",
+      "select-all-products": "Alle producten selecteren",
       "remove": "Verwijderen",
       "save": "Opslaan",
       "create": "Maken",
