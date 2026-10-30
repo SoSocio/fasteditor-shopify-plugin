@@ -182,9 +182,19 @@
       "product": "Produkt",
       "variant": "Variant"
     },
+  "target-filters": {
+    "all": "Alla",
+    "selected": "Valda",
+    "unselected": "Inte valda"
+  },
+    "targets": {
+      "title": "Välj produkter"
+    },
     "buttons": {
       "search": "Sök",
       "select": "Välj",
+      "select-all-page": "Välj alla på den här sidan",
+      "select-all-products": "Välj alla produkter",
       "remove": "Ta bort",
       "save": "Spara",
       "create": "Skapa",

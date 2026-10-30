@@ -6,6 +6,7 @@ import {getAppMetafield} from "../services/app.server";
 import {
   createPricingRule,
   deletePricingRule,
+  getAllPricingRuleTargetOptions,
   getPricingRuleById,
   getPricingRules,
   updatePricingRule
@@ -137,6 +138,21 @@ export const action = async ({request, params}: ActionFunctionArgs): Promise<Res
   const formData = await request.formData();
   const intent = String(formData.get("intent") || "");
   const ruleId = params.ruleId;
+
+  if (intent === "select-all-products") {
+    const allRules = await getPricingRules(admin);
+    const blockedTargetIds = allRules
+      .filter((existingRule) => !ruleId || ruleId === "new" || existingRule.legacyResourceId !== ruleId)
+      .flatMap((existingRule) => existingRule.targetIds);
+    const targets = await getAllPricingRuleTargetOptions(admin, blockedTargetIds);
+
+    return json({
+      targets: targets.map((target) => ({
+        targetId: target.id,
+        targetTitle: target.label,
+      })),
+    });
+  }
 
   if (intent === "delete") {
     if (!ruleId || ruleId === "new") {

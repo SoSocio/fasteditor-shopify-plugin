@@ -1,7 +1,8 @@
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {
   Form,
   useActionData,
+  useFetcher,
   useLoaderData,
   useNavigate,
   useNavigation,
@@ -33,6 +34,15 @@ import {PricingRuleTargetsTable} from "../components/PricingRules/PricingRuleTar
 
 const ENDPOINT = "/app/pricing-rules";
 
+type PricingRuleTargetSelection = {
+  targetId: string;
+  targetTitle: string;
+};
+
+type SelectAllProductsActionData = {
+  targets: PricingRuleTargetSelection[];
+};
+
 function buildDefaultValues(rule?: PricingRule | null): PricingRuleFormValues {
   const isVariantTarget = rule?.targetType === "variant";
   return {
@@ -56,6 +66,7 @@ export const PricingRuleFormPage = () => {
   const navigation = useNavigation();
   const submit = useSubmit();
   const navigate = useNavigate();
+  const selectAllProductsFetcher = useFetcher<SelectAllProductsActionData>();
   const formRef = useRef<HTMLFormElement>(null);
 
   const [formValues, setFormValues] = useState<PricingRuleFormValues>(
@@ -83,6 +94,32 @@ export const PricingRuleFormPage = () => {
     }));
   }, [formValues.targetIds, formValues.targetTitles, products]);
 
+  const addTargets = useCallback((values: PricingRuleTargetSelection[]) => {
+    setFormValues((prev) => {
+      const existingTargetIds = new Set(prev.targetIds);
+      const newTargets = values.filter(
+        (value) => !existingTargetIds.has(value.targetId)
+      );
+
+      if (newTargets.length === 0) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        targetType: "variant",
+        targetIds: [
+          ...prev.targetIds,
+          ...newTargets.map((value) => value.targetId),
+        ],
+        targetTitles: [
+          ...prev.targetTitles,
+          ...newTargets.map((value) => value.targetTitle),
+        ],
+      };
+    });
+  }, []);
+
   useEffect(() => {
     if (previousFormStateKeyRef.current === formStateKey) {
       return;
@@ -91,6 +128,12 @@ export const PricingRuleFormPage = () => {
     previousFormStateKeyRef.current = formStateKey;
     setFormValues(buildDefaultValues(rule));
   }, [formStateKey, rule]);
+
+  useEffect(() => {
+    if (selectAllProductsFetcher.data?.targets) {
+      addTargets(selectAllProductsFetcher.data.targets);
+    }
+  }, [addTargets, selectAllProductsFetcher.data]);
 
   if (appAvailability === "false") {
     return <UsageLimitBannerWithAction shopName={shopName}/>;
@@ -183,15 +226,35 @@ export const PricingRuleFormPage = () => {
                   </Text>
                 ) : null}
               </FormLayout>
-              <BlockStack gap="300">
-                <PricingRuleTargetsTable
+            </BlockStack>
+          </Card>
+
+          <Card>
+            <BlockStack gap="300">
+              <InlineStack align="space-between" blockAlign="center">
+                <Text as="h2" variant="headingLg">
+                  {t("pricing-rule-form.targets.title", {defaultValue: "Select products"})}
+                </Text>
+                <Button
+                  variant="primary"
+                  loading={selectAllProductsFetcher.state !== "idle"}
+                  onClick={() =>
+                    selectAllProductsFetcher.submit(
+                      {intent: "select-all-products"},
+                      {method: "post"}
+                    )
+                  }
+                >
+                  {t("pricing-rule-form.buttons.select-all-products")}
+                </Button>
+              </InlineStack>
+              <PricingRuleTargetsTable
                   products={products}
                   pageInfo={pageInfo}
                   shopName={shopName}
                   shopSettings={shopSettings}
                   blockedTargetIds={blockedTargetIds}
                   selectedTargetIds={formValues.targetIds}
-                  selectedTargets={selectedTargets}
                   onToggleTarget={(value) =>
                     setFormValues((prev) => {
                       const existingIndex = prev.targetIds.indexOf(value.targetId);
@@ -214,8 +277,58 @@ export const PricingRuleFormPage = () => {
                       };
                     })
                   }
+                  onToggleProductTargets={(values) =>
+                    setFormValues((prev) => {
+                      const productTargetIds = new Set(
+                        values.map((value) => value.targetId)
+                      );
+                      const areAllProductTargetsSelected = values.length > 0
+                        && values.every((value) => prev.targetIds.includes(value.targetId));
+
+                      if (areAllProductTargetsSelected) {
+                        const nextTargets = prev.targetIds.reduce<{
+                          ids: string[];
+                          titles: string[];
+                        }>((next, targetId, index) => {
+                          if (!productTargetIds.has(targetId)) {
+                            next.ids.push(targetId);
+                            next.titles.push(prev.targetTitles[index]);
+                          }
+                          return next;
+                        }, {ids: [], titles: []});
+
+                        return {
+                          ...prev,
+                          targetType: "variant",
+                          targetIds: nextTargets.ids,
+                          targetTitles: nextTargets.titles,
+                        };
+                      }
+
+                      const existingTargetIds = new Set(prev.targetIds);
+                      const targetsToAdd = values.filter(
+                        (value) => !existingTargetIds.has(value.targetId)
+                      );
+
+                      if (targetsToAdd.length === 0) {
+                        return prev;
+                      }
+
+                      return {
+                        ...prev,
+                        targetType: "variant",
+                        targetIds: [
+                          ...prev.targetIds,
+                          ...targetsToAdd.map((value) => value.targetId),
+                        ],
+                        targetTitles: [
+                          ...prev.targetTitles,
+                          ...targetsToAdd.map((value) => value.targetTitle),
+                        ],
+                      };
+                    })
+                  }
                 />
-              </BlockStack>
             </BlockStack>
           </Card>
 
