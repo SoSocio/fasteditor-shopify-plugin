@@ -6,9 +6,11 @@ import {
   setPaidMetafield
 } from "../services/app.server";
 import {
+  getShopSettings,
   updateShopSubscriptionStatus,
   updateSubscriptionShopSettings
 } from "../models/shopSettings.server";
+import {isActiveSubscription, shouldTrackWebhookSubscription} from "../services/subscriptionState";
 
 /**
  * Handles Shopify app subscription webhooks and updates the "paid" metafield.
@@ -27,16 +29,32 @@ export const action = async ({request}: ActionFunctionArgs): Promise<null> => {
 
   console.info(`[${topic}] Webhook received for shop: ${shop}`);
   const subscription = payload.app_subscription;
-  const isActive = subscription?.status === "ACTIVE" ? "true" : "false";
   const normalizedStatus = String(subscription?.status || "").toUpperCase();
+  const payloadGraphId: string = subscription?.admin_graphql_api_id;
 
   try {
-    await setPaidMetafield(admin, isActive);
-    
+    const subscriptions = await getAllAppSubscriptions(admin);
+
+    // The shop stays paid while any subscription is active, not only the one from this webhook
+    const hasActiveSubscription =
+      normalizedStatus === "ACTIVE" ||
+      subscriptions.some((s) => s.id !== payloadGraphId && isActiveSubscription(s));
+    await setPaidMetafield(admin, String(hasActiveSubscription));
+
     // Initialize app availability based on usage billing limit
     // Only check if subscription is active
     if (normalizedStatus === "ACTIVE") {
       await initializeAppAvailability(admin);
+    }
+
+    // Skip updates of other non-active subscriptions (e.g. expired pending charges)
+    const shopSettings = await getShopSettings(shop);
+    if (!shouldTrackWebhookSubscription(payloadGraphId, normalizedStatus, shopSettings?.shopifySubscriptionId)) {
+      console.info(
+        `[${topic}] Ignoring ${normalizedStatus} update for ${payloadGraphId}, ` +
+        `current subscription is ${shopSettings?.shopifySubscriptionId}`
+      );
+      return null;
     }
 
     // If canceled, update only the status and leave other fields intact
@@ -46,12 +64,10 @@ export const action = async ({request}: ActionFunctionArgs): Promise<null> => {
     }
 
     // Try to enrich subscription details via Admin GraphQL
-    const subscriptions = await getAllAppSubscriptions(admin);
-    const payloadGraphId: string = subscription?.admin_graphql_api_id;
     const pick = subscriptions.find((s) => (s?.id === payloadGraphId));
 
     if (pick) {
-      const currentPeriodEnd = new Date(pick.currentPeriodEnd);
+      const currentPeriodEnd = pick.currentPeriodEnd ? new Date(pick.currentPeriodEnd) : null;
 
       await updateSubscriptionShopSettings(
         shop,
