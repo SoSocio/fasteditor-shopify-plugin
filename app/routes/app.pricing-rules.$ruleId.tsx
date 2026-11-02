@@ -9,6 +9,7 @@ import {
   useParams,
   useSubmit
 } from "@remix-run/react";
+import type {ShouldRevalidateFunction} from "@remix-run/react";
 import {
   BlockStack,
   Checkbox,
@@ -58,6 +59,14 @@ function buildDefaultValues(rule?: PricingRule | null): PricingRuleFormValues {
 
 export { loader, action } from "./app.pricing-rules.$ruleId.server";
 
+export const shouldRevalidate: ShouldRevalidateFunction = ({formData, defaultShouldRevalidate}) => {
+  if (formData?.get("intent") === "select-all-products") {
+    return false;
+  }
+
+  return defaultShouldRevalidate;
+};
+
 export const PricingRuleFormPage = () => {
   const {t} = useTranslation();
   const {rule, appAvailability, shopName, products, pageInfo, blockedTargetIds, shopSettings} = useLoaderData<typeof loader>();
@@ -66,7 +75,7 @@ export const PricingRuleFormPage = () => {
   const navigation = useNavigation();
   const submit = useSubmit();
   const navigate = useNavigate();
-  const selectAllProductsFetcher = useFetcher<SelectAllProductsActionData>();
+  const availableTargetsFetcher = useFetcher<SelectAllProductsActionData>();
   const formRef = useRef<HTMLFormElement>(null);
 
   const [formValues, setFormValues] = useState<PricingRuleFormValues>(
@@ -76,6 +85,15 @@ export const PricingRuleFormPage = () => {
   const isSubmitting = navigation.state === "submitting";
   const formStateKey = rule?.id ?? params.ruleId ?? "new";
   const previousFormStateKeyRef = useRef(formStateKey);
+  const availableTargets = availableTargetsFetcher.data?.targets;
+  const hasTargetsToSelect = useMemo(() => {
+    if (!availableTargets) {
+      return false;
+    }
+
+    const selectedTargetIds = new Set(formValues.targetIds);
+    return availableTargets.some((target) => !selectedTargetIds.has(target.targetId));
+  }, [availableTargets, formValues.targetIds]);
   const selectedTargets = useMemo(() => {
     const currentTargetTitles = new Map<string, string>();
 
@@ -130,10 +148,12 @@ export const PricingRuleFormPage = () => {
   }, [formStateKey, rule]);
 
   useEffect(() => {
-    if (selectAllProductsFetcher.data?.targets) {
-      addTargets(selectAllProductsFetcher.data.targets);
-    }
-  }, [addTargets, selectAllProductsFetcher.data]);
+    availableTargetsFetcher.submit(
+      {intent: "select-all-products"},
+      {method: "post"}
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reload available targets only when the rule changes
+  }, [formStateKey]);
 
   if (appAvailability === "false") {
     return <UsageLimitBannerWithAction shopName={shopName}/>;
@@ -237,13 +257,13 @@ export const PricingRuleFormPage = () => {
                 </Text>
                 <Button
                   variant="primary"
-                  loading={selectAllProductsFetcher.state !== "idle"}
-                  onClick={() =>
-                    selectAllProductsFetcher.submit(
-                      {intent: "select-all-products"},
-                      {method: "post"}
-                    )
-                  }
+                  loading={availableTargetsFetcher.state !== "idle"}
+                  disabled={!hasTargetsToSelect}
+                  onClick={() => {
+                    if (availableTargets) {
+                      addTargets(availableTargets);
+                    }
+                  }}
                 >
                   {t("pricing-rule-form.buttons.select-all-products")}
                 </Button>
