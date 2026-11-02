@@ -1,20 +1,24 @@
 import {Card, EmptyState, Page, Text, Layout} from "@shopify/polaris";
 import {useCallback, useState} from "react";
+import {useRevalidator} from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 
 const NoSubscriptionPage = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
+  const revalidator = useRevalidator();
   const onSubscribe = useCallback(async () => {
     try {
       setLoading(true);
-      await fetch("/app/subscription/create", {method: "POST"})
+      const response = await fetch("/app/subscription/create", {method: "POST"})
+      // Subscription already active and re-synced on the server: reload loaders to unlock the app
+      if (response.ok) revalidator.revalidate();
     } catch (error) {
       shopify.toast.show(t("no-subscription-page.error-message"));
     } finally {
       setLoading(false);
     }
-  }, [t])
+  }, [t, revalidator])
 
   return (
     <Page>

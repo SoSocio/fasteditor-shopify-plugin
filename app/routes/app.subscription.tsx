@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import type {ActiveSubscription} from "../types/billing.types";
 import {authenticate} from "../shopify.server";
 import {transformSubscription} from "../services/billing.server";
-import {getAllAppSubscriptions, getAppMetafield} from "../services/app.server";
+import {getAppMetafield, getCurrentAppSubscription} from "../services/app.server";
 
 import {PageLayout} from "../components/layout/PageLayout";
 import {CurrentSubscription} from "../components/SubscriptionPage/CurrentSubscription";
@@ -54,19 +54,7 @@ export const loader = async (
       throw new Error("Unable to fetch shop settings");
     }
 
-    const subscriptions = await getAllAppSubscriptions(admin);
-    if (
-      !shopSettings?.shopifySubscriptionId ||
-      !subscriptions ||
-      subscriptions.length === 0
-    ) {
-      console.error(`[${ENDPOINT}] No subscriptions found`);
-      throw new Error("Unable to fetch subscriptions");
-    }
-
-    const currentSubscription = subscriptions.find(
-      (subscription) => subscription.id === shopSettings?.shopifySubscriptionId
-    );
+    const currentSubscription = await getCurrentAppSubscription(admin, shopSettings);
     if (!currentSubscription) {
       console.error(
         `[${ENDPOINT}] Subscription ${shopSettings?.shopifySubscriptionId} not found`
