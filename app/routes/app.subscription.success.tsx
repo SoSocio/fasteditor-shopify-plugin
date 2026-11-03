@@ -1,7 +1,12 @@
 import {type LoaderFunctionArgs} from "@remix-run/node";
 import {authenticate} from "../shopify.server";
 import {getAllAppSubscriptions, initializeAppAvailability} from "../services/app.server";
-import {createShopSettings, getShopSettings} from "../models/shopSettings.server";
+import {
+  createShopSettings,
+  getShopSettings,
+  updateSubscriptionShopSettings
+} from "../models/shopSettings.server";
+import {isActiveSubscription} from "../services/subscriptionState";
 import {getShopInfo, getShopLocale} from "../services/shop.server";
 import { calculateTrialEndDate, formatSubscriptionId } from "app/services/billing.server";
 
@@ -67,6 +72,16 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
       );
 
       console.info(`[${ENDPOINT}] Created shop settings for ${session.shop}`);
+    } else if (isActiveSubscription(currentSubscription)) {
+      // Existing shop (e.g. reinstall): point settings to the newly approved subscription
+      await updateSubscriptionShopSettings(
+        session.shop,
+        currentSubscription.id,
+        currentSubscription.status,
+        currentSubscription.currentPeriodEnd ? new Date(currentSubscription.currentPeriodEnd) : null
+      );
+
+      console.info(`[${ENDPOINT}] Updated subscription for ${session.shop}`);
     }
 
     // Initialize app availability based on usage billing limit
