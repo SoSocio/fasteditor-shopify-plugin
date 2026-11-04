@@ -1,6 +1,10 @@
 import {type LoaderFunctionArgs} from "@remix-run/node";
 import {authenticate} from "../shopify.server";
-import {getAllAppSubscriptions, initializeAppAvailability} from "../services/app.server";
+import {
+  getAllAppSubscriptions,
+  initializeAppAvailability,
+  setPaidMetafield
+} from "../services/app.server";
 import {
   createShopSettings,
   getShopSettings,
@@ -82,6 +86,11 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
       );
 
       console.info(`[${ENDPOINT}] Updated subscription for ${session.shop}`);
+    }
+
+    // Show storefront blocks right away instead of waiting for the subscription webhook
+    if (isActiveSubscription(currentSubscription)) {
+      await setPaidMetafield(admin, "true");
     }
 
     // Initialize app availability based on usage billing limit

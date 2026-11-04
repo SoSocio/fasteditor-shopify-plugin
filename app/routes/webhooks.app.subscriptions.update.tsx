@@ -49,6 +49,12 @@ export const action = async ({request}: ActionFunctionArgs): Promise<null> => {
 
     // Skip updates of other non-active subscriptions (e.g. expired pending charges)
     const shopSettings = await getShopSettings(shop);
+    if (!shopSettings) {
+      // New installation: /app/subscription/success creates shop settings from the subscription
+      console.info(`[${topic}] Shop settings not found for ${shop}, skipping subscription update`);
+      return null;
+    }
+
     if (!shouldTrackWebhookSubscription(payloadGraphId, normalizedStatus, shopSettings?.shopifySubscriptionId)) {
       console.info(
         `[${topic}] Ignoring ${normalizedStatus} update for ${payloadGraphId}, ` +
@@ -85,6 +91,8 @@ export const action = async ({request}: ActionFunctionArgs): Promise<null> => {
     }
   } catch (error) {
     console.error(`[${topic}] Failed to process subscription update:`, error);
+    // Non-2xx response makes Shopify redeliver the webhook; every step above is idempotent
+    throw new Response("Failed to process subscription update", {status: 500});
   }
 
   return null;

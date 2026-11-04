@@ -300,15 +300,16 @@ export async function getCurrentAppSubscription(
       `${shopSettings.shopifySubscriptionId} -> ${currentSubscription.id}`
     );
 
-    // Re-sync must not break page loaders; the resolved subscription is returned either way
+    // Re-sync must not break page loaders; the resolved subscription is returned either way.
+    // The "paid" metafield goes first: if it fails, the stored ID stays stale and the next load retries.
     try {
+      await setPaidMetafield(admin, "true");
       await updateSubscriptionShopSettings(
         shopSettings.shop,
         currentSubscription.id,
         currentSubscription.status,
         currentSubscription.currentPeriodEnd ? new Date(currentSubscription.currentPeriodEnd) : null
       );
-      await setPaidMetafield(admin, "true");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error("[getCurrentAppSubscription] Failed to re-sync subscription:", errorMessage);
