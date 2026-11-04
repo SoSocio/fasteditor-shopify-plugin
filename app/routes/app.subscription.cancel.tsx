@@ -1,7 +1,7 @@
 import {type ActionFunctionArgs} from "@remix-run/node";
 import {authenticate} from "../shopify.server";
 import {billingCancel} from "../services/billing.server";
-import {getAllAppSubscriptions} from "../services/app.server";
+import {getCurrentAppSubscription} from "../services/app.server";
 import {getShopSettings} from "../models/shopSettings.server";
 
 const ENDPOINT = "/app/subscription/cancel";
@@ -25,10 +25,7 @@ export const action = async ({request}: ActionFunctionArgs) => {
       return redirect("/app");
     }
 
-    const subscriptions = await getAllAppSubscriptions(admin);
-    const currentSubscription = subscriptions.find(
-      (s) => s.id === shopSettings.shopifySubscriptionId
-    );
+    const currentSubscription = await getCurrentAppSubscription(admin, shopSettings);
 
     if (!currentSubscription) {
       console.error(`[${ENDPOINT}] Subscription not found: ${shopSettings.shopifySubscriptionId}`);

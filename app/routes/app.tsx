@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import {authenticate} from "../shopify.server";
 import {SUPPORT_EMAIL} from "../constants";
 import {getShopSettings} from "../models/shopSettings.server";
-import {getAllAppSubscriptions} from "../services/app.server";
+import {getCurrentAppSubscription} from "../services/app.server";
 import NoSubscriptionPage from "app/components/SubscriptionPage/NoSubscriptionPage";
 import { getMerchant, createMerchant } from "../models/merchant.server";
 import i18n from "../i18n";
@@ -70,20 +70,7 @@ export const loader = async ({
     };
   }
 
-  const subscriptions = await getAllAppSubscriptions(admin);
-  console.log("[app.tsx] subscriptions", subscriptions);
-  if (
-    !shopSettings?.shopifySubscriptionId ||
-    !subscriptions ||
-    subscriptions.length === 0
-  ) {
-    console.log("[app.tsx] shopSettings?.shopifySubscriptionId or subscriptions not found. 2 case");
-    appAvailability = false;
-  }
-
-  const currentSubscription = subscriptions.find(
-    (subscription) => subscription.id === shopSettings?.shopifySubscriptionId
-  );
+  const currentSubscription = await getCurrentAppSubscription(admin, shopSettings);
   console.log("[app.tsx] currentSubscription", currentSubscription);
 
   if (!currentSubscription) {

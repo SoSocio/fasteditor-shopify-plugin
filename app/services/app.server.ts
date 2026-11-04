@@ -11,6 +11,9 @@ import {GET_APP_METAFIELD} from "../graphql/app/getAppMetafield";
 import {setMetafield} from "./metafield.server";
 import type {AppSubscription} from "@shopify/shopify-api";
 import {checkUsageBillingLimitReached} from "./billing.server";
+import {MONTHLY_PLAN} from "../shopify.server";
+import {type ShopSettings, updateSubscriptionShopSettings} from "../models/shopSettings.server";
+import {isActiveSubscription, resolveCurrentSubscription} from "./subscriptionState";
 
 /**
  * Executes a Shopify Admin API GraphQL query with error handling.
@@ -266,6 +269,54 @@ export async function getAllAppSubscriptions(admin: authenticateAdmin): Promise<
   `)
 
   return response.currentAppInstallation.allSubscriptions.nodes
+}
+
+/**
+ * Returns the shop's current subscription and re-syncs shop settings when the stored
+ * subscription ID no longer points to the active subscription.
+ *
+ * @param admin - Shopify Admin API client
+ * @param shopSettings - Shop settings with the stored subscription ID
+ * @returns Current subscription, or undefined if the shop has none
+ */
+export async function getCurrentAppSubscription(
+  admin: authenticateAdmin,
+  shopSettings: ShopSettings
+): Promise<AppSubscription | undefined> {
+  const subscriptions = await getAllAppSubscriptions(admin);
+  const currentSubscription = resolveCurrentSubscription(
+    subscriptions,
+    shopSettings.shopifySubscriptionId,
+    MONTHLY_PLAN
+  );
+
+  if (
+    currentSubscription &&
+    isActiveSubscription(currentSubscription) &&
+    currentSubscription.id !== shopSettings.shopifySubscriptionId
+  ) {
+    console.warn(
+      `[getCurrentAppSubscription] Re-syncing subscription for ${shopSettings.shop}: ` +
+      `${shopSettings.shopifySubscriptionId} -> ${currentSubscription.id}`
+    );
+
+    // Re-sync must not break page loaders; the resolved subscription is returned either way.
+    // The "paid" metafield goes first: if it fails, the stored ID stays stale and the next load retries.
+    try {
+      await setPaidMetafield(admin, "true");
+      await updateSubscriptionShopSettings(
+        shopSettings.shop,
+        currentSubscription.id,
+        currentSubscription.status,
+        currentSubscription.currentPeriodEnd ? new Date(currentSubscription.currentPeriodEnd) : null
+      );
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error("[getCurrentAppSubscription] Failed to re-sync subscription:", errorMessage);
+    }
+  }
+
+  return currentSubscription;
 }
 
 /**
