@@ -49,3 +49,11 @@ prefix = "apps"
 
 [pos]
 embedded = false
+
+# Hosts the app loads content from / sends customers to.
+# Theme extension requests go through the app proxy (store domain) and need no entry.
+# https://shopify.dev/docs/apps/build/security/storefront/declare-network-access
+[network_access]
+allowed_sources = [
+  "https://fasteditor-staging.vercel.app"
+]
