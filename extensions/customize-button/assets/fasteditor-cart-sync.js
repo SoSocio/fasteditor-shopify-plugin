@@ -62,6 +62,12 @@
     '[data-cart-item]',
     'li.cart-item',
   ];
+  const LINE_ITEM_KEY_ATTRIBUTES = [
+    'data-key',
+    'data-cart-item-key',
+    'data-line-key',
+    'data-item-key',
+  ];
   const QUANTITY_WRAPPER_SELECTORS = [
     'quantity-popover',
     'quantity-input',
@@ -494,7 +500,65 @@
 
     return candidates.filter((candidate) => {
       return !candidates.some((other) => other !== candidate && other.contains(candidate));
-    });
+    }).filter((candidate) => isProductLineItem(candidate));
+  }
+
+  /**
+   * Skips non-product rows that reuse line item classes (e.g. the Motion theme renders
+   * a `.cart__item.cart__item--headers` row), so they do not shift index-based matching.
+   */
+  function isProductLineItem(container) {
+    return Boolean(
+      getLineItemKey(container)
+      || container.querySelector('a[href*="/products/"]')
+      || container.querySelector('img')
+    );
+  }
+
+  function getLineItemKey(container) {
+    for (const attribute of LINE_ITEM_KEY_ATTRIBUTES) {
+      const value = container.getAttribute(attribute);
+      if (value) {
+        return value;
+      }
+    }
+
+    return '';
+  }
+
+  function getLineItemVariantId(container) {
+    const link = container.querySelector('a[href*="variant="]');
+    if (!link) {
+      return '';
+    }
+
+    const match = /[?&]variant=(\d+)/.exec(link.getAttribute('href') || '');
+    return match ? match[1] : '';
+  }
+
+  /**
+   * Resolves the cart item rendered by a theme line item container.
+   * Prefers the line item key, then a unique variant id from the product link,
+   * and falls back to the container position.
+   */
+  function resolveCartItemForLineItem(container, items, index) {
+    const key = getLineItemKey(container);
+    if (key) {
+      const byKey = items.find((item) => item?.key === key);
+      if (byKey) {
+        return byKey;
+      }
+    }
+
+    const variantId = getLineItemVariantId(container);
+    if (variantId) {
+      const byVariant = items.filter((item) => String(item?.variant_id) === variantId);
+      if (byVariant.length === 1) {
+        return byVariant[0];
+      }
+    }
+
+    return items[index];
   }
 
   function markExtraPricingLineItem(container) {
@@ -519,7 +583,7 @@
       }
 
       lineItems.forEach((lineItem, index) => {
-        if (!isExtraPricingItem(items[index])) {
+        if (!isExtraPricingItem(resolveCartItemForLineItem(lineItem, items, index))) {
           return;
         }
 
@@ -582,7 +646,7 @@
       }
 
       lineItems.forEach((lineItem, index) => {
-        const item = items[index];
+        const item = resolveCartItemForLineItem(lineItem, items, index);
         if (!shouldReplaceItemImage(item)) {
           return;
         }
